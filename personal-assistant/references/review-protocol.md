@@ -2,18 +2,24 @@
 
 When the user issues an audit/review/inspection command (examples: "审核修复", "检查实现", "review this", "audit the code", "check for issues"), follow a two-tier approach: **Quick Review** first, then offer **Full Report**.
 
+The review process cross-checks four sources:
+- **Dev logs** (`docs/dep/dev-*.md`) — what was claimed as done
+- **Git history** (`git log --oneline --since=<date>`) — what was actually committed
+- **Main docs** (`docs/main/`) — what the architecture/spec says should exist
+- **Actual code** — what is really there
+
 ## Quick Review (default)
 
-Always start here. Output 3-5 bullet points directly in the response — no file is generated.
+Always start here. Read dev logs since the last review (or last 3 days if no prior review). Run `git log --oneline --since=<last review date>` to cross-check dev log claims against actual commits. Then output 3-5 bullet points directly in the response — no file is generated.
 
 Format:
 
 ```
 ## Quick Review
 
-- [finding 1: what was checked, what was found]
-- [finding 2: issue or gap identified]
-- [finding 3: risk or concern]
+- [finding 1: what was checked, what was found — reference dev log round if relevant]
+- [finding 2: issue or gap identified vs dev log claims]
+- [finding 3: risk or concern — dev log items still open, blockers, etc.]
 - [summary verdict: OK / needs attention / blocking]
 
 需要我生成完整的审查报告到 `docs/dep/` 吗？
@@ -21,7 +27,9 @@ Format:
 
 Quick Review covers:
 - Critical issues (bugs, security, data loss)
-- Missing pieces vs spec/docs
+- Dev log claims not backed by git commits
+- Missing pieces vs dev log claims and main docs
+- Dev log items still marked as open/blocked
 - Obvious deviations from conventions
 - A one-line verdict
 
@@ -31,14 +39,7 @@ Only generate when the user confirms they want it (after being prompted, or if t
 
 ### Naming convention
 
-```
-docs/dep/review-<YYYYMMDD>-<round>.md
-```
-
-- `YYYYMMDD` — date the review was performed
-- `round` — sequential round number per day: `01`, `02`, `03`, ...
-
-If there is already a report for the same date and topic, increment the round. If the review is a continuation of a prior day's review, start a new file with `round-01` and link back to the previous report.
+See `references/doc-structure.md`. Reports follow `docs/dep/review-<YYYYMMDD>-<NN>.md`.
 
 ### Report template
 
@@ -55,6 +56,12 @@ status: in-progress
 ## Scope
 <!-- What was reviewed (files, features, modules) -->
 
+## Dev Logs Reviewed
+
+| Date | Round | Claim | Verified |
+|------|-------|-------|----------|
+| YYYY-MM-DD | R1 | [what dev log says was done] | ✅ / ⚠️ / ❌ — [evidence] |
+
 ## Findings
 
 ### Issues
@@ -65,11 +72,11 @@ status: in-progress
 | 1 | high/medium/low | path:line | ... | open/fixed/deferred |
 
 ### Unimplemented / Incomplete
-<!-- Features or behaviors mentioned in docs/spec but not in code -->
+<!-- Features or behaviors mentioned in docs/spec/dev-log but not in code -->
 
 | # | Reference | Description | Next step |
 |---|-----------|-------------|-----------|
-| 1 | doc/spec ref | ... | ... |
+| 1 | dev-YYYYMMDD R2 / spec ref | ... | ... |
 
 ### Deviations
 <!-- Code that diverges from documented intent or conventions -->

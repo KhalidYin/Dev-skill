@@ -1,0 +1,79 @@
+{
+  "skill_name": "personal-assistant",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "This is a brand new Python project with no documentation yet. I need to add a user login feature.",
+      "expected_output": "Skill enters Bootstrap mode, generates docs/main/ skeleton + USAGE.md, then switches to Development mode for the login feature.",
+      "expectations": [
+        "Bootstrap mode is detected (no docs exist)",
+        "docs/main/PROJECT_GUIDE.md is created with detected language/framework",
+        "docs/main/PROJECT_SPEC.md is created with TBD placeholder",
+        "docs/main/CODE_STYLE.md is created with TBD placeholder",
+        "docs/main/TEST_GUIDE.md is created with TBD placeholder",
+        "USAGE.md is created at project root",
+        "docs/dep/ and docs/deploy/ directories are created",
+        "Development continues with login feature implementation",
+        "Dev log is written to docs/dep/dev-*.md"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Fix the bug in src/auth.py where login times out after 30 seconds.",
+      "expected_output": "Skill enters Development mode, reads relevant docs, fixes the bug, runs tests, updates docs if needed, validates doc consistency, writes dev log.",
+      "expectations": [
+        "Development mode is selected",
+        "PROJECT_GUIDE.md and PROJECT_SPEC.md are read for context",
+        "Bug is fixed in src/auth.py",
+        "Tests are added or updated",
+        "Doc consistency check is performed and reported",
+        "Dev log round is written to docs/dep/dev-*.md with Done, Issues, Next, Files Changed/Commits",
+        "Response includes risk note, optimization advice, summary, validation"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review my codebase — I want to make sure everything is consistent with the docs.",
+      "expected_output": "Skill enters Review mode, reads dev logs since last review, does Quick Review with 3-5 bullet points, asks about Full Report.",
+      "expectations": [
+        "Review mode is selected",
+        "Dev logs in docs/dep/ are read",
+        "git log is checked against dev log claims",
+        "Quick Review outputs 3-5 bullet points with cross-check verdict",
+        "User is asked whether they want a Full Report"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need to set up deployment instructions for staging and production.",
+      "expected_output": "Skill enters Deployment mode, generates or updates the deployment guide at docs/deploy/DEPLOY_GUIDE.md with environments, steps, config, and rollback.",
+      "expectations": [
+        "Deployment mode is selected",
+        "Deployment guide is created/updated at docs/deploy/DEPLOY_GUIDE.md",
+        "Guide includes: Environments, Prerequisites, Steps, Configuration, Rollback, Verification"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I just refactored the auth module — now PROJECT_GUIDE.md calls it 'auth module' but PROJECT_SPEC.md calls it 'authentication service'. Continue with my next task.",
+      "expected_output": "Skill detects the terminology drift during doc consistency check, flags it explicitly to the user, asks which term to use before proceeding.",
+      "expectations": [
+        "Doc consistency check finds terminology drift",
+        "Both conflicting terms and files are named explicitly",
+        "No fuzzy language ('probably fine' etc.)",
+        "User is asked which term is correct before proceeding"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "What does the PROJECT_GUIDE.md say about the database layer?",
+      "expected_output": "Skill enters Consultation mode, reads the relevant doc, answers the question. No code changes, no doc updates, no dev log.",
+      "expectations": [
+        "Consultation mode is selected",
+        "Only docs are read, no files are modified",
+        "Answer is concise and based on PROJECT_GUIDE.md content",
+        "No dev log is written"
+      ]
+    }
+  ]
+}

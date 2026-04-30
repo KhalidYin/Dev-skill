@@ -5,7 +5,7 @@
       "status": "stable",
       "category": "dev-tooling",
       "last_modified": "2026-04-30",
-      "has_evals": false,
+      "has_evals": true,
       "tags": ["python", "r", "documentation"]
     }
   }
