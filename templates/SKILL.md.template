@@ -1,0 +1,18 @@
+---
+name: {{SKILL_NAME}}
+description: "{{SKILL_DESCRIPTION}}"
+---
+
+# {{SKILL_TITLE}}
+
+## When to use
+
+<!-- Describe the triggers and scenarios where this skill should be invoked -->
+
+## Working rules
+
+<!-- Define the skill's behavior, constraints, and workflow -->
+
+## Quick start
+
+<!-- Step-by-step instructions for the skill's main workflow -->

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Read(//c/Users/DeanKevin/.claude/skills/skill-creator/**)",
+      "Read(//c/Users/DeanKevin/.claude/skills/agent-browser/**)",
+      "Read(//c/Users/DeanKevin/.claude/skills/excel-xlsx-1.0.2/**)",
+      "Read(//c/Users/DeanKevin/.claude/skills/skill-creator/scripts/**)",
+      "Read(//c/Users/DeanKevin/.claude/skills/personal-assistant/**)",
+      "Read(///c/Users/DeanKevin/.claude/skills/**)",
+      "Bash(git init *)"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+# Packaged outputs
+dist/*.skill
+!dist/.gitkeep
+
+# Skill development workspaces (from skill-creator workflow)
+*-workspace/
+*-workspace*/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Claude Code session artifacts
+.claude/sessions/

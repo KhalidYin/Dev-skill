@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "skills": {
+    "personal-assistant": {
+      "status": "stable",
+      "category": "dev-tooling",
+      "last_modified": "2026-04-30",
+      "has_evals": false,
+      "tags": ["python", "r", "documentation"]
+    }
+  }
+}
