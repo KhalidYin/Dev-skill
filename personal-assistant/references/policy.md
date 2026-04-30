@@ -29,6 +29,15 @@ When responding, include:
 
 When pointing to code, use clickable file references with line numbers when possible, for example `path/to/file.py:42`.
 
+## Review tiers
+
+Reviews use a two-tier approach to avoid overhead:
+
+1. **Quick Review** (default) — 3-5 bullet points in the response. Covers critical issues, gaps, and a verdict. No file written.
+2. **Full Report** — detailed markdown report in `docs/dep/`. Only generated when the user confirms after seeing the Quick Review, or explicitly asks for a full report.
+
+See `references/review-protocol.md` for the complete workflow.
+
 ## Conflict handling
 
 If the project docs, code, and user request disagree, do not resolve the conflict silently.
@@ -38,6 +47,12 @@ If the project docs, code, and user request disagree, do not resolve the conflic
 3. ask the user which direction to follow
 
 Only proceed once the conflict is explicit.
+
+## Context memory
+
+This skill maintains a cross-platform project memory. Before any significant change, check `docs/main/memory/MEMORY.md` for relevant context. After completing work, save new decisions, preferences, or project facts to memory.
+
+See `references/context-memory.md` for the full memory protocol.
 
 ## R and Python guidance
 

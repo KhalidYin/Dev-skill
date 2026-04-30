@@ -8,7 +8,9 @@
       "Read(//c/Users/DeanKevin/.claude/skills/skill-creator/scripts/**)",
       "Read(//c/Users/DeanKevin/.claude/skills/personal-assistant/**)",
       "Read(///c/Users/DeanKevin/.claude/skills/**)",
-      "Bash(git init *)"
+      "Bash(git init *)",
+      "Bash(python scripts/validate_all.py)",
+      "PowerShell(Remove-Item -Recurse -Force \"$env:USERPROFILE\\\\.claude\\\\skills\\\\personal-assistant\" -ErrorAction SilentlyContinue; ./scripts/install.ps1)"
     ]
   }
 }
