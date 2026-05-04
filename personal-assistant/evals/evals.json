@@ -14,7 +14,7 @@
         "USAGE.md is created at project root",
         "docs/dep/ and docs/deploy/ directories are created",
         "Development continues with login feature implementation",
-        "Dev log is written to docs/dep/dev-*.md"
+        "Dev log round is appended to docs/dep/DEVLOG.md"
       ]
     },
     {
@@ -27,20 +27,20 @@
         "Bug is fixed in src/auth.py",
         "Tests are added or updated",
         "Doc consistency check is performed and reported",
-        "Dev log round is written to docs/dep/dev-*.md with Done, Issues, Next, Files Changed/Commits",
-        "Response includes risk note, optimization advice, summary, validation"
+        "Dev log round is appended to docs/dep/DEVLOG.md with Done, Issues, Next, Files Changed/Commits",
+        "Response includes risk note, optimization advice, summary, validation, doc consistency result"
       ]
     },
     {
       "id": 3,
       "prompt": "Review my codebase — I want to make sure everything is consistent with the docs.",
-      "expected_output": "Skill enters Review mode, reads dev logs since last review, does Quick Review with 3-5 bullet points, asks about Full Report.",
+      "expected_output": "Skill enters Review mode, reads dev log since last review, does Quick Review with 3-5 bullet points, asks about Full Report.",
       "expectations": [
         "Review mode is selected",
-        "Dev logs in docs/dep/ are read",
+        "Dev log in docs/dep/DEVLOG.md is read",
         "git log is checked against dev log claims",
         "Quick Review outputs 3-5 bullet points with cross-check verdict",
-        "User is asked whether they want a Full Report"
+        "User is asked whether they want a Full Report appended to docs/dep/REVIEWS.md"
       ]
     },
     {
@@ -73,6 +73,152 @@
         "Only docs are read, no files are modified",
         "Answer is concise and based on PROJECT_GUIDE.md content",
         "No dev log is written"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Fix the login bug, then review the auth module for security issues.",
+      "expected_output": "Skill handles mixed-mode request: enters Development first for the fix, completes with dev log, then switches to Review mode for the security audit.",
+      "expectations": [
+        "Development mode is selected first for the bug fix",
+        "Bug fix completes with dev log entry in DEVLOG.md",
+        "Review mode is then selected for the security audit",
+        "Quick Review is performed on the auth module",
+        "Two separate dev log / review entries are created"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "上次的任务还没做完，继续吧。",
+      "expected_output": "Skill checks TASK_STATE.md first (step 0), reads the checkpoint, presents in-progress task to user, asks whether to continue or start fresh.",
+      "expectations": [
+        "TASK_STATE.md is checked first (Development mode step 0)",
+        "If TASK_STATE.md exists: checkpoint content is read and presented",
+        "User is asked: '发现未完成的任务：[Goal]。继续还是开始新任务？'",
+        "If TASK_STATE.md does not exist: falls back to reading DEVLOG.md last round",
+        "No new work starts until user confirms direction"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "I'm switching to a different terminal. The task was interrupted while running tests for the auth module.",
+      "expected_output": "In the new session, Development mode checks TASK_STATE.md, finds the interrupted task, presents the checkpoint with Resume From instructions, and asks user whether to continue.",
+      "expectations": [
+        "TASK_STATE.md exists from the previous session's interruption",
+        "Development mode step 0 detects TASK_STATE.md",
+        "Checkpoint content is presented: Goal, Progress, Working Context, Resume From",
+        "User is asked whether to continue or start fresh",
+        "If continuing, the Resume From instruction is used as the starting point"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Review the work from last month.",
+      "expected_output": "Skill determines cross-month scope, reads archived DEVLOG-YYYY-MM.md in addition to current DEVLOG.md, performs Quick Review covering the specified range.",
+      "expectations": [
+        "Review scope is determined as cross-month (last month)",
+        "DEVLOG-YYYY-MM.md archive file is read for the relevant month",
+        "Only date sections within scope are read (not full archive)",
+        "Quick Review covers entries from both current month and archive",
+        "Cross-check against git log uses appropriate date range"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "这个功能我已经做了三天了，帮我看看现在什么状态。",
+      "expected_output": "Skill reads TASK_STATE.md and presents the current checkpoint: what's done, what's pending, any blockers, and the working context.",
+      "expectations": [
+        "TASK_STATE.md is read",
+        "Progress checklist is displayed with [x]/[ ] status",
+        "Working Context is presented (files being edited, last command, blockers)",
+        "Resume From instruction is shown",
+        "If TASK_STATE.md does not exist, reads DEVLOG.md last round instead"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Quick fix — just change the login timeout from 30s to 60s in config.py.",
+      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to DEVLOG.md.",
+      "expectations": [
+        "Quick Fix mode is triggered (user said 'quick fix')",
+        "AI validation runs: checks file count, interface change, architecture impact, etc.",
+        "Validation passes (single config file, no interface/architecture impact)",
+        "Change is made to config.py",
+        "One-line QF entry is written to DEVLOG.md (not a full round format)",
+        "TASK_STATE.md is NOT created",
+        "Doc consistency check is skipped",
+        "Output is brief: one-line summary + '已写入 dev log'"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Quick fix — refactor the auth module to use JWT instead of session cookies.",
+      "expected_output": "AI validation rejects Quick Fix because the change affects interfaces (auth mechanism), architecture (PROJECT_GUIDE.md auth flow), and multiple files. Skill explains why and upgrades to full Development mode.",
+      "expectations": [
+        "Quick Fix validation runs and detects: interface change (auth mechanism), architecture impact, multi-file change",
+        "Quick Fix is rejected with specific reason",
+        "Message includes: what check failed and why",
+        "Skill switches to full Development mode",
+        "TASK_STATE.md is created for the full task"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "继续上次的任务。",
+      "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with DEVLOG.md last round time. If DEVLOG is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
+      "expectations": [
+        "TASK_STATE.md is read (step 0)",
+        "Expiry check: TASK_STATE.updated is compared with DEVLOG last round time",
+        "If DEVLOG time >= TASK_STATE.updated: stale detection triggers",
+        "User is prompted: 'TASK_STATE 显示任务在 [time] 中断，但 DEVLOG 显示 [time] 已有完成记录。这个任务是否已完成？'",
+        "If user confirms: TASK_STATE.md is deleted, proceeds as new task"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "把 config.py 里的超时值从 30 改成 60。",
+      "expected_output": "Skill makes the change and outputs at Level 1 verbosity: one-line summary and dev log confirmation only. No risk note, no optimization advice, no doc consistency check.",
+      "expectations": [
+        "Change is detected as small (single file, <10 lines, no interface change)",
+        "Output Discipline Level 1 is applied",
+        "Output contains only: one-line summary + '已写入 dev log'",
+        "No risk note, optimization advice, validation section, or doc consistency check in output"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "我要做一个用户权限系统，涉及角色管理、权限分配、API 鉴权，帮我先规划一下。",
+      "expected_output": "Skill creates PLAN.md with the feature breakdown, then asks the user to confirm the plan before starting implementation.",
+      "expectations": [
+        "PLAN.md is created at docs/dep/PLAN.md",
+        "Plan includes: Goal, Context, Plan steps (numbered), Decisions section",
+        "Status is set to 'planning'",
+        "User is asked to review and confirm the plan before implementation begins",
+        "TASK_STATE.md is NOT created yet (waiting for plan confirmation)"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "The code uses session-based auth but PROJECT_GUIDE.md says the API is stateless. What should I do?",
+      "expected_output": "Skill detects the conflict between code and docs, reports the exact discrepancy, explains the practical impact, and asks the user which is correct before proceeding.",
+      "expectations": [
+        "Conflict between code and docs is detected",
+        "Specific conflicting claims are named with file references",
+        "Practical impact is explained",
+        "User is asked which direction to follow",
+        "No silent resolution — conflict must be explicit"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "这个项目用的是 Go，帮我初始化文档。",
+      "expected_output": "Skill enters Bootstrap mode, generates skeleton with Go-detected info in PROJECT_GUIDE.md and USAGE.md, marks unknowns as TBD.",
+      "expectations": [
+        "Bootstrap mode is selected",
+        "PROJECT_GUIDE.md reflects Go as the detected language",
+        "USAGE.md includes Go-specific quick start (go build, go test, etc.)",
+        "TBD placeholders used where project specifics are unknown",
+        "Language guidance in policy.md is followed — match Go conventions"
       ]
     }
   ]

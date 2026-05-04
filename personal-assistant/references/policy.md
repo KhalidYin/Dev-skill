@@ -11,33 +11,65 @@ If test coverage is constrained by the current code structure, say so clearly an
 
 ## Fix quality
 
-- fix the source of the bug, not just the symptom
-- avoid unrelated refactors
-- preserve existing naming and module boundaries unless they are part of the issue
-- prefer lightweight automation over manual repetition
+- Fix the source of the bug, not just the symptom
+- Avoid unrelated refactors
+- Preserve existing naming and module boundaries unless they are part of the issue
+- Prefer lightweight automation over manual repetition
 
 For recurring checks, suggest or use simple tools such as `pre-commit`, `styler`, `lintr`, or a small verification script if the repo already supports that pattern.
 
-## Dev log (mandatory)
+## Quick Fix mode
 
-After every completed round of work in Development mode, write a dev log entry to `docs/dep/dev-<YYYYMMDD>.md`. This is non-negotiable — the review process depends on it.
+Quick Fix is a lightweight sub-mode of Development for small, low-risk changes. It reduces ceremony while maintaining a minimum audit trail.
 
-- **One file per day**, multiple rounds within the file
-- **Each round** must include: `Done`, `Issues / Blockers`, `Next`, `Files Changed`
-- **Be concrete** — "Fixed login timeout" not "Worked on auth"
-- **Next** — always end with clear next steps; write "Done — no next steps" if complete
-- **Open issues** — if an issue from a prior round is still unresolved, mention it again
+### When to use Quick Fix
 
-See `references/dev-log-protocol.md` for the full format spec.
+**User-triggered**: User explicitly says "quick fix", "小改动", "快速修一下", or similar.
 
-## Task resume
+**AI validation is mandatory** — even if the user requests Quick Fix, the AI must autonomously assess the change scope before proceeding. If validation fails, upgrade to full Development mode and explain why.
 
-Development mode checks the most recent dev log before starting new work:
+### AI validation rules
 
-- Read the last round of the most recent `dev-*.md` file
-- If `Next` has open items (not "Done — no next steps") → remind the user what was pending and ask whether to continue or start fresh
-- If no dev log exists or last round's `Next` is cleared → proceed as new task
-- This uses existing dev log fields as natural checkpoints — no separate state file needed
+Before entering Quick Fix, analyze the planned change against these criteria. **If ANY are true, reject Quick Fix and upgrade to full Development:**
+
+| Check | Reject if true |
+|-------|---------------|
+| File count | Touches more than 2 files |
+| Interface change | Modifies function signatures, API endpoints, or data models |
+| Architecture impact | Affects modules, data flow, or shared dependencies described in PROJECT_GUIDE.md |
+| Config/env change | Modifies configuration, environment variables, CI/CD, or deployment-related files |
+| Test breakage | Existing tests fail after the change |
+| Spec boundary | Crosses feature boundaries defined in PROJECT_SPEC.md |
+| Naming convention | Introduces new naming that conflicts with CODE_STYLE.md |
+
+If none of the above apply, proceed with Quick Fix.
+
+### Quick Fix flow
+
+```
+1. Validate change scope (AI autonomous check above)
+2. Make the change
+3. Run related tests (if test suite exists)
+4. Write one-line entry to DEVLOG.md (not a full round — see dev-log-protocol.md)
+5. Done — skip: TASK_STATE.md, doc consistency check, output discipline
+```
+
+### Rejection message format
+
+When Quick Fix is rejected:
+
+```
+这个改动不适合 Quick Fix 模式，原因：
+- [具体原因，如：修改了 API 接口签名，影响 PROJECT_SPEC.md 中定义的边界]
+
+切换到完整 Development 模式处理。
+```
+
+## Dev log
+
+After every completed round of work in Development mode, write a dev log entry to `docs/dep/DEVLOG.md`. This is non-negotiable — the review process depends on it.
+
+**Quick Fix exception**: Quick Fix uses a one-line entry format instead of a full round. See `references/dev-log-protocol.md` for both formats.
 
 ## Doc consistency check
 
@@ -50,6 +82,8 @@ After updating docs in Development mode, cross-check the following files for con
 - `<root>/USAGE.md`
 
 **Exclude:** `docs/main/memory/` (managed separately).
+
+**Quick Fix exception**: Doc consistency check is skipped for Quick Fix changes (they don't touch docs).
 
 ### Check rules
 
@@ -75,22 +109,73 @@ After updating docs in Development mode, cross-check the following files for con
 
 ## Output discipline
 
-When responding, include:
+Output verbosity scales with change size. Determine the level before responding:
 
-- a risk note with one of: technical risk, maintenance risk, or project risk
-- optimization advice grouped into: immediate, medium-term, and tooling
-- a concise summary of what changed or what you recommend changing
-- what was validated, or what could not be validated yet
-- doc consistency check result (see above)
+### Level 1 — Small change (single file, <10 lines, no interface/config change)
 
-When pointing to code, use clickable file references with line numbers when possible, for example `path/to/file.py:42`.
+```
+[一句话 summary]
+已写入 dev log。
+```
+
+Skip: risk note, optimization advice, validation, doc consistency.
+
+### Level 2 — Medium change (multi-file, or affects interfaces)
+
+```
+## Summary
+[what changed]
+
+## Risk Note
+[one of: technical risk, maintenance risk, project risk]
+
+## Doc Consistency
+[check result]
+```
+
+Skip: optimization advice, detailed validation.
+
+### Level 3 — Large change (architecture change, new module, spec boundary change)
+
+```
+## Summary
+[what changed]
+
+## Risk Note
+[technical / maintenance / project risk]
+
+## Optimization Advice
+- Immediate: [...]
+- Medium-term: [...]
+- Tooling: [...]
+
+## Validation
+[what was validated, what could not be validated]
+
+## Doc Consistency
+[check result]
+```
+
+All 5 items included.
+
+### Level selection
+
+| Criteria | Level 1 | Level 2 | Level 3 |
+|----------|---------|---------|---------|
+| Files changed | 1 | 2-3 | 4+ |
+| Lines changed | <10 | 10-100 | 100+ |
+| Interface impact | None | Internal | Public API |
+| Architecture impact | None | Minor | Significant |
+| Quick Fix mode | Always L1 | N/A | N/A |
+
+When pointing to code, use clickable file references with line numbers: `path/to/file.py:42`.
 
 ## Review tiers
 
-Reviews use a two-tier approach to avoid overhead:
+Reviews use a two-tier approach:
 
-1. **Quick Review** (default) — reads dev logs since last review, outputs 3-5 bullet points + cross-check verdict. No file written.
-2. **Full Report** — detailed markdown report in `docs/dep/` with Dev Log Cross-check table. Only generated when the user confirms after seeing the Quick Review.
+1. **Quick Review** (default) — reads dev log since last review, outputs 3-5 bullet points + cross-check verdict. No file written.
+2. **Full Report** — appends detailed report to `docs/dep/REVIEWS.md`. Only generated when the user confirms after Quick Review.
 
 See `references/review-protocol.md` for the complete workflow.
 
@@ -98,15 +183,15 @@ See `references/review-protocol.md` for the complete workflow.
 
 If the project docs, code, and user request disagree, do not resolve the conflict silently.
 
-1. identify the conflicting files or rules
-2. explain the practical impact
-3. ask the user which direction to follow
+1. Identify the conflicting files or rules
+2. Explain the practical impact
+3. Ask the user which direction to follow
 
 Only proceed once the conflict is explicit.
 
 ## Context memory
 
-This skill maintains a cross-platform project memory. Before any significant change, check `docs/main/memory/MEMORY.md` for relevant context. After completing work, save new decisions, preferences, or project facts to memory.
+Before any significant change, check `docs/main/memory/MEMORY.md` for relevant context. After completing work, save new decisions, preferences, or project facts to memory.
 
 See `references/context-memory.md` for the full memory protocol.
 

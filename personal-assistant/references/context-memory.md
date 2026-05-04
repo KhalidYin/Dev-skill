@@ -8,16 +8,30 @@ Claude Code has a native auto-memory system (`~/.claude/projects/.../memory/`), 
 
 | Scenario | Native memory | Repo memory |
 |----------|--------------|-------------|
-| Switch to a different computer | ❌ Lost — not in the repo | ✅ Comes with `git clone` |
-| New teammate joins | ❌ Starts with zero context | ✅ Full project memory available |
-| CI / automated agents | ❌ No access to your local state | ✅ Reads from the repo |
-| Use a different AI tool | ❌ Claude-only format | ✅ Platform-agnostic Markdown |
-| Reinstall OS / wipe config | ❌ Gone | ✅ In version control |
+| Switch to a different computer | Lost — not in the repo | Comes with `git clone` |
+| New teammate joins | Starts with zero context | Full project memory available |
+| CI / automated agents | No access to your local state | Reads from the repo |
+| Use a different AI tool | Claude-only format | Platform-agnostic Markdown |
+| Reinstall OS / wipe config | Gone | In version control |
 
 **They are complementary, not redundant:**
 - Repo memory is the **source of truth** — lives in the project, version-controlled, shared
 - Native memory can act as a **local cache** — personal notes, temporary reminders, tool-specific preferences
 - This skill reads from and writes to **repo memory** (`docs/main/memory/`)
+
+## Relationship with TASK_STATE.md
+
+| System | Purpose | Lifetime | Location |
+|--------|---------|----------|----------|
+| **Memory** (`docs/main/memory/`) | Long-term project knowledge: decisions, preferences, constraints, references | Permanent — persists across all sessions | Version-controlled in repo |
+| **TASK_STATE.md** (`docs/dep/`) | Short-term task checkpoint: what's in-progress, working context, resume point | Temporary — exists only during active work | Version-controlled in repo |
+| **DEVLOG.md** (`docs/dep/`) | Historical record: what was done, issues, commits | Permanent — append-only log | Version-controlled in repo |
+
+Flow:
+```
+Task in progress  → TASK_STATE.md (hot checkpoint)
+Task completes    → TASK_STATE.md → DEVLOG.md (historical record) + Memory (if new knowledge)
+```
 
 ## Storage location
 
@@ -53,6 +67,13 @@ Save to memory when:
 - You learn new constraints, deadlines, or stakeholder requirements
 - The user confirms a non-obvious approach worked well
 
+Do NOT save to memory:
+- When TASK_STATE.md is sufficient (in-progress work details)
+- Code patterns derivable from reading the code
+- Git history or recent changes — `git log` is authoritative
+- Ephemeral task details or temporary state
+- Anything already documented in CLAUDE.md or `docs/main/` files
+
 ## Memory entry format
 
 Each memory file uses this structure:
@@ -66,13 +87,6 @@ type: user | project | feedback | reference
 
 <content — for feedback/project types, structure as: rule/fact, then **Why:** and **How to apply:** lines>
 ```
-
-## What NOT to store in memory
-
-- Code patterns or conventions derivable from reading the code
-- Git history or recent changes — `git log` is authoritative
-- Ephemeral task details or temporary state
-- Anything already documented in CLAUDE.md or `docs/main/` files
 
 ## MEMORY.md index format
 

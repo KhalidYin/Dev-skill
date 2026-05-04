@@ -1,52 +1,41 @@
 # Project contract
 
-## Document location
+## Document locations
 
-See `references/doc-structure.md` for the complete directory tree and naming conventions.
+See `references/doc-structure.md` — the authoritative source for all paths and naming conventions.
 
 **Relationship**:
 - `main/` — defines what the project IS (blueprint)
-- `dep/` — records what was DONE (development diary)
+- `dep/DEVLOG.md` — records what was DONE (rolling dev log)
+- `dep/REVIEWS.md` — records what was FOUND (rolling review reports)
+- `dep/PLAN.md` — records what is PLANNED (optional, living document)
 - `deploy/` — describes HOW to deploy (deployment guide)
-- `USAGE.md` — how to USE the project (root level, auto-generated)
+- `USAGE.md` — how to USE the project (root level)
 
 Reviews cross-check dev log claims against main docs, usage docs, and actual code.
 
-Use these docs as the source of truth when they exist.
-
-If the repo uses different filenames or paths, map them to these roles once and keep that mapping consistent.
+Use these docs as the source of truth when they exist. If the repo uses different filenames or paths, map them to these roles once and keep that mapping consistent.
 
 ## Bootstrap
 
-When ALL four canonical docs are missing from `docs/main/` (or root), do NOT refuse to work. Instead, auto-generate a minimal skeleton:
+When ALL four canonical docs are missing from `docs/main/` (or root), auto-generate a minimal skeleton:
 
-```
-<project-root>/
-├── USAGE.md                # quick start, detected prerequisites, common commands (TBD where unknown)
-│
-└── docs/
-    ├── main/
-    │   ├── PROJECT_GUIDE.md  # one-sentence summary + detected language/framework + top-level directory list
-    │   ├── PROJECT_SPEC.md   # "TBD — add technical scope, design decisions, and feature boundaries"
-    │   ├── CODE_STYLE.md     # "TBD — add naming conventions, formatting rules, and style preferences"
-    │   ├── TEST_GUIDE.md     # "TBD — add test layout, entry points, and regression coverage notes"
-    │   └── memory/
-    │       └── MEMORY.md     # empty index with header only
-    │
-    ├── dep/                  # (created, empty)
-    └── deploy/
-        └── DEPLOY_GUIDE.md   # "TBD — add deployment environments, steps, and rollback procedures"
-```
+- `USAGE.md` — quick start filled with detected info; prerequisites and FAQ marked TBD
+- `docs/main/PROJECT_GUIDE.md` — one-sentence summary + detected language/framework + top-level directory list
+- `docs/main/PROJECT_SPEC.md` — TBD placeholder
+- `docs/main/CODE_STYLE.md` — TBD placeholder
+- `docs/main/TEST_GUIDE.md` — TBD placeholder
+- `docs/main/memory/MEMORY.md` — empty index with header only
+- `docs/dep/` — created, empty (DEVLOG.md created on first Development round)
+- `docs/deploy/DEPLOY_GUIDE.md` — TBD placeholder
 
 Bootstrap rules:
 - Generate only what is immediately observable: project language, framework, top-level structure
-- USAGE.md: quick start section filled with detected info; prerequisites and FAQ marked TBD
 - Use "TBD" placeholders for anything that requires human input
 - Do NOT invent architecture, scope, or conventions — leave them blank
 - Tell the user what was created and that they should fill in the details over time
 - After bootstrap, proceed with the original request
-
-If SOME docs exist but not all, only generate the missing ones. Do not overwrite existing docs.
+- If SOME docs exist but not all, only generate the missing ones. Do not overwrite existing docs.
 
 ## Doc sync rules
 

@@ -1,69 +1,229 @@
 # Document structure
 
-This is the authoritative reference for all document paths and naming conventions used by this skill.
+Authoritative reference for all document paths and naming conventions.
 
 ## Directory tree
 
 ```
 <project-root>/
-├── USAGE.md                        # 使用指南 — 快速开始、前置条件、常用命令（根目录）
-│
+├── USAGE.md                        # Quick start, prerequisites, common commands
+
 └── docs/
-    ├── main/                       # 项目蓝图 — 描述"是什么"
-    │   ├── PROJECT_GUIDE.md        # 架构、模块职责、数据流、共享依赖
-    │   ├── PROJECT_SPEC.md         # 技术范围、设计决策、功能边界
-    │   ├── CODE_STYLE.md           # 命名、格式、风格约定
-    │   ├── TEST_GUIDE.md           # 测试布局、回归覆盖、测试入口
-    │   └── memory/                 # 跨平台项目记忆（见 context-memory.md）
-    │       ├── MEMORY.md           # 记忆索引（始终先读这个）
-    │       └── <type>-<topic>.md   # 记忆条目
+    ├── main/                       # Blueprint — describes "what it IS"
+    │   ├── PROJECT_GUIDE.md        # Architecture, module responsibilities, data flow
+    │   ├── PROJECT_SPEC.md         # Technical scope, design decisions, feature boundaries
+    │   ├── CODE_STYLE.md           # Naming, formatting, style conventions
+    │   ├── TEST_GUIDE.md           # Test layout, regression coverage, entry points
+    │   └── memory/                 # Cross-platform project memory (see context-memory.md)
+    │       ├── MEMORY.md           # Memory index (always read first)
+    │       └── <type>-<topic>.md   # Memory entries
     │
-    ├── dep/                        # 项目日记 — 记录"做了什么"
-    │   ├── dev-<YYYYMMDD>.md       # 开发日志（每日一个文件，内分多轮）
-    │   └── review-<YYYYMMDD>-<NN>.md # 审查报告（按需生成，对照 dev 日志）
+    ├── dep/                        # Diary — records "what was DONE"
+    │   ├── DEVLOG.md               # Current month dev log (active, append-only)
+    │   ├── DEVLOG-YYYY-MM.md       # Archived months (read-only)
+    │   ├── REVIEWS.md              # Rolling review reports (single file, append-only)
+    │   ├── PLAN.md                 # Living project plan (optional)
+    │   └── TASK_STATE.md           # Interrupt checkpoint (exists only when task is in-progress)
     │
-    └── deploy/                     # 部署指引 — 说明"如何部署"
-        └── DEPLOY_GUIDE.md          # 部署指南：环境、前置条件、步骤、配置、回滚
+    └── deploy/                     # Deployment — describes "HOW to deploy"
+        └── DEPLOY_GUIDE.md        # Environments, steps, config, rollback
 ```
 
 ## File reference
 
-### USAGE.md — 使用指南（项目根目录）
+### USAGE.md
 
-| File | Writes | When | Format |
-|------|--------|------|--------|
-| `USAGE.md` | Bootstrap / Development | Bootstrap auto-generates; dev mode updates as project evolves | Quick start, prerequisites, common commands, FAQ |
+| Writes | When | Format |
+|--------|------|--------|
+| Bootstrap / Development | Bootstrap auto-generates; dev mode updates as project evolves | Quick start, prerequisites, common commands, FAQ |
 
-### docs/main/ — 项目蓝图
+### docs/main/ — Blueprint
 
-| File | Writes | When | Format |
-|------|--------|------|--------|
-| `PROJECT_GUIDE.md` | Bootstrap / Development | Bootstrap auto-generates; dev mode updates when architecture changes | Free-form, project-specific |
-| `PROJECT_SPEC.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; dev mode fills in over time | Free-form, project-specific |
-| `CODE_STYLE.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; dev mode fills in as conventions emerge | Free-form, project-specific |
-| `TEST_GUIDE.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; dev mode updates when test layout changes | Free-form, project-specific |
-| `memory/MEMORY.md` | Bootstrap / Context update | Bootstrap creates empty; updated when a memory file is added/removed | Index — one link per line |
-| `memory/<type>-<topic>.md` | Development / Consultation | When decisions, preferences, or project facts emerge | Frontmatter + markdown body (see context-memory.md) |
+| File | Writes | When |
+|------|--------|------|
+| `PROJECT_GUIDE.md` | Bootstrap / Development | Bootstrap auto-generates; dev mode updates when architecture changes |
+| `PROJECT_SPEC.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; fills in over time |
+| `CODE_STYLE.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; fills in as conventions emerge |
+| `TEST_GUIDE.md` | Bootstrap / Development | Bootstrap generates TBD placeholder; updates when test layout changes |
+| `memory/MEMORY.md` | Bootstrap / Context update | Bootstrap creates empty; updated when a memory file is added/removed |
+| `memory/<type>-<topic>.md` | Development / Consultation | When decisions, preferences, or project facts emerge |
 
-### docs/dep/ — 项目日记
+### docs/dep/ — Diary
 
-| File | Writes | When | Format |
-|------|--------|------|--------|
-| `dev-<YYYYMMDD>.md` | Development (mandatory) | After each completed round of work; one file per day, multiple rounds within | 4 sections per round: Done, Issues/Blockers, Next, Files Changed (see dev-log-protocol.md) |
-| `review-<YYYYMMDD>-<NN>.md` | Review (on demand) | Only after user confirms they want a full report (after Quick Review) | Frontmatter + Scope + Dev Logs Reviewed table + Findings + Next Actions (see review-protocol.md) |
+| File | Writes | When | Lifecycle |
+|------|--------|------|-----------|
+| `DEVLOG.md` | Development (mandatory) | After each completed round; append-only | Active for current month; rotated on month change |
+| `DEVLOG-YYYY-MM.md` | — (archived) | Created by rotation from DEVLOG.md | Read-only archive |
+| `REVIEWS.md` | Review (on demand) | Only after user confirms Full Report; append-only | Permanent, no rotation |
+| `PLAN.md` | Development (optional) | When a multi-step plan is needed | Overwritten when plan evolves |
+| `TASK_STATE.md` | Development | Created when task starts; updated at checkpoints; deleted when task completes | Exists only during active work |
 
-### docs/deploy/ — 部署指引
+### docs/deploy/ — Deployment
 
-| File | Writes | When | Format |
-|------|--------|------|--------|
-| `DEPLOY_GUIDE.md` | Deployment / Development | Bootstrap generates TBD placeholder; filled in when user asks to deploy or when deployment-relevant code changes | Environments, prerequisites, step-by-step, config, rollback procedure |
+| File | Writes | When |
+|------|--------|------|
+| `DEPLOY_GUIDE.md` | Deployment / Development | Bootstrap generates TBD placeholder; filled in when deploying or when deployment-relevant code changes |
 
 ## Naming rules
 
 | Pattern | Rule |
 |---------|------|
-| `USAGE.md` | Root level. Auto-generated at bootstrap, updated as project evolves. |
-| `dev-<YYYYMMDD>.md` | Date of the development work. One file per day. Rounds within use `## Round N [HH:MM]`. |
-| `review-<YYYYMMDD>-<NN>.md` | Date of the review. `NN` = sequential round `01`, `02`, ... per day. |
-| `DEPLOY_GUIDE.md` | Persistent deployment guide. Bootstrap generates TBD placeholder; filled in over time. |
-| `memory/<type>-<topic>.md` | `type` = `user` / `project` / `feedback` / `reference`. `topic` = short kebab-case identifier. |
+| `USAGE.md` | Root level. Auto-generated at bootstrap. |
+| `DEVLOG.md` | Current month dev log. Entries: `## YYYY-MM-DD` date headers, rounds: `### Round N [HH:MM]`. |
+| `DEVLOG-YYYY-MM.md` | Archived month. Same format as DEVLOG.md. Created by rotation. |
+| `REVIEWS.md` | Single file. Entries: `## YYYY-MM-DD Round N` headers. |
+| `PLAN.md` | Living document, overwritten when plan evolves. |
+| `TASK_STATE.md` | Checkpoint file. Exists only when a task is in-progress. Deleted on task completion. |
+| `DEPLOY_GUIDE.md` | Persistent deployment guide. |
+| `memory/<type>-<topic>.md` | `type` = `user` / `project` / `feedback` / `reference`. `topic` = short kebab-case. |
+
+## DEVLOG monthly rotation
+
+DEVLOG.md uses monthly rotation to prevent content bloat:
+
+```
+Rotation rules:
+- Current month: DEVLOG.md (active, append-only)
+- On month change: rename DEVLOG.md → DEVLOG-YYYY-MM.md, create fresh DEVLOG.md
+- Archives are read-only — never modify past months
+```
+
+### Layered reading
+
+To minimize token consumption, read DEVLOG files selectively:
+
+| Layer | When to read | How |
+|-------|-------------|-----|
+| DEVLOG.md (current month) | Always in Development and Review modes | Full read |
+| DEVLOG-YYYY-MM.md (archives) | User specifies time range; task resume references archived entry; review covers cross-month range | Read only relevant date section |
+| REVIEWS.md | Review mode | Last 3 reviews: full read. Older reviews: status line only |
+
+## TASK_STATE.md — Interrupt checkpoint
+
+TASK_STATE.md is a lightweight checkpoint file that enables cross-session task resumption.
+
+### Lifecycle
+
+```
+Task starts       → Create TASK_STATE.md with status: in-progress
+Task progresses   → Update checkpoint items ([x] / [ ]) and Working Context
+Task interrupted  → TASK_STATE.md persists in repo (survives terminal/session switch)
+New session starts → Step 0 in Development mode checks if TASK_STATE.md exists
+Task completes    → Consolidate into DEVLOG.md round, delete TASK_STATE.md
+```
+
+### Format
+
+```markdown
+---
+status: in-progress
+created: YYYY-MM-DD HH:MM
+updated: YYYY-MM-DD HH:MM
+---
+
+# Current Task
+
+## Goal
+[one-line description of what is being done]
+
+## Progress
+- [x] [completed step]
+- [x] [completed step]
+- [ ] [current/next step]
+- [ ] [future step]
+
+## Working Context
+- **Files being edited**: [list of files]
+- **Last command run**: [command] ([status])
+- **Key decisions**: [decision + reference to docs/memory]
+- **Blocker**: [description or "None"]
+
+## Resume From
+[explicit instruction for the next session: what to do, where to start]
+```
+
+### Multi-task support
+
+If multiple tasks are interrupted simultaneously:
+
+```markdown
+## Task 1: [name]
+status: in-progress
+[checkpoint content]
+
+## Task 2: [name]
+status: blocked
+[checkpoint content]
+```
+
+Priority: `in-progress` > `blocked`. Present both to user and let them choose.
+
+## PLAN.md — Project plan
+
+PLAN.md is a living document for planning multi-step work before implementation. It sits above TASK_STATE.md in the abstraction hierarchy.
+
+### Relationship
+
+```
+PLAN.md     = Strategy (what to do, why, in what order)
+TASK_STATE  = Tactics (where we are in the plan, specific progress)
+DEVLOG.md   = Record (what was done)
+```
+
+### When to use
+
+- User says "帮我规划一下", "先想清楚再做", "plan this out"
+- Task is estimated to span more than 3 dev log rounds
+- Multiple related features that need sequencing
+- Architecture decision that needs rationale documentation
+
+When PLAN.md exists, TASK_STATE.md should reference which plan step is being worked on.
+
+### Format
+
+```markdown
+---
+status: planning | in-progress | done
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
+# [Feature/Project Name]
+
+## Goal
+[one sentence — what we're building and why]
+
+## Context
+[background: constraints, stakeholders, dependencies]
+
+## Plan
+1. [x] [completed step]
+2. [ ] [current step — this should match TASK_STATE.md Progress]
+3. [ ] [future step]
+
+## Decisions
+- [Decision]: chose [X] over [Y] because [Z]
+- [Decision]: ...
+
+## Risks
+- [risk]: [mitigation]
+
+## Related
+- [links to relevant docs, issues, or memory entries]
+```
+
+### Lifecycle
+
+```
+Planning phase  → Create PLAN.md with status: planning
+Work begins     → Update status: in-progress
+Steps complete  → Check off items in Plan section
+All done        → Update status: done (keep file as historical record)
+New related work → Reopen by updating status and adding new steps
+```
+
+### When NOT to use
+
+- Single task that can be done in 1-2 rounds → use TASK_STATE.md only
+- Task is already clear and well-defined → skip planning, go straight to Development
+- User didn't ask for planning and the task is straightforward

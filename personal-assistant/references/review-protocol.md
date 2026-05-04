@@ -1,16 +1,29 @@
 # Review protocol
 
-When the user issues an audit/review/inspection command (examples: "审核修复", "检查实现", "review this", "audit the code", "check for issues"), follow a two-tier approach: **Quick Review** first, then offer **Full Report**.
+When the user issues an audit/review/inspection command, follow a two-tier approach: **Quick Review** first, then offer **Full Report**.
 
 The review process cross-checks four sources:
-- **Dev logs** (`docs/dep/dev-*.md`) — what was claimed as done
+- **Dev log** (`docs/dep/DEVLOG.md` + archives) — what was claimed as done
 - **Git history** (`git log --oneline --since=<date>`) — what was actually committed
 - **Main docs** (`docs/main/`) — what the architecture/spec says should exist
 - **Actual code** — what is really there
 
+## Scope determination
+
+Review scope is determined by the user's request. If unspecified, default to: **all entries since the last review**.
+
+| User says | Scope |
+|-----------|-------|
+| "review the codebase" | All entries since last review (or last 3 days if no prior review) |
+| "review last week" | DEVLOG entries from the past 7 days, may cross month boundaries |
+| "review the auth module" | Entries that touch auth-related files, regardless of date |
+| "review everything" | All DEVLOG entries + archives |
+
+When scope crosses month boundaries, read both `DEVLOG.md` and the relevant `DEVLOG-YYYY-MM.md` archives — only the date sections within scope.
+
 ## Quick Review (default)
 
-Always start here. Read dev logs since the last review (or last 3 days if no prior review). Run `git log --oneline --since=<last review date>` to cross-check dev log claims against actual commits. Then output 3-5 bullet points directly in the response — no file is generated.
+Always start here. Read dev log entries within scope. Run `git log --oneline --since=<scope start date>` to cross-check claims against actual commits. Output 3-5 bullet points directly in the response — no file is written.
 
 Format:
 
@@ -22,7 +35,7 @@ Format:
 - [finding 3: risk or concern — dev log items still open, blockers, etc.]
 - [summary verdict: OK / needs attention / blocking]
 
-需要我生成完整的审查报告到 `docs/dep/` 吗？
+需要我生成完整的审查报告到 `docs/dep/REVIEWS.md` 吗？
 ```
 
 Quick Review covers:
@@ -35,79 +48,86 @@ Quick Review covers:
 
 ## Full Report (on demand)
 
-Only generate when the user confirms they want it (after being prompted, or if they explicitly ask for "完整报告", "生成报告", "full report", "write report").
+Only generate when the user confirms (after Quick Review prompt) or explicitly asks for "完整报告", "生成报告", "full report".
 
-### Naming convention
+### Format
 
-See `references/doc-structure.md`. Reports follow `docs/dep/review-<YYYYMMDD>-<NN>.md`.
+`REVIEWS.md` is a **single rolling file**, append-only. Each review is a dated section.
 
-### Report template
+Only include sections that have content — skip empty sections entirely, do not generate empty tables.
 
 ```markdown
----
-date: YYYY-MM-DD
-round: N
-trigger: "user prompt that triggered this review"
-status: in-progress
+# Review Reports
+
 ---
 
-# Review Report — YYYY-MM-DD Round N
+## 2026-05-04 Round 1
 
-## Scope
-<!-- What was reviewed (files, features, modules) -->
+### Scope
+<!-- What was reviewed: files, features, modules, time range -->
 
-## Dev Logs Reviewed
+### Dev Logs Reviewed
 
 | Date | Round | Claim | Verified |
 |------|-------|-------|----------|
-| YYYY-MM-DD | R1 | [what dev log says was done] | ✅ / ⚠️ / ❌ — [evidence] |
+| 2026-05-04 | R1 | [what dev log says was done] | ✅ / ⚠️ / ❌ — [evidence] |
 
-## Findings
+### Findings
 
-### Issues
-<!-- Problems found: bugs, inconsistencies, missing pieces -->
+#### Issues
+<!-- Only include if issues found -->
 
 | # | Severity | File/Area | Description | Status |
 |---|----------|-----------|-------------|--------|
 | 1 | high/medium/low | path:line | ... | open/fixed/deferred |
 
-### Unimplemented / Incomplete
-<!-- Features or behaviors mentioned in docs/spec/dev-log but not in code -->
+#### Unimplemented / Incomplete
+<!-- Only include if unimplemented items found -->
 
 | # | Reference | Description | Next step |
 |---|-----------|-------------|-----------|
-| 1 | dev-YYYYMMDD R2 / spec ref | ... | ... |
+| 1 | DEVLOG 2026-05-03 R2 / spec ref | ... | ... |
 
-### Deviations
-<!-- Code that diverges from documented intent or conventions -->
+#### Deviations
+<!-- Only include if deviations found -->
 
 | # | Expected | Actual | Impact |
 |---|----------|--------|--------|
 | 1 | ... | ... | ... |
 
-## Next Actions
-<!-- Concrete next steps, prioritized -->
+### Next Actions
+<!-- Always include — concrete, prioritized -->
 
 1. ...
-2. ...
 
-## Linked Reports
-<!-- Previous related reviews -->
-- [Review YYYY-MM-DD Round N-1](review-YYYYMMDD-NN.md)
+### Status: in-progress / resolved / deferred
+
+---
+
+## 2026-05-03 Round 1
+- ...
 ```
 
-### Status tracking
+### Rules
 
-- **in-progress** — report written, issues still open
-- **resolved** — all issues closed, no remaining actions
-- **deferred** — some issues explicitly deferred by user
+- **Append-only** — never delete or edit past reviews
+- **Only include sections with content** — no empty tables or placeholder sections
+- **Status tracking** — `in-progress` (issues open), `resolved` (all closed), `deferred` (some deferred)
+- **Status is historical** — do not modify past reviews' status. If previously open issues are now resolved, note the resolution in the new review's findings
+- Link to related prior reviews by date reference
 
-Update the report's frontmatter `status` and the findings table as issues are addressed in follow-up work.
+### Layered reading for REVIEWS.md
+
+To minimize token consumption when reading past reviews:
+
+| Reviews to read | How |
+|----------------|-----|
+| Last 3 reviews | Full read — complete sections |
+| Older reviews | Status line only — read just the `### Status:` line |
+| User requests specific review | Full read of that review section |
 
 ## When NOT to generate
 
-Skip both Quick Review and Full Report when:
-
-- The task is a simple code change or bug fix (not a review)
-- The user asks for a one-line answer about code behavior
-- The task is purely about writing new code (no review implied)
+- Simple code change or bug fix (not a review)
+- One-line answer about code behavior
+- Purely writing new code (no review implied)
