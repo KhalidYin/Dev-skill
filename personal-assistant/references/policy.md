@@ -195,7 +195,29 @@ Before any significant change, check `docs/main/memory/MEMORY.md` for relevant c
 
 See `references/context-memory.md` for the full memory protocol.
 
-## Language guidance
+## Document language
+
+**All project documentation MUST be written in Chinese. This is non-negotiable.**
+
+| Document | Language | Note |
+|----------|----------|------|
+| `USAGE.md` | Chinese | |
+| `docs/main/PROJECT_GUIDE.md` | Chinese | |
+| `docs/main/PROJECT_SPEC.md` | Chinese | |
+| `docs/main/CODE_STYLE.md` | Chinese | |
+| `docs/main/TEST_GUIDE.md` | Chinese | |
+| `docs/main/memory/*.md` | Chinese | Frontmatter fields (`name`, `description`, `type`) may remain English |
+| `docs/dep/DEVLOG.md` | Chinese | Section headers (`Done`, `Issues/Blockers`, `Next`, `Files Changed/Commits`) may remain English |
+| `docs/dep/REVIEWS.md` | Chinese | Section headers and table headers may remain English |
+| `docs/dep/PLAN.md` | Chinese | Section headers may remain English |
+| `docs/dep/TASK_STATE.md` | Chinese | Progress items and context must be Chinese; section headers may remain English |
+| `docs/deploy/DEPLOY_GUIDE.md` | Chinese | |
+
+**Code identifiers** (function names, variable names, file paths, commit hashes) are exempt — they follow the programming language's convention.
+
+**User-facing output** (Quick Review, responses, summaries) must be in Chinese.
+
+## Language guidance (programming)
 
 Follow the existing stack first — this skill works with any language. Detect the project's language and tooling, then match its conventions.
 
