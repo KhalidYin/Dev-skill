@@ -1,28 +1,47 @@
 # Dev Log Protocol
 
-Every non-trivial development action MUST be recorded in `docs/dep/DEVLOG.md`. This log is the primary source the review process uses to cross-check claims against code and docs.
+Every non-trivial development action MUST be recorded in a DEVLOG batch file under `docs/dep/`. This log is the primary source the review process uses to cross-check claims against code and docs.
 
-## Monthly rotation
+## Round batch system
 
-DEVLOG.md uses monthly rotation to prevent content bloat:
+DEVLOG uses **40-round batches** to control file size. Each file holds exactly one batch.
 
-- **Current month**: `DEVLOG.md` — active, append-only
-- **Previous months**: `DEVLOG-YYYY-MM.md` — read-only archives, created by rotation
-- **Rotation trigger**: When a new month begins and the first entry is written, rename the old `DEVLOG.md` to `DEVLOG-YYYY-MM.md`
-- **Archives are immutable** — never edit or delete past month files
+- **Active batch**: `DEVLOG-RXXX-RXXX.md` — current file, append-only
+- **Sealed batches**: `DEVLOG-RXXX-RXXX.md` — read-only, never modified
+- **Batch size**: 40 global rounds per file
+- **Round numbering**: Global, monotonic (R001, R002, ... RXXX)
+
+```
+docs/dep/
+├── DEVLOG-R001-R040.md     # Global rounds R001–R040
+├── DEVLOG-R041-R080.md     # Global rounds R041–R080
+└── DEVLOG-R081-R120.md     # Global rounds R081–R120 (active)
+```
+
+### Global round counter
+
+Each round gets a unique global identifier. When writing a new round:
+
+```
+1. Find the active batch file (highest round range)
+2. Read the last round number in that file
+3. Next round = last round + 1
+4. If the active batch has 40 rounds → seal it, create next batch, start with R((N-1)*40+1)
+5. If no DEVLOG files exist → start with R001
+```
 
 ## Format
 
-Entries are organized by date, rounds by time. All DEVLOG files (current and archives) use the same format:
+Entries use date headers with global round numbers. All DEVLOG batch files use the same format:
 
 ```markdown
-# Dev Log
+# Dev Log — R001–R040
 
 ---
 
 ## 2026-05-04
 
-### Round 1 [14:30]
+### R007 [14:30]
 
 #### Done
 - [what was accomplished — concrete and verifiable]
@@ -40,22 +59,25 @@ Entries are organized by date, rounds by time. All DEVLOG files (current and arc
 
 ---
 
-### Round 2 [16:45]
+### R008 [16:45]
 
 #### Done
 - ...
 
 ## 2026-05-03
 
-### Round 1 [10:00]
+### R006 [10:00]
 - ...
 ```
+
+**Key**: rounds use global numbering `R001, R002, ...` — not daily restart.
 
 ## Rules
 
 - **Append-only** — never delete or edit past entries; always append new ones
+- **Batch file title** — `# Dev Log — R001–R040` reflects the round range in that file
 - **Date header** — `## YYYY-MM-DD`, one per day. Create only when work happens that day
-- **Round header** — `### Round N [HH:MM]`, sequential within each day, starting at 1
+- **Round header** — `### RXXX [HH:MM]`, global monotonic number (R001, R002, ...)
 - **Separator** — use `---` between rounds within the same date section
 - **Be concrete** — "Fixed login timeout" not "Worked on auth"
 - **Files Changed / Commits** — list every file touched with commit hash. If not yet committed, write "(uncommitted)"
@@ -64,22 +86,21 @@ Entries are organized by date, rounds by time. All DEVLOG files (current and arc
 
 ## Layered reading
 
-To minimize token consumption, read DEVLOG files selectively:
-
 | Scenario | What to read |
 |----------|-------------|
-| Development mode (task resume check) | DEVLOG.md: last date section only |
-| Development mode (write new round) | DEVLOG.md: append to current date or create new date header |
-| Review (within current month) | DEVLOG.md: full read |
-| Review (cross-month range) | DEVLOG.md + relevant DEVLOG-YYYY-MM.md: read only the specified date range |
-| User asks about specific date | That date's section only, in the appropriate file |
+| Development mode (task resume check) | Active batch: last round only |
+| Development mode (write new round) | Active batch: append new round |
+| Review (recent, within same batch) | Active batch: full read |
+| Review (cross-batch range) | Active batch + relevant sealed batch: read only the specified round range |
+| User asks about specific round | That round's section in the appropriate batch file |
 
-### How to find the right file
+### How to find the right batch
 
 ```
-1. Is the date in the current month? → Read DEVLOG.md
-2. Is the date in a past month?      → Read DEVLOG-YYYY-MM.md for that month
-3. Unclear which month?              → Check file listing in docs/dep/
+1. Determine the round number needed (e.g., R052)
+2. Batch = DEVLOG-R041-R080.md (since 41 ≤ 52 ≤ 80)
+3. Formula: batch N contains rounds R((N-1)*40+1) to R(N*40)
+4. Read only the relevant sections from that file
 ```
 
 ## When to write
@@ -94,15 +115,17 @@ Write BEFORE responding to the user. The dev log entry is part of the task outpu
 
 ## Quick Fix entry format
 
-Quick Fix changes use a one-line entry instead of a full round. Append under the current date header:
+Quick Fix changes use a one-line entry instead of a full round. Append under the current date header in the active batch file:
 
 ```markdown
 ## 2026-05-04
 
-### QF [14:30] — Fixed login timeout in src/auth.py:42 — `abc1234`
+### R007 [14:30] — QF: Fixed login timeout in src/auth.py:42 — `abc1234`
 ```
 
-Format: `### QF [HH:MM] — [one-line description] — [commit hash or (uncommitted)]`
+Format: `### RXXX [HH:MM] — QF: [one-line description] — [commit hash or (uncommitted)]`
+
+QF entries use the global round counter just like full rounds — this ensures no gaps in the round sequence.
 
 If no date header exists for today, create it first. If a full round already exists for today, append the QF entry after the last round.
 

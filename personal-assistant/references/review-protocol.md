@@ -3,7 +3,7 @@
 When the user issues an audit/review/inspection command, follow a two-tier approach: **Quick Review** first, then offer **Full Report**.
 
 The review process cross-checks four sources:
-- **Dev log** (`docs/dep/DEVLOG.md` + archives) — what was claimed as done
+- **Dev log** (`docs/dep/DEVLOG-RXXX-RXXX.md`) — what was claimed as done
 - **Git history** (`git log --oneline --since=<date>`) — what was actually committed
 - **Main docs** (`docs/main/`) — what the architecture/spec says should exist
 - **Actual code** — what is really there
@@ -14,23 +14,24 @@ Review scope is determined by the user's request. If unspecified, default to: **
 
 | User says | Scope |
 |-----------|-------|
-| "review the codebase" | All entries since last review (or last 3 days if no prior review) |
-| "review last week" | DEVLOG entries from the past 7 days, may cross month boundaries |
-| "review the auth module" | Entries that touch auth-related files, regardless of date |
-| "review everything" | All DEVLOG entries + archives |
+| "review the codebase" | All rounds since last review (or last 10 rounds if no prior review) |
+| "review last week" | DEVLOG rounds from the past 7 days (identify via date headers) |
+| "review the auth module" | Rounds that touch auth-related files, regardless of date |
+| "review R020 to R035" | Rounds R020–R035, may cross batch boundaries |
+| "review everything" | All DEVLOG rounds across all batches |
 
-When scope crosses month boundaries, read both `DEVLOG.md` and the relevant `DEVLOG-YYYY-MM.md` archives — only the date sections within scope.
+When scope crosses batch boundaries, read both the active batch and the relevant sealed batch — only the round sections within scope.
 
 ## Quick Review (default)
 
-Always start here. Read dev log entries within scope. Run `git log --oneline --since=<scope start date>` to cross-check claims against actual commits. Output 3-5 bullet points directly in the response — no file is written.
+Always start here. Read dev log rounds within scope. Run `git log --oneline --since=<scope start date>` to cross-check claims against actual commits. Output 3-5 bullet points directly in the response — no file is written.
 
 Format:
 
 ```
 ## Quick Review
 
-- [finding 1: what was checked, what was found — reference dev log round if relevant]
+- [finding 1: what was checked, what was found — reference dev log round RXXX if relevant]
 - [finding 2: issue or gap identified vs dev log claims]
 - [finding 3: risk or concern — dev log items still open, blockers, etc.]
 - [summary verdict: OK / needs attention / blocking]
@@ -52,7 +53,7 @@ Only generate when the user confirms (after Quick Review prompt) or explicitly a
 
 ### Format
 
-`REVIEWS.md` is a **single rolling file**, append-only. Each review is a dated section.
+`REVIEWS.md` is a **single rolling file**, append-only. Each review is a numbered section. Naming follows actual review sequence (第 1 次 review = Review 1).
 
 Only include sections that have content — skip empty sections entirely, do not generate empty tables.
 
@@ -61,16 +62,16 @@ Only include sections that have content — skip empty sections entirely, do not
 
 ---
 
-## 2026-05-04 Round 1
+## Review 1 [2026-05-04]
 
 ### Scope
-<!-- What was reviewed: files, features, modules, time range -->
+<!-- What was reviewed: files, features, modules, round range -->
 
 ### Dev Logs Reviewed
 
-| Date | Round | Claim | Verified |
-|------|-------|-------|----------|
-| 2026-05-04 | R1 | [what dev log says was done] | ✅ / ⚠️ / ❌ — [evidence] |
+| Round | Claim | Verified |
+|-------|-------|----------|
+| R007 | [what dev log says was done] | ✅ / ⚠️ / ❌ — [evidence] |
 
 ### Findings
 
@@ -86,7 +87,7 @@ Only include sections that have content — skip empty sections entirely, do not
 
 | # | Reference | Description | Next step |
 |---|-----------|-------------|-----------|
-| 1 | DEVLOG 2026-05-03 R2 / spec ref | ... | ... |
+| 1 | R008 / spec ref | ... | ... |
 
 #### Deviations
 <!-- Only include if deviations found -->
@@ -104,7 +105,7 @@ Only include sections that have content — skip empty sections entirely, do not
 
 ---
 
-## 2026-05-03 Round 1
+## Review 2 [2026-05-05]
 - ...
 ```
 
@@ -112,9 +113,11 @@ Only include sections that have content — skip empty sections entirely, do not
 
 - **Append-only** — never delete or edit past reviews
 - **Only include sections with content** — no empty tables or placeholder sections
+- **Review header** — `## Review N [YYYY-MM-DD]`, N is the sequential review count (1, 2, 3, ...)
+- **Dev Log reference** — use global round numbers (R007), not date-based references
 - **Status tracking** — `in-progress` (issues open), `resolved` (all closed), `deferred` (some deferred)
 - **Status is historical** — do not modify past reviews' status. If previously open issues are now resolved, note the resolution in the new review's findings
-- Link to related prior reviews by date reference
+- Link to related prior reviews by review number reference
 
 ### Layered reading for REVIEWS.md
 

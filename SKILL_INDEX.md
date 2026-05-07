@@ -2,7 +2,7 @@
 
 | Skill | Status | Category | Description |
 |-------|--------|----------|-------------|
-| [personal-assistant](personal-assistant/SKILL.md) | ✅ stable | dev-tooling | Document-first development copilot. Bootstrap, consult, develop, review, deploy — with monthly-rotated dev log, interrupt checkpoint (TASK_STATE.md), and cross-platform memory. |
+| [personal-assistant](personal-assistant/SKILL.md) | ✅ stable | dev-tooling | Document-first development copilot. Use whenever the user wants to change code, fix bugs, add tests, refactor modules... |
 
 ---
 

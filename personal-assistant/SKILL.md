@@ -15,10 +15,10 @@ See `references/doc-structure.md` for the complete document tree, naming convent
 
 | Reference | Authoritative for |
 |-----------|-------------------|
-| `doc-structure.md` | All file paths, naming rules, directory layout, TASK_STATE.md lifecycle, DEVLOG rotation |
+| `doc-structure.md` | All file paths, naming rules, directory layout, TASK_STATE.md lifecycle, DEVLOG batch rules |
 | `project-contract.md` | Document relationships, bootstrap rules, doc sync rules |
 | `policy.md` | Tests, fix quality, doc consistency, output discipline, conflict handling, language guidance |
-| `dev-log-protocol.md` | DEVLOG.md format, rotation rules, layered reading, when/how to write dev log entries |
+| `dev-log-protocol.md` | DEVLOG batch format, round counter, layered reading, when/how to write dev log entries |
 | `review-protocol.md` | Scope determination, Quick Review and Full Report workflow, REVIEWS.md format, layered reading |
 | `context-memory.md` | Cross-platform memory system, memory vs TASK_STATE vs DEVLOG relationship |
 
@@ -77,7 +77,7 @@ See `references/project-contract.md` for bootstrap rules.
 
 #### Step 1: Check for unfinished work
 
-Read the last round in `docs/dep/DEVLOG.md` (current month only, see layered reading in `references/dev-log-protocol.md`). If `Next` has open items not covered by TASK_STATE.md, ask: "上次 [date] 还有未完成的任务：xxx。继续上次的任务还是开始新任务？"
+Read the last round in the active DEVLOG batch file (see layered reading in `references/dev-log-protocol.md`). If `Next` has open items not covered by TASK_STATE.md, ask: "上次 [round] 还有未完成的任务：xxx。继续上次的任务还是开始新任务？"
 
 #### Step 2: Route to Quick Fix or Full Development
 
@@ -113,7 +113,7 @@ If full Development, continue to step 3.
 
 ### Review
 1. **Determine scope** — parse the user's request to identify time range, module, or "all" (see `references/review-protocol.md` § Scope determination). Default: all entries since last review
-2. Read dev log entries within scope (use layered reading — current month + archives as needed)
+2. Read dev log rounds within scope (use layered reading — active batch + sealed batches as needed, see `references/dev-log-protocol.md`)
 3. Run `git log --oneline --since=<scope start date>` and cross-check against dev log claims
 4. Inspect the relevant docs in `docs/main/` and the actual code
 5. Perform **Quick Review** — output 3-5 bullet points + cross-check verdict (include git/dev-log mismatches if found)

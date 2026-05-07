@@ -19,9 +19,9 @@ Authoritative reference for all document paths and naming conventions.
     │       └── <type>-<topic>.md   # Memory entries
     │
     ├── dep/                        # Diary — records "what was DONE"
-    │   ├── DEVLOG.md               # Current month dev log (active, append-only)
-    │   ├── DEVLOG-YYYY-MM.md       # Archived months (read-only)
-    │   ├── REVIEWS.md              # Rolling review reports (single file, append-only)
+    │   ├── DEVLOG-R001-R040.md     # Current batch (active, append-only, up to 40 rounds)
+    │   ├── DEVLOG-R041-R080.md     # Completed batches (read-only archives)
+    │   ├── REVIEWS.md              # Review reports (single file, append-only)
     │   ├── PLAN.md                 # Living project plan (optional)
     │   └── TASK_STATE.md           # Interrupt checkpoint (exists only when task is in-progress)
     │
@@ -52,8 +52,7 @@ Authoritative reference for all document paths and naming conventions.
 
 | File | Writes | When | Lifecycle |
 |------|--------|------|-----------|
-| `DEVLOG.md` | Development (mandatory) | After each completed round; append-only | Active for current month; rotated on month change |
-| `DEVLOG-YYYY-MM.md` | — (archived) | Created by rotation from DEVLOG.md | Read-only archive |
+| `DEVLOG-RXXX-RXXX.md` | Development (mandatory) | After each completed round; append-only | Active until 40 rounds filled, then sealed |
 | `REVIEWS.md` | Review (on demand) | Only after user confirms Full Report; append-only | Permanent, no rotation |
 | `PLAN.md` | Development (optional) | When a multi-step plan is needed | Overwritten when plan evolves |
 | `TASK_STATE.md` | Development | Created when task starts; updated at checkpoints; deleted when task completes | Exists only during active work |
@@ -69,23 +68,37 @@ Authoritative reference for all document paths and naming conventions.
 | Pattern | Rule |
 |---------|------|
 | `USAGE.md` | Root level. Auto-generated at bootstrap. |
-| `DEVLOG.md` | Current month dev log. Entries: `## YYYY-MM-DD` date headers, rounds: `### Round N [HH:MM]`. |
-| `DEVLOG-YYYY-MM.md` | Archived month. Same format as DEVLOG.md. Created by rotation. |
-| `REVIEWS.md` | Single file. Entries: `## YYYY-MM-DD Round N` headers. |
+| `DEVLOG-R001-R040.md` | Round batch file. 40 rounds per batch. Global round numbering (R001, R002, ...). Naming: `DEVLOG-R001-R040.md`, `DEVLOG-R041-R080.md`, etc. |
+| `REVIEWS.md` | Single file, append-only. Each entry: `## Review N [YYYY-MM-DD]` header. |
 | `PLAN.md` | Living document, overwritten when plan evolves. |
 | `TASK_STATE.md` | Checkpoint file. Exists only when a task is in-progress. Deleted on task completion. |
 | `DEPLOY_GUIDE.md` | Persistent deployment guide. |
 | `memory/<type>-<topic>.md` | `type` = `user` / `project` / `feedback` / `reference`. `topic` = short kebab-case. |
 
-## DEVLOG monthly rotation
+## DEVLOG round batches
 
-DEVLOG.md uses monthly rotation to prevent content bloat:
+DEVLOG uses 40-round batches to control file size. Each file holds exactly one batch.
+
+### Batch rules
 
 ```
-Rotation rules:
-- Current month: DEVLOG.md (active, append-only)
-- On month change: rename DEVLOG.md → DEVLOG-YYYY-MM.md, create fresh DEVLOG.md
-- Archives are read-only — never modify past months
+- One active file at a time: DEVLOG-RXXX-RXXX.md
+- Each batch = 40 global rounds
+- Batch 1: DEVLOG-R001-R040.md (global rounds R001–R040)
+- Batch 2: DEVLOG-R041-R080.md (global rounds R041–R080)
+- Batch N: DEVLOG-R((N-1)*40+1)-R(N*40).md
+- When the active file reaches 40 rounds → seal it, create next batch file
+- Sealed batches are read-only — never modify past batch files
+- Round numbering is global and monotonic across batches
+```
+
+### Global round counter
+
+Each round has a unique global identifier `RXXX` (e.g., R001, R042, R103). The counter is maintained by the active DEVLOG file:
+
+```
+Read the last round number from the active batch to determine the next value.
+If no DEVLOG file exists, start at R001.
 ```
 
 ### Layered reading
@@ -94,9 +107,18 @@ To minimize token consumption, read DEVLOG files selectively:
 
 | Layer | When to read | How |
 |-------|-------------|-----|
-| DEVLOG.md (current month) | Always in Development and Review modes | Full read |
-| DEVLOG-YYYY-MM.md (archives) | User specifies time range; task resume references archived entry; review covers cross-month range | Read only relevant date section |
+| Active batch | Always in Development and Review modes | Full read |
+| Previous batch (1 back) | Task resume references earlier round; review covers recent range | Full read |
+| Older batches | User specifies older round range or date | Read only the relevant date sections |
 | REVIEWS.md | Review mode | Last 3 reviews: full read. Older reviews: status line only |
+
+### How to find the right batch
+
+```
+1. Determine the round number range needed (from scope)
+2. Map to batch file: DEVLOG-RXXX-RXXX.md
+3. Read from that file — only the relevant sections
+```
 
 ## TASK_STATE.md — Interrupt checkpoint
 
@@ -109,7 +131,7 @@ Task starts       → Create TASK_STATE.md with status: in-progress
 Task progresses   → Update checkpoint items ([x] / [ ]) and Working Context
 Task interrupted  → TASK_STATE.md persists in repo (survives terminal/session switch)
 New session starts → Step 0 in Development mode checks if TASK_STATE.md exists
-Task completes    → Consolidate into DEVLOG.md round, delete TASK_STATE.md
+Task completes    → Consolidate into DEVLOG batch round, delete TASK_STATE.md
 ```
 
 ### Format

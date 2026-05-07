@@ -14,7 +14,7 @@
         "USAGE.md is created at project root",
         "docs/dep/ and docs/deploy/ directories are created",
         "Development continues with login feature implementation",
-        "Dev log round is appended to docs/dep/DEVLOG.md"
+        "Dev log round is appended to active DEVLOG batch file"
       ]
     },
     {
@@ -114,13 +114,13 @@
     {
       "id": 12,
       "prompt": "Review the work from last month.",
-      "expected_output": "Skill determines cross-month scope, reads archived DEVLOG-YYYY-MM.md in addition to current DEVLOG.md, performs Quick Review covering the specified range.",
+      "expected_output": "Skill determines cross-batch scope, reads the relevant sealed DEVLOG-RXXX-RXXX.md batch file in addition to the active batch, performs Quick Review covering the specified round range.",
       "expectations": [
-        "Review scope is determined as cross-month (last month)",
-        "DEVLOG-YYYY-MM.md archive file is read for the relevant month",
-        "Only date sections within scope are read (not full archive)",
-        "Quick Review covers entries from both current month and archive",
-        "Cross-check against git log uses appropriate date range"
+        "Review scope is determined as cross-batch (spans sealed + active batch)",
+        "Relevant DEVLOG-RXXX-RXXX.md sealed batch file is identified and read",
+        "Only round sections within scope are read (not full batch files)",
+        "Quick Review covers entries from both active and sealed batches",
+        "Cross-check against git log uses appropriate date range derived from round dates"
       ]
     },
     {
