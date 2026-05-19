@@ -180,28 +180,37 @@ status: blocked
 
 Priority: `in-progress` > `blocked`. Present both to user and let them choose.
 
-## PLAN.md — Project plan
+## PLAN.md — Phase-Gate 项目计划
 
-PLAN.md is a living document for planning multi-step work before implementation. It sits above TASK_STATE.md in the abstraction hierarchy.
+PLAN.md 是执行合同文件，不是愿望清单。它位于 TASK_STATE.md 之上，将多步骤工作拆解为有边界、有完成标准、可独立验证的 Phase。
 
-### Relationship
+### 层级关系
 
 ```
-PLAN.md     = Strategy (what to do, why, in what order)
-TASK_STATE  = Tactics (where we are in the plan, specific progress)
-DEVLOG.md   = Record (what was done)
+PLAN.md      = 战略 + 阶段合同（Phase map + 每个 Phase 的输入/产出/边界/完成标准）
+TASK_STATE   = 当前 Phase 内的进度追踪（Goal 引用当前 Phase）
+DEVLOG.md    = 执行记录（每轮标题标注所属 Phase）
 ```
 
-### When to use
+### 何时使用
 
-- User says "帮我规划一下", "先想清楚再做", "plan this out"
-- Task is estimated to span more than 3 dev log rounds
-- Multiple related features that need sequencing
-- Architecture decision that needs rationale documentation
+- 用户说"帮我规划一下"、"先想清楚再做"、"plan this out"、"设计一下方案"
+- 任务预估超过 3 个 DEVLOG 轮次
+- 多个相关功能需要排序
+- 架构决策需要记录理由
 
-When PLAN.md exists, TASK_STATE.md should reference which plan step is being worked on.
+### 规划流程
 
-### Format
+规划采用**多轮交互模式**，不是一次性生成。详细流程见 `references/planning-protocol.md`。
+
+```
+第 1 轮：目标与范围确认（包含明确的排除项）
+第 2 轮：Phase 拆解（概要 — 每个 Phase 一句话目标）
+第 3 轮：逐 Phase 细化（输入条件、产出、完成标准、边界、涉及文件）
+第 4 轮：最终确认，写入 PLAN.md，用户说"开始"后进入执行
+```
+
+### PLAN.md 格式（Phase-Gate 结构）
 
 ```markdown
 ---
@@ -210,42 +219,108 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
-# [Feature/Project Name]
+# [功能/项目名称]
 
+## 目标
+[一句话 — 要构建什么，为什么]
+
+## 背景
+[约束、依赖、相关文档]
+
+## Phase 总览
+| Phase | 目标 | 预估轮次 | 依赖 | 状态 |
+|-------|------|---------|------|------|
+| P1 | [一句话目标] | RXXX-RXXX | - | done |
+| P2 | [一句话目标] | RXXX-RXXX | P1 | in-progress |
+| P3 | [一句话目标] | RXXX-RXXX | P2 | pending |
+
+## P1: [Phase 名称]
+
+### 输入条件
+- [开始本 Phase 前必须为真的条件]
+
+### 产出
+- [具体的、可验证的交付物]
+
+### 完成标准
+- [ ] [可客观验证的标准]
+- [ ] [如有多条，逐条列出]
+
+### 边界（本 Phase 明确不做）
+- [防止 AI 在执行中越界的排除项]
+
+### 涉及文件
+- `path/to/file.py` — 新建/修改
+
+### 关键决策
+- [技术选择，需要用户拍板的事项]
+
+## P2: [Phase 名称]
+...
+```
+
+### UI 类 Phase 额外要求
+
+UI 类 Phase 必须在细化时包含：
+- **涉及页面/组件**：列出所有新建和复用的 UI 文件
+- **组件树**：ASCII 树形图展示组件嵌套关系
+- **状态矩阵**：初始/加载中/成功/错误/空/网络错误 等状态及其 UI 表现
+- **交互流**：用户操作 → 系统响应 → 状态变更的完整链路
+- **不做**：明确排除的 UI 细节（防止 AI 自行添加动画、样式等）
+
+### 生命周期
+
+```
+规划阶段 → 创建 PLAN.md，status: planning
+用户确认 → status 改为 in-progress，开始执行
+Phase 推进 → 勾选完成标准，更新 Phase 总览状态行
+全部完成 → status 改为 done，保留文件
+新规划触发 → 直接覆盖（旧内容已同步到主文档和 DEVLOG）
+```
+
+### 覆盖规则
+
+覆盖 PLAN.md 前，AI 必须确认：
+1. 旧计划的产出已反映在 `PROJECT_SPEC.md` 或 `PROJECT_GUIDE.md`
+2. 旧计划的执行记录已完整写入 DEVLOG
+3. 旧计划中的关键决策已保存到项目记忆
+
+三项全部就绪 → 覆盖。有缺失 → 先补齐再覆盖。
+
+PLAN.md 是执行工具而非历史档案，不归档。计划的核心内容在执行中已同步到主文档（蓝图）和 DEVLOG（日记），保留旧计划会造成混淆。
+
+### 何时不用
+
+- 单次任务，1-2 轮内可完成 → 用 TASK_STATE.md 即可
+- 任务已经清晰、定义明确 → 跳过规划，直接进入 Development
+- 用户没要求规划且任务直接明了
+
+### TASK_STATE.md 与 Phase 的关联
+
+当 PLAN.md 存在时，TASK_STATE.md 必须引用当前 Phase：
+
+```markdown
 ## Goal
-[one sentence — what we're building and why]
+P2 — 实现注册/登录 API（PLAN.md Phase 2）
 
-## Context
-[background: constraints, stakeholders, dependencies]
-
-## Plan
-1. [x] [completed step]
-2. [ ] [current step — this should match TASK_STATE.md Progress]
-3. [ ] [future step]
-
-## Decisions
-- [Decision]: chose [X] over [Y] because [Z]
-- [Decision]: ...
-
-## Risks
-- [risk]: [mitigation]
-
-## Related
-- [links to relevant docs, issues, or memory entries]
+## Phase Context
+- **Phase 完成标准**：[引用 PLAN.md 中 P2 的完成标准]
+- **Phase 边界**：[引用 PLAN.md 中 P2 的边界]
 ```
 
-### Lifecycle
+### DEVLOG 中的 Phase 标注
 
-```
-Planning phase  → Create PLAN.md with status: planning
-Work begins     → Update status: in-progress
-Steps complete  → Check off items in Plan section
-All done        → Update status: done (keep file as historical record)
-New related work → Reopen by updating status and adding new steps
+每轮 DEVLOG 标题必须标注所属 Phase：
+
+```markdown
+### R005 [14:30] — P2: 实现 POST /api/auth/register
 ```
 
-### When NOT to use
+### Phase-Gate 验证
 
-- Single task that can be done in 1-2 rounds → use TASK_STATE.md only
-- Task is already clear and well-defined → skip planning, go straight to Development
-- User didn't ask for planning and the task is straightforward
+当前 Phase 所有 TASK_STATE 项完成时：
+1. 逐条检查 PLAN.md 中该 Phase 的完成标准
+2. 检查是否越界（做了边界中排除的内容）
+3. 全部通过 → 勾选完成标准，更新 Phase 总览，进入下一 Phase
+4. 有未通过 → 补齐缺口，不进入下一 Phase
+5. 发现越界 → 标记并询问用户

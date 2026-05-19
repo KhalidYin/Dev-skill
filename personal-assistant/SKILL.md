@@ -20,17 +20,19 @@ See `references/doc-structure.md` for the complete document tree, naming convent
 | `policy.md` | Tests, fix quality, doc consistency, output discipline, conflict handling, language guidance |
 | `dev-log-protocol.md` | DEVLOG batch format, round counter, layered reading, when/how to write dev log entries |
 | `review-protocol.md` | Scope determination, Quick Review and Full Report workflow, REVIEWS.md format, layered reading |
+| `planning-protocol.md` | Multi-round interactive planning, Phase-Gate structure, phase refinement, UI-phase detail requirements, plan completion and overwrite rules |
 | `context-memory.md` | Cross-platform memory system, memory vs TASK_STATE vs DEVLOG relationship |
 
 ## Modes
 
-This skill routes tasks into one of five modes:
+This skill routes tasks into one of six modes:
 
 | Mode | Trigger | What happens |
 |------|---------|--------------|
 | **Bootstrap** | Project has no docs at all | Generate minimal doc skeleton + USAGE.md, then proceed |
 | **Consultation** | "what is", "how does", "explain", "find" — read-only | Read docs + code, answer, no edits |
-| **Development** | "fix", "add", "change", "refactor", "implement" | Check TASK_STATE → implement → test → update docs → validate → write dev log → update memory |
+| **Planning** | "帮我规划", "先想清楚再做", "plan this", "设计一下方案" | Multi-round interactive planning → write PLAN.md → enter Development |
+| **Development** | "fix", "add", "change", "refactor", "implement" | Check TASK_STATE → Phase-Gate check → implement → test → update docs → validate → write dev log → update memory |
 | **Review** | "review", "audit", "检查", "审核", "inspect" | Determine scope → Quick Review first; ask if Full Report needed |
 | **Deployment** | "deploy", "部署", "上线", "发布", "ship" | Generate or update deployment guide in `docs/deploy/DEPLOY_GUIDE.md` |
 
@@ -39,8 +41,9 @@ This skill routes tasks into one of five modes:
 1. Check if `docs/main/` exists with the four canonical docs. If entirely missing → **Bootstrap**
 2. If the request mentions deployment → **Deployment**
 3. If the request is read-only (asking questions, understanding code) → **Consultation**
-4. If the request asks for a review/audit/inspection → **Review**
-5. If the request asks to change something → **Development**
+4. If the request asks for planning / design before implementation → **Planning**
+5. If the request asks for a review/audit/inspection → **Review**
+6. If the request asks to change something → **Development**
 
 ## Quick start by mode
 
@@ -59,6 +62,43 @@ See `references/project-contract.md` for bootstrap rules.
 2. Inspect nearby code as needed
 3. Answer the question concisely — no code changes, no doc updates
 4. If the answer reveals important context, optionally save it to memory
+
+### Planning
+
+Planning is a multi-round interactive process before any code is written. See `references/planning-protocol.md` for the complete protocol.
+
+**Round 1 — Goal & Scope:**
+1. Read relevant docs (`PROJECT_GUIDE.md`, `PROJECT_SPEC.md`) and project memory
+2. Inspect nearby code to understand current state
+3. Propose: Goal statement + Scope (包含/不包含) + Constraints + Key decision points
+4. Wait for user confirmation before proceeding
+
+**Round 2 — Phase breakdown:**
+1. Decompose the work into 2-6 phases, each completable in 1-3 DEVLOG rounds
+2. Output Phase overview table (Phase | Goal | Estimated rounds | Dependencies | Status)
+3. Wait for user to adjust and confirm
+
+**Round 3 — Per-phase refinement (core):**
+1. For each Phase, output the full contract:
+   - Input conditions (what must be true before starting)
+   - Deliverables (concrete, verifiable outputs)
+   - Completion criteria (objectively checkable)
+   - Boundaries (explicit exclusions to prevent drift)
+   - Files involved
+   - Key decisions (if any)
+2. For UI-heavy phases, additionally output: component tree, state matrix, interaction flow (see `references/planning-protocol.md` § UI 类 Phase 的细化要求)
+3. For small plans (2-3 phases), all phases in one round. For large plans (4+ phases), 1-2 phases per round.
+
+**Round 4 — Finalize:**
+1. Write complete `docs/dep/PLAN.md` with `status: planning`
+2. Present for final review
+3. On user confirmation ("开始", "确认执行", "go") → update `status: in-progress`, create TASK_STATE.md for P1, enter Development mode
+
+**Quick planning (lightweight):**
+For tasks estimable in 1-2 DEVLOG rounds, skip multi-round and do one-shot: propose Phase breakdown with completion criteria + boundaries, confirm once, write PLAN.md, execute. Completion criteria and boundaries cannot be skipped even in quick mode.
+
+**Plan completion:**
+When all phases are done, update PLAN.md `status: done`. When a new plan is needed, overwrite — only after confirming the old plan's outputs are synced to main docs and DEVLOG (see `references/planning-protocol.md` § 计划完成后的处理).
 
 ### Development
 
@@ -96,20 +136,31 @@ If Quick Fix:
 
 If full Development, continue to step 3.
 
-#### Full Development (steps 3–13)
+#### Full Development (steps 3–15)
 
 3. Inspect the relevant docs, nearby code, and project memory (`docs/main/memory/`)
 4. State the constraint or design choice that matters
-5. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md)
-6. Make the smallest viable implementation
-7. **Update TASK_STATE.md** — after each significant step, update the progress checklist and working context
-8. Add or update tests
-9. Update the relevant docs in `docs/main/` and `USAGE.md` if applicable
-10. **Validate consistency** — cross-check `docs/main/*.md` (excl. memory/) + `USAGE.md` for terminology drift or conflicts (see `references/policy.md` § Doc consistency check)
-11. **Write a dev log round** — append to `docs/dep/DEVLOG.md` (see `references/dev-log-protocol.md`)
-12. **Delete TASK_STATE.md** — task is complete, checkpoint is no longer needed
-13. Update context memory if new decisions, facts, or user preferences emerged
-14. **Output discipline** — verbosity scales with change size (see `references/policy.md` § Output discipline)
+5. **Phase-Gate check (if PLAN.md exists)** — before starting work, verify current Phase:
+   - Read `PLAN.md` current Phase's input conditions, completion criteria, and boundaries
+   - If previous Phase has unchecked completion criteria → flag and ask user before proceeding
+   - If TASK_STATE.md exists from previous session, verify its Goal matches the current PLAN.md Phase
+   - If current request would cross Phase boundaries → flag and ask user
+6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If PLAN.md exists, Goal must reference the current Phase (e.g., "P2 — 实现注册/登录 API"), and include Phase Context section with completion criteria and boundaries.
+7. Make the smallest viable implementation
+8. **Update TASK_STATE.md** — after each significant step, update the progress checklist and working context
+9. Add or update tests
+10. Update the relevant docs in `docs/main/` and `USAGE.md` if applicable
+11. **Validate consistency** — cross-check `docs/main/*.md` (excl. memory/) + `USAGE.md` for terminology drift or conflicts (see `references/policy.md` § Doc consistency check)
+12. **Phase-Gate validation (if PLAN.md exists)** — when TASK_STATE.md items are all checked:
+    - Verify each completion criterion in PLAN.md for the current Phase
+    - Check for boundary violations (did we do things the Phase explicitly excluded?)
+    - All pass → check off completion criteria in PLAN.md, update Phase overview status
+    - Failures → fix gaps before proceeding. Do not start next Phase.
+    - Boundary violation → flag and ask user: expand this Phase's scope, or defer to later Phase?
+13. **Write a dev log round** — append to `docs/dep/DEVLOG.md`. If PLAN.md exists, include Phase annotation in the round header: `### RXXX [HH:MM] — PX: [简短描述]` (see `references/dev-log-protocol.md`)
+14. **Delete TASK_STATE.md** — task/phase is complete, checkpoint is no longer needed
+15. Update context memory if new decisions, facts, or user preferences emerged
+16. **Output discipline** — verbosity scales with change size (see `references/policy.md` § Output discipline)
 
 ### Review
 1. **Determine scope** — parse the user's request to identify time range, module, or "all" (see `references/review-protocol.md` § Scope determination). Default: all entries since last review

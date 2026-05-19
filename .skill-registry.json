@@ -4,7 +4,7 @@
     "personal-assistant": {
       "status": "stable",
       "category": "dev-tooling",
-      "last_modified": "2026-05-05",
+      "last_modified": "2026-05-19",
       "has_evals": true,
       "tags": ["documentation", "dev-tooling", "python", "r", "review", "devops"]
     }

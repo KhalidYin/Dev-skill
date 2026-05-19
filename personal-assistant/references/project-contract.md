@@ -46,3 +46,14 @@ Document only what is actually implemented. Do not write planned work, placehold
 Any code change that affects architecture, interfaces, data flow, validation rules, naming, or testing expectations must be reflected in the relevant docs in the same task.
 
 If the change is purely local and does not alter behavior or project contracts, limit documentation updates to the affected area.
+
+## Plan sync rules
+
+When a PLAN.md reaches `status: done`, its content must be synced to permanent documentation before the file can be overwritten by a new plan:
+
+1. **PROJECT_SPEC.md** — new features, design decisions, scope boundaries defined in the plan must be reflected
+2. **PROJECT_GUIDE.md** — architectural changes, new modules, data flow changes must be reflected
+3. **docs/main/memory/** — key decisions and rationale from the plan must be saved as project memory
+4. **DEVLOG.md** — all execution rounds must be complete and traceable to plan phases
+
+PLAN.md is a disposable execution tool, not a permanent record. Once its content is synced, the file can be safely overwritten when a new planning cycle begins. Do not archive or rename old PLAN.md files — this creates confusion about which plan is current.
