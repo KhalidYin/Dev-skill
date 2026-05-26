@@ -41,7 +41,7 @@ Entries use date headers with global round numbers. All DEVLOG batch files use t
 
 ## 2026-05-04
 
-### R007 [14:30] — P2: 实现注册 API
+### R007 [14:30] [user-auth] P2: 实现注册 API
 
 #### Done
 - [what was accomplished — concrete and verifiable]
@@ -59,7 +59,7 @@ Entries use date headers with global round numbers. All DEVLOG batch files use t
 
 ---
 
-### R008 [16:45] — P2: 实现登录 API
+### R008 [16:45] [user-auth] P2: 实现登录 API
 
 #### Done
 - ...
@@ -78,7 +78,7 @@ Entries use date headers with global round numbers. All DEVLOG batch files use t
 - **Batch file title** — `# Dev Log — R001–R040` reflects the round range in that file
 - **Date header** — `## YYYY-MM-DD`, one per day. Create only when work happens that day
 - **Round header** — `### RXXX [HH:MM]`, global monotonic number (R001, R002, ...)
-- **Phase annotation** — 当 `PLAN.md` 存在时，轮次标题必须标注所属 Phase：`### RXXX [HH:MM] — PX: [简短描述]`。Phase 编号与 PLAN.md 的 Phase 总览一致
+- **Sub-plan and Phase annotation** — 当存在活跃子计划时，轮次标题必须同时标注子计划和 Phase：`### RXXX [HH:MM] [<sub-plan>] PX: [简短描述]`。子计划名与 `plans/<name>.md` 文件名一致（不含扩展名）。无子计划时省略子计划标注，有子计划但单 Phase 时省略 Phase 标注
 - **Separator** — use `---` between rounds within the same date section
 - **Be concrete** — "Fixed login timeout" not "Worked on auth"
 - **Files Changed / Commits** — list every file touched with commit hash. If not yet committed, write "(uncommitted)"
@@ -121,12 +121,12 @@ Quick Fix changes use a one-line entry instead of a full round. Append under the
 ```markdown
 ## 2026-05-04
 
-### R007 [14:30] — P2: QF: Fixed login timeout in src/auth.py:42 — `abc1234`
+### R007 [14:30] [user-auth] P2: QF: Fixed login timeout in src/auth.py:42 — `abc1234`
 ```
 
-Format: `### RXXX [HH:MM] — [PX:] QF: [one-line description] — [commit hash or (uncommitted)]`
+Format: `### RXXX [HH:MM] [<sub-plan>] [PX:] QF: [one-line description] — [commit hash or (uncommitted)]`
 
-Phase 前缀 `PX:` 在 PLAN.md 存在时为必填，否则省略。
+子计划标注 `[<sub-plan>]` 和 Phase 前缀 `PX:` 在存在活跃子计划时为必填，否则省略。
 
 QF entries use the global round counter just like full rounds — this ensures no gaps in the round sequence.
 

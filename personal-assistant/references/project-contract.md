@@ -8,7 +8,8 @@ See `references/doc-structure.md` — the authoritative source for all paths and
 - `main/` — defines what the project IS (blueprint)
 - `dep/DEVLOG.md` — records what was DONE (rolling dev log)
 - `dep/REVIEWS.md` — records what was FOUND (rolling review reports)
-- `dep/PLAN.md` — records what is PLANNED (optional, living document)
+- `dep/PLAN.md` — records what is ACTIVE (dashboard with pointers to sub-plans)
+- `dep/plans/` — records what is PLANNED in detail (sub-plan contracts, persistent)
 - `deploy/` — describes HOW to deploy (deployment guide)
 - `USAGE.md` — how to USE the project (root level)
 
@@ -49,11 +50,24 @@ If the change is purely local and does not alter behavior or project contracts, 
 
 ## Plan sync rules
 
-When a PLAN.md reaches `status: done`, its content must be synced to permanent documentation before the file can be overwritten by a new plan:
+### 子计划完成后的同步
 
-1. **PROJECT_SPEC.md** — new features, design decisions, scope boundaries defined in the plan must be reflected
-2. **PROJECT_GUIDE.md** — architectural changes, new modules, data flow changes must be reflected
-3. **docs/main/memory/** — key decisions and rationale from the plan must be saved as project memory
-4. **DEVLOG.md** — all execution rounds must be complete and traceable to plan phases
+子计划全部 Phase 完成时，按子计划 frontmatter 的 `syncs_to` 清单同步到主文档：
 
-PLAN.md is a disposable execution tool, not a permanent record. Once its content is synced, the file can be safely overwritten when a new planning cycle begins. Do not archive or rename old PLAN.md files — this creates confusion about which plan is current.
+1. **PROJECT_SPEC.md** — 新功能说明、技术决策、范围边界
+2. **PROJECT_GUIDE.md** — 架构变更、模块职责、数据流
+3. **TEST_GUIDE.md** — 测试说明、覆盖范围（如有新增测试模式）
+4. **CODE_STYLE.md** — 编码约定（如有新约定）
+5. **docs/main/memory/** — 关键决策写入或更新项目记忆
+
+### PLAN.md 指针移除
+
+同步完成后：
+1. 将子计划从 PLAN.md "进行中"移到"最近完成"
+2. 保留最近 3 条"最近完成"，超过的直接删除
+3. 子计划文件（`plans/<name>.md`）不移除、不删除 — 它是功能的设计决策记录
+4. PLAN.md 只移除指向子计划的指针
+
+### 覆盖旧仪表盘
+
+当 PLAN.md "进行中"和"待开始"都为空时，新计划直接基于当前 PLAN.md 结构增量更新。如果旧有延后条目，保留到新仪表盘作为参考。

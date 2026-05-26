@@ -19,10 +19,13 @@ Authoritative reference for all document paths and naming conventions.
     │       └── <type>-<topic>.md   # Memory entries
     │
     ├── dep/                        # Diary — records "what was DONE"
+    │   ├── PLAN.md                 # 主线仪表盘（仅活跃项 + 最近完成 + 延后）
+    │   ├── plans/                  # 子计划目录（持久文件，完成后不移除）
+    │   │   ├── user-auth.md        # 每个功能/模块的完整 Phase-Gate 实施方案
+    │   │   └── ...
     │   ├── DEVLOG-R001-R040.md     # Current batch (active, append-only, up to 40 rounds)
     │   ├── DEVLOG-R041-R080.md     # Completed batches (read-only archives)
     │   ├── REVIEWS.md              # Review reports (single file, append-only)
-    │   ├── PLAN.md                 # Living project plan (optional)
     │   └── TASK_STATE.md           # Interrupt checkpoint (exists only when task is in-progress)
     │
     └── deploy/                     # Deployment — describes "HOW to deploy"
@@ -52,9 +55,10 @@ Authoritative reference for all document paths and naming conventions.
 
 | File | Writes | When | Lifecycle |
 |------|--------|------|-----------|
+| `PLAN.md` | Planning / Development | When any sub-plan is active | 仪表盘，只存指针和状态。子计划完成后移除指针 |
+| `plans/<name>.md` | Planning | When a new feature/module/refactor is planned | 持久文件，完成后不移除。是该功能的设计决策记录 |
 | `DEVLOG-RXXX-RXXX.md` | Development (mandatory) | After each completed round; append-only | Active until 40 rounds filled, then sealed |
 | `REVIEWS.md` | Review (on demand) | Only after user confirms Full Report; append-only | Permanent, no rotation |
-| `PLAN.md` | Development (optional) | When a multi-step plan is needed | Overwritten when plan evolves |
 | `TASK_STATE.md` | Development | Created when task starts; updated at checkpoints; deleted when task completes | Exists only during active work |
 
 ### docs/deploy/ — Deployment
@@ -70,7 +74,8 @@ Authoritative reference for all document paths and naming conventions.
 | `USAGE.md` | Root level. Auto-generated at bootstrap. |
 | `DEVLOG-R001-R040.md` | Round batch file. 40 rounds per batch. Global round numbering (R001, R002, ...). Naming: `DEVLOG-R001-R040.md`, `DEVLOG-R041-R080.md`, etc. |
 | `REVIEWS.md` | Single file, append-only. Each entry: `## Review N [YYYY-MM-DD]` header. |
-| `PLAN.md` | Living document, overwritten when plan evolves. |
+| `PLAN.md` | 主线仪表盘。仅存指针和状态（进行中/待开始/最近完成/延后）。不存 Phase 细节。 |
+| `plans/<name>.md` | 子计划文件。kebab-case 命名，与功能名对应（如 `user-auth.md`）。持久保留，完成后不移除。 |
 | `TASK_STATE.md` | Checkpoint file. Exists only when a task is in-progress. Deleted on task completion. |
 | `DEPLOY_GUIDE.md` | Persistent deployment guide. |
 | `memory/<type>-<topic>.md` | `type` = `user` / `project` / `feedback` / `reference`. `topic` = short kebab-case. |
@@ -180,59 +185,134 @@ status: blocked
 
 Priority: `in-progress` > `blocked`. Present both to user and let them choose.
 
-## PLAN.md — Phase-Gate 项目计划
-
-PLAN.md 是执行合同文件，不是愿望清单。它位于 TASK_STATE.md 之上，将多步骤工作拆解为有边界、有完成标准、可独立验证的 Phase。
-
-### 层级关系
+## 三层计划体系
 
 ```
-PLAN.md      = 战略 + 阶段合同（Phase map + 每个 Phase 的输入/产出/边界/完成标准）
-TASK_STATE   = 当前 Phase 内的进度追踪（Goal 引用当前 Phase）
-DEVLOG.md    = 执行记录（每轮标题标注所属 Phase）
+PLAN.md             → 仪表盘层：只看"正在发生什么"，完成即移除指针
+docs/dep/plans/<name>.md → 合同层：每个功能/模块的完整 Phase-Gate 实施方案
+TASK_STATE.md       → 执行层：当前 Phase 内的单步进度
 ```
 
-### 何时使用
+---
 
-- 用户说"帮我规划一下"、"先想清楚再做"、"plan this out"、"设计一下方案"
-- 任务预估超过 3 个 DEVLOG 轮次
-- 多个相关功能需要排序
-- 架构决策需要记录理由
+## PLAN.md — 主线仪表盘
 
-### 规划流程
+PLAN.md 是仪表盘，不是实施文档。它只包含指向子计划的指针、状态和优先级，不包含任何 Phase 的实施细节。Phase 细节全部在 `plans/<name>.md` 中。
 
-规划采用**多轮交互模式**，不是一次性生成。详细流程见 `references/planning-protocol.md`。
+### 格式
+
+```markdown
+---
+updated: YYYY-MM-DD
+---
+
+# 项目计划
+
+## 进行中
+| 子计划 | 文件 | 当前 Phase | 已用轮次 | 开始日期 |
+|--------|------|-----------|---------|---------|
+| 用户认证 | [plans/user-auth.md](plans/user-auth.md) | P2: 注册/登录 API | R004-R006 | YYYY-MM-DD |
+
+## 待开始
+| 优先级 | 子计划 | 文件 | 预估总轮次 | 依赖 |
+|--------|--------|------|----------|------|
+| 1 | 管理后台 | [plans/admin-panel.md](plans/admin-panel.md) | 5-8 | 用户认证 P3 完成 |
+| 2 | 数据导出 | [plans/data-export.md](plans/data-export.md) | 3-5 | - |
+
+## 最近完成
+> 仅保留最近 3 条。更早的直接移除。
+
+| 日期 | 子计划 | 已同步到 |
+|------|--------|---------|
+| YYYY-MM-DD | 数据库迁移框架 | PROJECT_GUIDE, PROJECT_SPEC |
+
+## 延后
+- OAuth 第三方登录 → 下个计划周期再评估
+```
+
+### 维护规则
+
+- **进行中**：每个活跃子计划一行。当前 Phase 和已用轮次在每次 Gate 通过后更新
+- **待开始**：按优先级降序排列。新子计划注册时插入到正确位置
+- **最近完成**：保留最近 3 条。超过的直接删除——内容已在子计划文件 + 主文档 + DEVLOG 中
+- **延后**：不需要立即处理的需求。下个计划周期时作为输入
+- **状态一致性**：PLAN.md "进行中"的当前 Phase 必须与子计划文件的 Phase 总览一致
+
+---
+
+## plans/<name>.md — 子计划合同
+
+子计划文件是某个功能/模块的完整实施方案。它是持久文件，完成后不移除、不归档——是功能的设计决策记录。
+
+### 文件命名
+
+kebab-case，与功能名对应：`user-auth.md`、`admin-panel.md`、`frontend-redesign.md`
+
+### 何时独立建子计划 vs 合并
 
 ```
-第 1 轮：目标与范围确认（包含明确的排除项）
-第 2 轮：Phase 拆解（概要 — 每个 Phase 一句话目标）
-第 3 轮：逐 Phase 细化（输入条件、产出、完成标准、边界、涉及文件）
-第 4 轮：最终确认，写入 PLAN.md，用户说"开始"后进入执行
+独立建子计划：
+  - 预估 ≥ 2 个 Phase
+  - 涉及 ≥ 3 个文件
+  - 跨模块改动
+  - 需要头脑风暴的
+
+合并到已有子计划：
+  - 改动属于同一模块
+  - 已有子计划还在 planning 或 in-progress
+  - 新需求不改变已有子计划的核心目标
+
+不建子计划（直接用 TASK_STATE.md）：
+  - 单 Phase 内可完成
+  - 预估 1-2 个 DEVLOG 轮次
+  - Bug 修复（原因已知）
+  - 不需要头脑风暴
 ```
 
-### PLAN.md 格式（Phase-Gate 结构）
+### 格式
 
 ```markdown
 ---
 status: planning | in-progress | done
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+priority: 1
+estimated_rounds: 4-8
+depends_on: []
+syncs_to:
+  - PROJECT_SPEC.md
+  - PROJECT_GUIDE.md
 ---
 
-# [功能/项目名称]
+# [功能/模块名称]
 
 ## 目标
 [一句话 — 要构建什么，为什么]
 
 ## 背景
-[约束、依赖、相关文档]
+- 当前状态：[现在怎么做 / 没有做什么]
+- 约束：[技术约束、时间约束]
+- 方案来源：[正式头脑风暴 / 轻量讨论 / 已有明确需求]
+
+## 涉及范围
+- **包含**：[明确要做的事]
+- **不包含**：[明确不做的事]
+
+## 主文档影响
+完成后需要更新：
+- `PROJECT_SPEC.md`：[具体章节]
+- `PROJECT_GUIDE.md`：[具体章节]
+
+---
 
 ## Phase 总览
 | Phase | 目标 | 预估轮次 | 依赖 | 状态 |
 |-------|------|---------|------|------|
-| P1 | [一句话目标] | RXXX-RXXX | - | done |
-| P2 | [一句话目标] | RXXX-RXXX | P1 | in-progress |
-| P3 | [一句话目标] | RXXX-RXXX | P2 | pending |
+| P1 | [一句话] | RXXX-RXXX | - | done |
+| P2 | [一句话] | RXXX-RXXX | P1 | in-progress |
+| P3 | [一句话] | RXXX-RXXX | P2 | pending |
+
+---
 
 ## P1: [Phase 名称]
 
@@ -243,84 +323,100 @@ updated: YYYY-MM-DD
 - [具体的、可验证的交付物]
 
 ### 完成标准
-- [ ] [可客观验证的标准]
-- [ ] [如有多条，逐条列出]
+- [ ] [可客观验证的标准，至少 3 条]
 
 ### 边界（本 Phase 明确不做）
-- [防止 AI 在执行中越界的排除项]
+- [防止 AI 在执行中越界，至少 2 条]
 
 ### 涉及文件
-- `path/to/file.py` — 新建/修改
+| 文件 | 操作 | 预计行数 |
+|------|------|---------|
+| `path/to/file.py` | 新建 | ~40 |
+| `path/to/other.py` | 修改 | +5 |
 
 ### 关键决策
-- [技术选择，需要用户拍板的事项]
+- [本 Phase 的技术选择]：[选项 A / 选项 B]，选择 [X]，理由：[具体理由]
+- 如果没有决策点，写"无"
+
+---
 
 ## P2: [Phase 名称]
-...
+[... 同上 ...]
+
+---
+
+## 执行中发现
+| ID | 描述 | 发现于 | 类型 | 处理 |
+|----|------|--------|------|------|
+| D1 | [问题描述] | P2 | 阻断 | → 新增 P4 |
+
+## 关键决策记录
+| 日期 | 决策 | 选项 | 选择 | 理由 |
+|------|------|------|------|------|
+| YYYY-MM-DD | [具体决策] | [A / B] | [X] | [理由] |
 ```
 
 ### UI 类 Phase 额外要求
 
-UI 类 Phase 必须在细化时包含：
+UI 类 Phase 细化时必须包含：
 - **涉及页面/组件**：列出所有新建和复用的 UI 文件
 - **组件树**：ASCII 树形图展示组件嵌套关系
-- **状态矩阵**：初始/加载中/成功/错误/空/网络错误 等状态及其 UI 表现
+- **状态矩阵**：初始 / 提交中 / 成功 / 错误 / 空数据 / 网络错误 — 每个状态的触发条件和 UI 表现
 - **交互流**：用户操作 → 系统响应 → 状态变更的完整链路
-- **不做**：明确排除的 UI 细节（防止 AI 自行添加动画、样式等）
+- **不做**：明确排除的 UI 细节（动画、响应式、暗色模式等）
 
 ### 生命周期
 
 ```
-规划阶段 → 创建 PLAN.md，status: planning
-用户确认 → status 改为 in-progress，开始执行
-Phase 推进 → 勾选完成标准，更新 Phase 总览状态行
-全部完成 → status 改为 done，保留文件
-新规划触发 → 直接覆盖（旧内容已同步到主文档和 DEVLOG）
+头脑风暴/轻量讨论 → 创建 plans/<name>.md，status: planning
+用户确认 Phase 拆解 → status 改为 in-progress
+Phase 推进 → Gate 时勾选完成标准，更新 Phase 总览
+全部 Phase 完成 → 验证 → 同步主文档 → status 改为 done
+  子计划文件保留在 plans/ 目录，不移除
+  PLAN.md 将指针从"进行中"移到"最近完成"
 ```
 
-### 覆盖规则
+### 与 PLAN.md 的关系
 
-覆盖 PLAN.md 前，AI 必须确认：
-1. 旧计划的产出已反映在 `PROJECT_SPEC.md` 或 `PROJECT_GUIDE.md`
-2. 旧计划的执行记录已完整写入 DEVLOG
-3. 旧计划中的关键决策已保存到项目记忆
+PLAN.md 只存指向子计划的指针（文件名、当前 Phase、状态、优先级）。子计划的 Phase 细节、完成标准、边界、决策全部在子计划文件内。PLAN.md "进行中"行的当前 Phase 必须与子计划的 Phase 总览状态一致。
 
-三项全部就绪 → 覆盖。有缺失 → 先补齐再覆盖。
+---
 
-PLAN.md 是执行工具而非历史档案，不归档。计划的核心内容在执行中已同步到主文档（蓝图）和 DEVLOG（日记），保留旧计划会造成混淆。
+## TASK_STATE.md — 与子计划的关联
 
-### 何时不用
-
-- 单次任务，1-2 轮内可完成 → 用 TASK_STATE.md 即可
-- 任务已经清晰、定义明确 → 跳过规划，直接进入 Development
-- 用户没要求规划且任务直接明了
-
-### TASK_STATE.md 与 Phase 的关联
-
-当 PLAN.md 存在时，TASK_STATE.md 必须引用当前 Phase：
+当存在子计划时，TASK_STATE.md 的 Goal 和 Phase Context 必须引用子计划：
 
 ```markdown
 ## Goal
-P2 — 实现注册/登录 API（PLAN.md Phase 2）
+P2 — 实现注册/登录 API（子计划：plans/user-auth.md）
 
 ## Phase Context
-- **Phase 完成标准**：[引用 PLAN.md 中 P2 的完成标准]
-- **Phase 边界**：[引用 PLAN.md 中 P2 的边界]
+- **输入条件**：[引用子计划中 P2 的输入条件]
+- **完成标准**：[引用子计划中 P2 的完成标准]
+- **边界**：[引用子计划中 P2 的边界]
 ```
 
-### DEVLOG 中的 Phase 标注
+## DEVLOG — 子计划和 Phase 标注
 
-每轮 DEVLOG 标题必须标注所属 Phase：
+当存在子计划时，DEVLOG 轮次标题同时标注子计划和 Phase：
 
 ```markdown
-### R005 [14:30] — P2: 实现 POST /api/auth/register
+### R007 [14:30] [user-auth] P2: 实现 POST /api/auth/register
 ```
 
-### Phase-Gate 验证
+无子计划时（单 Phase 的 bug 修复等）省略子计划标注：
+
+```markdown
+### R007 [14:30] 修复登录超时问题
+```
+
+## Phase-Gate 验证
 
 当前 Phase 所有 TASK_STATE 项完成时：
-1. 逐条检查 PLAN.md 中该 Phase 的完成标准
-2. 检查是否越界（做了边界中排除的内容）
-3. 全部通过 → 勾选完成标准，更新 Phase 总览，进入下一 Phase
-4. 有未通过 → 补齐缺口，不进入下一 Phase
-5. 发现越界 → 标记并询问用户
+1. 逐条检查子计划中该 Phase 的完成标准
+2. 检查是否有越界改动（做了边界中排除的内容）
+3. 检查"执行中发现"是否有新条目需要分类
+4. 全部通过 → 勾选完成标准，更新子计划 Phase 总览和 PLAN.md
+5. 有未通过 → 补齐缺口，不进入下一 Phase
+6. 有越界 → 标记并询问用户
+7. 有新发现 → 分类为阻断/增强/延后，按 `references/planning-protocol.md` § 执行中发现处理

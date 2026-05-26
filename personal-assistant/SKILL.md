@@ -20,7 +20,7 @@ See `references/doc-structure.md` for the complete document tree, naming convent
 | `policy.md` | Tests, fix quality, doc consistency, output discipline, conflict handling, language guidance |
 | `dev-log-protocol.md` | DEVLOG batch format, round counter, layered reading, when/how to write dev log entries |
 | `review-protocol.md` | Scope determination, Quick Review and Full Report workflow, REVIEWS.md format, layered reading |
-| `planning-protocol.md` | Multi-round interactive planning, Phase-Gate structure, phase refinement, UI-phase detail requirements, plan completion and overwrite rules |
+| `planning-protocol.md` | Three-tier planning system, brainstorming protocol, sub-plan specification, insert-during-execution protocol, execution-phase Phase-Gate |
 | `context-memory.md` | Cross-platform memory system, memory vs TASK_STATE vs DEVLOG relationship |
 
 ## Modes
@@ -65,40 +65,41 @@ See `references/project-contract.md` for bootstrap rules.
 
 ### Planning
 
-Planning is a multi-round interactive process before any code is written. See `references/planning-protocol.md` for the complete protocol.
+Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (contract) → TASK_STATE.md (execution). See `references/planning-protocol.md` for the complete protocol.
 
-**Round 1 — Goal & Scope:**
-1. Read relevant docs (`PROJECT_GUIDE.md`, `PROJECT_SPEC.md`) and project memory
-2. Inspect nearby code to understand current state
-3. Propose: Goal statement + Scope (包含/不包含) + Constraints + Key decision points
-4. Wait for user confirmation before proceeding
+**Route to the right planning mode:**
 
-**Round 2 — Phase breakdown:**
-1. Decompose the work into 2-6 phases, each completable in 1-3 DEVLOG rounds
-2. Output Phase overview table (Phase | Goal | Estimated rounds | Dependencies | Status)
-3. Wait for user to adjust and confirm
+| 场景 | 模式 | 输出 |
+|------|------|------|
+| 全新功能模块 / 新技术栈 / 大重构 | 正式头脑风暴 (Storm-R1 → R4) | 子计划文件 |
+| 已有模块加小功能 | 轻量讨论 | 子计划文件 |
+| Bug 修复（原因已知） | 跳过规划 | TASK_STATE.md |
+| Bug 修复（原因不明） | 跳过规划 | TASK_STATE.md (P1 = 调查) |
+| 配置调整 / 性能优化 | 跳过规划 | TASK_STATE.md |
 
-**Round 3 — Per-phase refinement (core):**
-1. For each Phase, output the full contract:
-   - Input conditions (what must be true before starting)
-   - Deliverables (concrete, verifiable outputs)
-   - Completion criteria (objectively checkable)
-   - Boundaries (explicit exclusions to prevent drift)
-   - Files involved
-   - Key decisions (if any)
-2. For UI-heavy phases, additionally output: component tree, state matrix, interaction flow (see `references/planning-protocol.md` § UI 类 Phase 的细化要求)
-3. For small plans (2-3 phases), all phases in one round. For large plans (4+ phases), 1-2 phases per round.
+**正式头脑风暴 (新功能/新技术/大重构):**
 
-**Round 4 — Finalize:**
-1. Write complete `docs/dep/PLAN.md` with `status: planning`
-2. Present for final review
-3. On user confirmation ("开始", "确认执行", "go") → update `status: in-progress`, create TASK_STATE.md for P1, enter Development mode
+1. **Storm-R1 — 现状与目标**：阅读相关文档和代码 → 输出当前状态、目标、约束 → 用户确认
+2. **Storm-R2 — 方案对比**：提出 ≥ 2 个可行方案，含优劣、复杂度、影响面、预估轮次 → 推荐一个方案 → 用户选择
+3. **Storm-R3 — 范围边界**：确认包含/不包含范围、主文档影响、风险
+4. **Storm-R4 — Phase 拆解初稿**：拆解为 2-6 个 Phase，确认依赖链
+5. 写入 `docs/dep/plans/<name>.md`（包含背景、方案来源、Phase 合同、头脑风暴结论摘要）
+6. 在 `docs/dep/PLAN.md` "待开始" 中注册
 
-**Quick planning (lightweight):**
-For tasks estimable in 1-2 DEVLOG rounds, skip multi-round and do one-shot: propose Phase breakdown with completion criteria + boundaries, confirm once, write PLAN.md, execute. Completion criteria and boundaries cannot be skipped even in quick mode.
+**轻量讨论 (已有模块加功能):**
 
-**Plan completion:**
-When all phases are done, update PLAN.md `status: done`. When a new plan is needed, overwrite — only after confirming the old plan's outputs are synced to main docs and DEVLOG (see `references/planning-protocol.md` § 计划完成后的处理).
+1. AI 简要说明实现思路（1-2 句）
+2. 如果一种做法 → 直接确认；如果多种 → 列选项让用户选
+3. 确认后直接进入 Phase 细化（跳过方案对比和范围确认）
+4. 写入子计划文件，注册到 PLAN.md
+
+**子计划完成与 PLAN.md 移除:**
+
+1. 全部 Phase 完成 + 测试通过 + Review 通过（如有）
+2. 按 `syncs_to` 清单同步到主文档（PROJECT_SPEC / PROJECT_GUIDE / TEST_GUIDE）
+3. 关键决策保存到 `docs/main/memory/`
+4. 子计划文件保留在 `plans/` 目录（持久设计记录）
+5. PLAN.md 将指针从"进行中"移到"最近完成"（保留最近 3 条，超过删除）
 
 ### Development
 
@@ -140,24 +141,25 @@ If full Development, continue to step 3.
 
 3. Inspect the relevant docs, nearby code, and project memory (`docs/main/memory/`)
 4. State the constraint or design choice that matters
-5. **Phase-Gate check (if PLAN.md exists)** — before starting work, verify current Phase:
-   - Read `PLAN.md` current Phase's input conditions, completion criteria, and boundaries
+5. **Phase-Gate check (if sub-plan exists)** — before starting work, verify current Phase:
+   - Read the active sub-plan file (`plans/<name>.md`) current Phase's input conditions, completion criteria, and boundaries
    - If previous Phase has unchecked completion criteria → flag and ask user before proceeding
-   - If TASK_STATE.md exists from previous session, verify its Goal matches the current PLAN.md Phase
+   - If TASK_STATE.md exists from previous session, verify its Goal matches the current sub-plan Phase
    - If current request would cross Phase boundaries → flag and ask user
-6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If PLAN.md exists, Goal must reference the current Phase (e.g., "P2 — 实现注册/登录 API"), and include Phase Context section with completion criteria and boundaries.
+6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If a sub-plan is active, Goal must reference the sub-plan file and current Phase (e.g., "P2 — 实现注册/登录 API（子计划：plans/user-auth.md）"), and include Phase Context section with input conditions, completion criteria, and boundaries from the sub-plan.
 7. Make the smallest viable implementation
 8. **Update TASK_STATE.md** — after each significant step, update the progress checklist and working context
 9. Add or update tests
 10. Update the relevant docs in `docs/main/` and `USAGE.md` if applicable
 11. **Validate consistency** — cross-check `docs/main/*.md` (excl. memory/) + `USAGE.md` for terminology drift or conflicts (see `references/policy.md` § Doc consistency check)
-12. **Phase-Gate validation (if PLAN.md exists)** — when TASK_STATE.md items are all checked:
-    - Verify each completion criterion in PLAN.md for the current Phase
+12. **Phase-Gate validation (if sub-plan exists)** — when TASK_STATE.md items are all checked:
+    - Verify each completion criterion in the sub-plan file for the current Phase
     - Check for boundary violations (did we do things the Phase explicitly excluded?)
-    - All pass → check off completion criteria in PLAN.md, update Phase overview status
+    - Review "执行中发现" entries and classify new ones as 阻断/增强/延后 (see `references/planning-protocol.md` § 执行中发现)
+    - All pass + no violations → check off completion criteria in sub-plan, update Phase overview, update PLAN.md dashboard
     - Failures → fix gaps before proceeding. Do not start next Phase.
     - Boundary violation → flag and ask user: expand this Phase's scope, or defer to later Phase?
-13. **Write a dev log round** — append to `docs/dep/DEVLOG.md`. If PLAN.md exists, include Phase annotation in the round header: `### RXXX [HH:MM] — PX: [简短描述]` (see `references/dev-log-protocol.md`)
+13. **Write a dev log round** — append to `docs/dep/DEVLOG.md`. If a sub-plan is active, include sub-plan and Phase annotation in the round header: `### RXXX [HH:MM] [sub-plan] PX: [简短描述]` (see `references/dev-log-protocol.md`)
 14. **Delete TASK_STATE.md** — task/phase is complete, checkpoint is no longer needed
 15. Update context memory if new decisions, facts, or user preferences emerged
 16. **Output discipline** — verbosity scales with change size (see `references/policy.md` § Output discipline)
