@@ -1,18 +1,15 @@
 #!/usr/bin/env bash
-# Install script: symlink project skill directories to ~/.claude/skills/
+# Install script: symlink project skill directories to ~/.claude/skills/ and ~/.codex/skills/
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CLAUDE_SKILLS="${HOME}/.claude/skills"
+TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills")
 SKILL_NAME="${1:-}"
-
-mkdir -p "$CLAUDE_SKILLS"
 
 # Discover skill directories (those with SKILL.md at project root)
 skills=()
 for dir in "$PROJECT_ROOT"/*/; do
     name=$(basename "$dir")
-    # Exclude non-skill directories
     case "$name" in
         scripts|templates|dist|.git) continue ;;
     esac
@@ -30,32 +27,41 @@ if [ ${#skills[@]} -eq 0 ]; then
     exit 0
 fi
 
-echo "Linking skill(s) to $CLAUDE_SKILLS..."
-echo ""
+link_skills() {
+    local target_dir="$1"
 
-for name in "${skills[@]}"; do
-    source="$PROJECT_ROOT/$name"
-    target="$CLAUDE_SKILLS/$name"
+    mkdir -p "$target_dir"
 
-    if [ -L "$target" ]; then
-        current_target=$(readlink "$target")
-        if [ "$current_target" = "$source" ]; then
-            echo "  [$name] Already linked - skipping"
+    for name in "${skills[@]}"; do
+        source="$PROJECT_ROOT/$name"
+        target="$target_dir/$name"
+
+        if [ -L "$target" ]; then
+            current_target=$(readlink "$target")
+            if [ "$current_target" = "$source" ]; then
+                echo "  [$name] Already linked - skipping"
+                continue
+            else
+                echo "  [$name] Link exists but points elsewhere ($current_target). Replacing..."
+                rm "$target"
+            fi
+        elif [ -d "$target" ]; then
+            echo "  WARNING: [$name] Real directory exists at $target"
+            echo "  Remove it manually if you want to replace it: rm -rf '$target'"
             continue
-        else
-            echo "  [$name] Link exists but points elsewhere ($current_target). Replacing..."
-            rm "$target"
         fi
-    elif [ -d "$target" ]; then
-        echo "  WARNING: [$name] Real directory exists at $target"
-        echo "  Remove it manually if you want to replace it: rm -rf '$target'"
-        continue
-    fi
 
-    ln -s "$source" "$target"
-    echo "  [$name] Linked"
+        ln -s "$source" "$target"
+        echo "  [$name] Linked"
+    done
+}
+
+for target_dir in "${TARGET_DIRS[@]}"; do
+    echo "Linking skill(s) to $target_dir..."
+    echo ""
+    link_skills "$target_dir"
+    echo ""
 done
 
-echo ""
-echo "Done. Linked skills are available to Claude Code."
-echo "Verify with: ls -la '$CLAUDE_SKILLS'"
+echo "Done. Linked skills are available to Claude Code and Codex."
+echo "Verify with: ls -la '${TARGET_DIRS[0]}'"
