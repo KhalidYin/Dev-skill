@@ -78,7 +78,7 @@ Entries use date headers with global round numbers. All DEVLOG batch files use t
 - **Batch file title** — `# Dev Log — R001–R040` reflects the round range in that file
 - **Date header** — `## YYYY-MM-DD`, one per day. Create only when work happens that day
 - **Round header** — `### RXXX [HH:MM]`, global monotonic number (R001, R002, ...)
-- **Sub-plan and Phase annotation** — 当存在活跃子计划时，轮次标题必须同时标注子计划和 Phase：`### RXXX [HH:MM] [<sub-plan>] PX: [简短描述]`。子计划名与 `plans/<name>.md` 文件名一致（不含扩展名）。无子计划时省略子计划标注，有子计划但单 Phase 时省略 Phase 标注
+- **Sub-plan and Phase annotation** — 当存在活跃子计划时，轮次标题必须同时标注子计划和 Phase：`### RXXX [HH:MM] [sub-plan] PX: [简短描述]`。子计划名与 `plans/<name>.md` 文件名一致（不含扩展名）。无子计划时省略子计划标注，有子计划但单 Phase 时省略 Phase 标注
 - **Separator** — use `---` between rounds within the same date section
 - **Be concrete** — "Fixed login timeout" not "Worked on auth"
 - **Files Changed / Commits** — list every file touched with commit hash. If not yet committed, write "(uncommitted)"
