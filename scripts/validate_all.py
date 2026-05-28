@@ -100,7 +100,16 @@ def main():
 
     all_valid = True
     for skill_dir in sorted(skills):
-        valid, message = validate_fn(skill_dir)
+        try:
+            valid, message = validate_fn(skill_dir)
+        except UnicodeDecodeError as e:
+            if validate_fn is builtin_validate:
+                raise
+            print(
+                f"Note: skill-creator validator encoding error for {skill_dir.name} "
+                f"({e}), using builtin."
+            )
+            valid, message = builtin_validate(skill_dir)
 
         status = "PASS" if valid else "FAIL"
         print(f"  [{status}] {skill_dir.name}: {message}")

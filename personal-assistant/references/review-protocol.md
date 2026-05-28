@@ -34,7 +34,7 @@ Format:
 - [finding 1: what was checked, what was found — reference dev log round RXXX if relevant]
 - [finding 2: issue or gap identified vs dev log claims]
 - [finding 3: risk or concern — dev log items still open, blockers, etc.]
-- **Plan sync status**: N 个 P0/P1 issues 未同步到 PLAN.md（最长积压 X 天）/ 已同步
+- **Plan sync status**: N 个阻断/P0 issues 未同步到 PLAN.md（最长积压 X 轮）/ 已同步；Quick Review 只报告状态，不写文件
 - [summary verdict: OK / needs attention / blocking]
 
 需要我生成完整的审查报告到 `docs/dep/REVIEWS.md` 吗？
@@ -124,11 +124,12 @@ Only include sections that have content — skip empty sections entirely, do not
 
 Review 报告写入 `REVIEWS.md` 后，必须立即执行以下检查，确保 Review 发现不会与 `PLAN.md` 断裂：
 
-1. **P0/P1 同步**：将本轮 Review 中 Status=open 的 P0/P1 issues 写入对应位置：
-   - 属于现有子计划 → 写入该子计划 `plans/<name>.md` 的 execution findings 表
-   - 不属于任何子计划 → 创建或更新 `plans/tech-debt-repair.md` 子计划，PLAN.md 只保留子计划指针
-2. **老化检测**：读取 `plans/tech-debt-repair.md` 中已有的技术债务条目。如果 P0/P1 issues 积压超过 3 轮未被标记为 resolved → 在本轮 Review Findings 中标记为 `aging`。
-3. **状态刷新**：
+1. **阻断/P0 同步**：将本轮 Review 中 `Status=open` 的阻断 issue 写入对应位置：
+   - 属于现有子计划 → 写入该子计划 `docs/dep/plans/P<phase>-<name>.md` 的 execution findings 表。
+   - 不属于任何子计划 → 创建独立 `docs/dep/plans/P0-<desc>.md`，PLAN.md 只保留子计划指针。
+2. **非阻断技术债务同步**：将本轮 Review 中非阻断的技术债务写入或创建 `docs/dep/plans/P0-tech-debt.md`。该文件是单一技术债务 track，内部用 Phase 或条目区分来源和处理批次。
+3. **老化检测**：读取 `P0-tech-debt.md` 和所有 open 的 `P0-*.md`。如果 open issues 积压超过 3 个 DEVLOG 轮次未被标记为 resolved → 在本轮 Review Findings 中标记为 `aging`。
+4. **状态刷新**：
    - 已 resolved 的 issues → 从 PLAN.md 技术债务 track 移除，记入"最近完成"
    - 仍 open 的 issues → 保留在 PLAN.md，更新积压天数
 
@@ -138,11 +139,12 @@ Review 报告写入 `REVIEWS.md` 后，必须立即执行以下检查，确保 R
 
 | 发现类型 | 归属 |
 |----------|------|
-| 技术债务（Bug、性能、安全、数据完整性） | 创建 `plans/tech-debt-repair.md` 子计划（如不存在），PLAN.md 只保留子计划指针 |
-| 新功能需求 | 按 planning-protocol 的 "insert-during-execution" 流程创建新子计划 |
+| 阻断型 bug / 安全 / 数据完整性问题 | 创建独立 `docs/dep/plans/P0-<desc>.md`，PLAN.md 最高优先级 |
+| 非阻断技术债务（Bug、性能、维护性） | 创建或更新 `docs/dep/plans/P0-tech-debt.md`，PLAN.md 只保留一行指针 |
+| 新功能需求 | 按 `references/planning-protocol.md` 的“执行中插入新计划”流程创建新子计划 |
 | 架构改进 | 归入最相关的现有子计划，或创建新子计划 |
 
-技术债务子计划格式遵循 `plans/<name>.md` 标准（frontmatter + Phase 表 + 逐 Phase 详情），每个 P0/P1 issue 作为独立 Phase 或合并为同一批次 Phase。PLAN.md 仪表盘只保留一行指针，不内联详细任务表。
+所有 Review 生成的子计划都遵循 `templates/sub-plan.md.template`。`P0-tech-debt.md` 的 frontmatter 使用 `phase_index: 0`，`priority` 低于独立阻断型 `P0-<desc>.md`。PLAN.md 仪表盘只保留指针，不内联详细任务表。
 
 ### Layered reading for REVIEWS.md
 

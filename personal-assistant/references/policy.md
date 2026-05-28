@@ -50,7 +50,7 @@ If none of the above apply, proceed with Quick Fix.
 1. Validate change scope (AI autonomous check above)
 2. Make the change
 3. Run related tests (if test suite exists)
-4. Write one-line entry to DEVLOG.md (not a full round — see dev-log-protocol.md)
+4. Write one-line entry to the active DEVLOG batch (not a full round — see dev-log-protocol.md)
 5. Done — skip: TASK_STATE.md, doc consistency check, output discipline
 ```
 
@@ -67,7 +67,7 @@ When Quick Fix is rejected:
 
 ## Dev log
 
-After every completed round of work in Development mode, write a dev log entry to `docs/dep/DEVLOG.md`. This is non-negotiable — the review process depends on it.
+After every completed round of work in Development mode, write a dev log entry to the active `docs/dep/DEVLOG-RXXX-RXXX.md` batch. This is non-negotiable — the review process depends on it.
 
 **Quick Fix exception**: Quick Fix uses a one-line entry format instead of a full round. See `references/dev-log-protocol.md` for both formats.
 
@@ -207,7 +207,7 @@ See `references/context-memory.md` for the full memory protocol.
 | `docs/main/CODE_STYLE.md` | Chinese | |
 | `docs/main/TEST_GUIDE.md` | Chinese | |
 | `docs/main/memory/*.md` | Chinese | Frontmatter fields (`name`, `description`, `type`) may remain English |
-| `docs/dep/DEVLOG.md` | Chinese | Section headers (`Done`, `Issues/Blockers`, `Next`, `Files Changed/Commits`) may remain English |
+| `docs/dep/DEVLOG-RXXX-RXXX.md` | Chinese | Section headers (`Done`, `Issues/Blockers`, `Next`, `Files Changed/Commits`) may remain English |
 | `docs/dep/REVIEWS.md` | Chinese | Section headers and table headers may remain English |
 | `docs/dep/PLAN.md` | Chinese | Section headers may remain English |
 | `docs/dep/TASK_STATE.md` | Chinese | Progress items and context must be Chinese; section headers may remain English |

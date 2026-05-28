@@ -65,7 +65,7 @@ See `references/project-contract.md` for bootstrap rules.
 
 ### Planning
 
-Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (contract) → TASK_STATE.md (execution). See `references/planning-protocol.md` for the complete protocol.
+Planning uses a three-tier system: `docs/dep/PLAN.md` (dashboard) → `docs/dep/plans/P<phase>-<name>.md` (contract) → `docs/dep/TASK_STATE.md` (execution). See `references/planning-protocol.md` for the complete protocol.
 
 **Route to the right planning mode:**
 
@@ -73,6 +73,8 @@ Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (cont
 |------|------|------|
 | 全新功能模块 / 新技术栈 / 大重构 | 正式头脑风暴 (Storm-R1 → R4) | 子计划文件 |
 | 已有模块加小功能 | 轻量讨论 | 子计划文件 |
+| Review 阻断型 bug | P0 前置修复 | `docs/dep/plans/P0-<desc>.md` |
+| Review 非阻断技术债务 | P0 技术债务 track | `docs/dep/plans/P0-tech-debt.md` |
 | Bug 修复（原因已知） | 跳过规划 | TASK_STATE.md |
 | Bug 修复（原因不明） | 跳过规划 | TASK_STATE.md (P1 = 调查) |
 | 配置调整 / 性能优化 | 跳过规划 | TASK_STATE.md |
@@ -83,7 +85,7 @@ Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (cont
 2. **Storm-R2 — 方案对比**：提出 ≥ 2 个可行方案，含优劣、复杂度、影响面、预估轮次 → 推荐一个方案 → 用户选择
 3. **Storm-R3 — 范围边界**：确认包含/不包含范围、主文档影响、风险
 4. **Storm-R4 — Phase 拆解初稿**：拆解为 2-6 个 Phase，确认依赖链
-5. 写入 `docs/dep/plans/<name>.md`（包含背景、方案来源、Phase 合同、头脑风暴结论摘要）
+5. 写入 `docs/dep/plans/P<phase>-<name>.md`（包含背景、方案来源、Phase 合同、头脑风暴结论摘要）
 6. 在 `docs/dep/PLAN.md` "待开始" 中注册
 
 **轻量讨论 (已有模块加功能):**
@@ -96,7 +98,7 @@ Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (cont
 **子计划完成与 PLAN.md 移除:**
 
 1. 全部 Phase 完成 + 测试通过 + Review 通过（如有）
-2. 按 `syncs_to` 清单同步到主文档（PROJECT_SPEC / PROJECT_GUIDE / TEST_GUIDE）
+2. 按 `syncs_to` 清单同步到主文档（PROJECT_SPEC / PROJECT_GUIDE / TEST_GUIDE / CODE_STYLE，按实际影响）
 3. 关键决策保存到 `docs/main/memory/`
 4. 子计划文件保留在 `plans/` 目录（持久设计记录）
 5. PLAN.md 将指针从"进行中"移到"最近完成"（保留最近 3 条，超过删除）
@@ -106,7 +108,7 @@ Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (cont
 #### Step 0: Check interrupt checkpoint
 
 1. If `docs/dep/TASK_STATE.md` exists, read it
-2. **Expiry check** — compare TASK_STATE.md `updated` time with DEVLOG.md last round time:
+2. **Expiry check** — compare TASK_STATE.md `updated` time with the active DEVLOG batch's last round time:
    - If DEVLOG last round time >= TASK_STATE.updated → the task may have already completed and TASK_STATE is a stale leftover
    - Prompt: "TASK_STATE.md 显示任务在 [updated time] 中断，但 DEVLOG 显示 [last round time] 已有完成记录。这个任务是否已完成？我可以清理 TASK_STATE.md。"
    - If user confirms → delete TASK_STATE.md, proceed as new task
@@ -118,7 +120,7 @@ Planning uses a three-tier system: PLAN.md (dashboard) → plans/<name>.md (cont
 
 #### Step 1: Check for unfinished work
 
-Read the last round in the active DEVLOG batch file (see layered reading in `references/dev-log-protocol.md`). If `Next` has open items not covered by TASK_STATE.md, ask: "上次 [round] 还有未完成的任务：xxx。继续上次的任务还是开始新任务？"
+Read the last round in the active `docs/dep/DEVLOG-RXXX-RXXX.md` batch file (see layered reading in `references/dev-log-protocol.md`). If `Next` has open items not covered by TASK_STATE.md, ask: "上次 [round] 还有未完成的任务：xxx。继续上次的任务还是开始新任务？"
 
 #### Step 2: Route to Quick Fix or Full Development
 
@@ -131,7 +133,7 @@ If Quick Fix:
 ```
 3. Make the change
 4. Run related tests
-5. Write one-line QF entry to DEVLOG.md (see dev-log-protocol.md)
+5. Write one-line QF entry to the active DEVLOG batch (see dev-log-protocol.md)
 6. Done
 ```
 
@@ -142,11 +144,11 @@ If full Development, continue to step 3.
 3. Inspect the relevant docs, nearby code, and project memory (`docs/main/memory/`)
 4. State the constraint or design choice that matters
 5. **Phase-Gate check (if sub-plan exists)** — before starting work, verify current Phase:
-   - Read the active sub-plan file (`plans/<name>.md`) current Phase's input conditions, completion criteria, and boundaries
+   - Read the active sub-plan file (`docs/dep/plans/P<phase>-<name>.md`) current Phase's input conditions, completion criteria, and boundaries
    - If previous Phase has unchecked completion criteria → flag and ask user before proceeding
    - If TASK_STATE.md exists from previous session, verify its Goal matches the current sub-plan Phase
    - If current request would cross Phase boundaries → flag and ask user
-6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If a sub-plan is active, Goal must reference the sub-plan file and current Phase (e.g., "P2 — 实现注册/登录 API（子计划：plans/user-auth.md）"), and include Phase Context section with input conditions, completion criteria, and boundaries from the sub-plan.
+6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If a sub-plan is active, Goal must reference the sub-plan file and current Phase (e.g., "P2 — 实现注册/登录 API（子计划：docs/dep/plans/P1-user-auth.md）"), and include Phase Context section with input conditions, completion criteria, and boundaries from the sub-plan.
 7. Make the smallest viable implementation
 8. **Update TASK_STATE.md** — after each significant step, update the progress checklist and working context
 9. Add or update tests
@@ -159,7 +161,7 @@ If full Development, continue to step 3.
     - All pass + no violations → check off completion criteria in sub-plan, update Phase overview, update PLAN.md dashboard
     - Failures → fix gaps before proceeding. Do not start next Phase.
     - Boundary violation → flag and ask user: expand this Phase's scope, or defer to later Phase?
-13. **Write a dev log round** — append to `docs/dep/DEVLOG.md`. If a sub-plan is active, include sub-plan and Phase annotation in the round header: `### RXXX [HH:MM] [sub-plan] PX: [简短描述]` (see `references/dev-log-protocol.md`)
+13. **Write a dev log round** — append to the active `docs/dep/DEVLOG-RXXX-RXXX.md` batch. If a sub-plan is active, include sub-plan and Phase annotation in the round header: `### RXXX [HH:MM] [P1-user-auth] P2: [简短描述]` (see `references/dev-log-protocol.md`)
 14. **Delete TASK_STATE.md** — task/phase is complete, checkpoint is no longer needed
 15. Update context memory if new decisions, facts, or user preferences emerged
 16. **Output discipline** — verbosity scales with change size (see `references/policy.md` § Output discipline)

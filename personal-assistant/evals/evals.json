@@ -27,7 +27,7 @@
         "Bug is fixed in src/auth.py",
         "Tests are added or updated",
         "Doc consistency check is performed and reported",
-        "Dev log round is appended to docs/dep/DEVLOG.md with Done, Issues, Next, Files Changed/Commits",
+        "Dev log round is appended to the active docs/dep/DEVLOG-RXXX-RXXX.md batch with Done, Issues, Next, Files Changed/Commits",
         "Response includes risk note, optimization advice, summary, validation, doc consistency result"
       ]
     },
@@ -37,7 +37,7 @@
       "expected_output": "Skill enters Review mode, reads dev log since last review, does Quick Review with 3-5 bullet points, asks about Full Report.",
       "expectations": [
         "Review mode is selected",
-        "Dev log in docs/dep/DEVLOG.md is read",
+        "Active dev log batch docs/dep/DEVLOG-RXXX-RXXX.md is read",
         "git log is checked against dev log claims",
         "Quick Review outputs 3-5 bullet points with cross-check verdict",
         "User is asked whether they want a Full Report appended to docs/dep/REVIEWS.md"
@@ -81,7 +81,7 @@
       "expected_output": "Skill handles mixed-mode request: enters Development first for the fix, completes with dev log, then switches to Review mode for the security audit.",
       "expectations": [
         "Development mode is selected first for the bug fix",
-        "Bug fix completes with dev log entry in DEVLOG.md",
+        "Bug fix completes with dev log entry in the active DEVLOG batch",
         "Review mode is then selected for the security audit",
         "Quick Review is performed on the auth module",
         "Two separate dev log / review entries are created"
@@ -95,7 +95,7 @@
         "TASK_STATE.md is checked first (Development mode step 0)",
         "If TASK_STATE.md exists: checkpoint content is read and presented",
         "User is asked: '发现未完成的任务：[Goal]。继续还是开始新任务？'",
-        "If TASK_STATE.md does not exist: falls back to reading DEVLOG.md last round",
+        "If TASK_STATE.md does not exist: falls back to reading the active DEVLOG batch last round",
         "No new work starts until user confirms direction"
       ]
     },
@@ -132,19 +132,19 @@
         "Progress checklist is displayed with [x]/[ ] status",
         "Working Context is presented (files being edited, last command, blockers)",
         "Resume From instruction is shown",
-        "If TASK_STATE.md does not exist, reads DEVLOG.md last round instead"
+        "If TASK_STATE.md does not exist, reads the active DEVLOG batch last round instead"
       ]
     },
     {
       "id": 14,
       "prompt": "Quick fix — just change the login timeout from 30s to 60s in config.py.",
-      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to DEVLOG.md.",
+      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to the active DEVLOG batch.",
       "expectations": [
         "Quick Fix mode is triggered (user said 'quick fix')",
         "AI validation runs: checks file count, interface change, architecture impact, etc.",
         "Validation passes (single config file, no interface/architecture impact)",
         "Change is made to config.py",
-        "One-line QF entry is written to DEVLOG.md (not a full round format)",
+        "One-line QF entry is written to the active DEVLOG batch (not a full round format)",
         "TASK_STATE.md is NOT created",
         "Doc consistency check is skipped",
         "Output is brief: one-line summary + '已写入 dev log'"
@@ -165,7 +165,7 @@
     {
       "id": 16,
       "prompt": "继续上次的任务。",
-      "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with DEVLOG.md last round time. If DEVLOG is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
+      "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with the active DEVLOG batch last round time. If the DEVLOG batch is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
       "expectations": [
         "TASK_STATE.md is read (step 0)",
         "Expiry check: TASK_STATE.updated is compared with DEVLOG last round time",
@@ -188,11 +188,13 @@
     {
       "id": 18,
       "prompt": "我要做一个用户权限系统，涉及角色管理、权限分配、API 鉴权，帮我先规划一下。",
-      "expected_output": "Skill creates PLAN.md with the feature breakdown, then asks the user to confirm the plan before starting implementation.",
+      "expected_output": "Skill creates or updates docs/dep/PLAN.md as a dashboard and creates a phase-indexed sub-plan under docs/dep/plans/ with the feature breakdown, then asks the user to confirm before starting implementation.",
       "expectations": [
-        "PLAN.md is created at docs/dep/PLAN.md",
-        "Plan includes: Goal, Context, Plan steps (numbered), Decisions section",
-        "Status is set to 'planning'",
+        "PLAN.md is created or updated at docs/dep/PLAN.md as a dashboard",
+        "A sub-plan is created at docs/dep/plans/P<phase>-<name>.md",
+        "Sub-plan frontmatter includes phase_index, status, priority, estimated_rounds, depends_on, and syncs_to",
+        "Sub-plan includes Goal/Context, Phase breakdown, completion criteria, boundaries, decisions, and main-doc sync targets",
+        "Status is set to 'planning' in the sub-plan",
         "User is asked to review and confirm the plan before implementation begins",
         "TASK_STATE.md is NOT created yet (waiting for plan confirmation)"
       ]

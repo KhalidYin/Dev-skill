@@ -2,45 +2,45 @@
 
 ## Document locations
 
-See `references/doc-structure.md` — the authoritative source for all paths and naming conventions.
+See `references/doc-structure.md` for the authoritative source for all paths, naming conventions, and file lifecycles.
 
-**Relationship**:
-- `main/` — defines what the project IS (blueprint)
-- `dep/DEVLOG.md` — records what was DONE (rolling dev log)
-- `dep/REVIEWS.md` — records what was FOUND (rolling review reports)
-- `dep/PLAN.md` — records what is ACTIVE (dashboard with pointers to sub-plans)
-- `dep/plans/` — records what is PLANNED in detail (sub-plan contracts, persistent)
-- `deploy/` — describes HOW to deploy (deployment guide)
-- `USAGE.md` — how to USE the project (root level)
+Relationship:
+- `docs/main/` defines what the project is.
+- `docs/dep/DEVLOG-RXXX-RXXX.md` records what was done.
+- `docs/dep/REVIEWS.md` records what was found.
+- `docs/dep/PLAN.md` records what is active or queued.
+- `docs/dep/plans/P<phase>-<name>.md` records planned work in detail.
+- `docs/deploy/` describes how to deploy.
+- `USAGE.md` describes how to use the project.
 
-Reviews cross-check dev log claims against main docs, usage docs, and actual code.
+Reviews cross-check DEVLOG claims against main docs, usage docs, git history, and actual code.
 
 Use these docs as the source of truth when they exist. If the repo uses different filenames or paths, map them to these roles once and keep that mapping consistent.
 
 ## Bootstrap
 
-When ALL four canonical docs are missing from `docs/main/` (or root), auto-generate a minimal skeleton:
+When all four canonical docs are missing from `docs/main/` (or root), auto-generate a minimal skeleton from the bundled templates:
 
-- `USAGE.md` — quick start filled with detected info; prerequisites and FAQ marked TBD
-- `docs/main/PROJECT_GUIDE.md` — one-sentence summary + detected language/framework + top-level directory list
-- `docs/main/PROJECT_SPEC.md` — TBD placeholder
-- `docs/main/CODE_STYLE.md` — TBD placeholder
-- `docs/main/TEST_GUIDE.md` — TBD placeholder
-- `docs/main/memory/MEMORY.md` — empty index with header only
-- `docs/dep/` — created, empty (DEVLOG.md created on first Development round)
-- `docs/deploy/DEPLOY_GUIDE.md` — TBD placeholder
+- `USAGE.md` - quick start filled with detected info; prerequisites and FAQ marked TBD.
+- `docs/main/PROJECT_GUIDE.md` - based on `templates/PROJECT_GUIDE.md.template`; fill only observed language/framework and top-level structure.
+- `docs/main/PROJECT_SPEC.md` - based on `templates/PROJECT_SPEC.md.template`; unknown sections remain TBD.
+- `docs/main/CODE_STYLE.md` - based on `templates/CODE_STYLE.md.template`; unknown conventions remain TBD.
+- `docs/main/TEST_GUIDE.md` - based on `templates/TEST_GUIDE.md.template`; unknown test details remain TBD.
+- `docs/main/memory/MEMORY.md` - empty index with header only.
+- `docs/dep/` - created; first Development round creates `DEVLOG-R001-R040.md`.
+- `docs/deploy/DEPLOY_GUIDE.md` - TBD placeholder.
 
 Bootstrap rules:
-- Generate only what is immediately observable: project language, framework, top-level structure
-- Use "TBD" placeholders for anything that requires human input
-- Do NOT invent architecture, scope, or conventions — leave them blank
-- Tell the user what was created and that they should fill in the details over time
-- After bootstrap, proceed with the original request
-- If SOME docs exist but not all, only generate the missing ones. Do not overwrite existing docs.
+- Generate only what is immediately observable: project language, framework, top-level structure, commands found in package/config files.
+- Use `TBD` placeholders for anything requiring human input.
+- Do not invent architecture, scope, or conventions.
+- If some docs exist but not all, create only missing docs. Do not overwrite existing docs.
+- Tell the user what was created and that project-specific details should be filled in over time.
+- After bootstrap, proceed with the original request.
 
 ## Doc sync rules
 
-If a required doc is missing, incomplete, or contradicts another doc, do not guess. Report the exact gap or conflict and ask the user to confirm the direction before changing code.
+If a required doc is missing, incomplete, or contradicts another doc, do not guess. Report the exact gap or conflict and ask the user to confirm the direction before changing code when the answer cannot be inferred from implementation.
 
 Document only what is actually implemented. Do not write planned work, placeholder menus, or future ideas as if they already exist.
 
@@ -48,26 +48,46 @@ Any code change that affects architecture, interfaces, data flow, validation rul
 
 If the change is purely local and does not alter behavior or project contracts, limit documentation updates to the affected area.
 
+## Main document templates
+
+The four canonical `docs/main/` documents have explicit structures. Review and plan sync checks use these sections as targets.
+
+| Main doc | Template | Sync targets |
+|----------|----------|--------------|
+| `PROJECT_GUIDE.md` | `templates/PROJECT_GUIDE.md.template` | Overview, tech stack, module structure, data flow, directory structure, key conventions |
+| `PROJECT_SPEC.md` | `templates/PROJECT_SPEC.md.template` | Project goals, feature scope, technical decisions, interface contracts, non-functional requirements |
+| `CODE_STYLE.md` | `templates/CODE_STYLE.md.template` | Naming, formatting, comments, import order, error handling, special conventions |
+| `TEST_GUIDE.md` | `templates/TEST_GUIDE.md.template` | Test framework, test structure, run commands, coverage, test conventions, test data |
+
 ## Plan sync rules
 
-### 子计划完成后的同步
+### Sub-plan completion sync
 
-子计划全部 Phase 完成时，按子计划 frontmatter 的 `syncs_to` 清单同步到主文档：
+When all Phases in a sub-plan are complete, synchronize according to the sub-plan frontmatter `syncs_to` list and the body section `## 主文档影响`.
 
-1. **PROJECT_SPEC.md** — 新功能说明、技术决策、范围边界
-2. **PROJECT_GUIDE.md** — 架构变更、模块职责、数据流
-3. **TEST_GUIDE.md** — 测试说明、覆盖范围（如有新增测试模式）
-4. **CODE_STYLE.md** — 编码约定（如有新约定）
-5. **docs/main/memory/** — 关键决策写入或更新项目记忆
+Rules:
+- `syncs_to` lists document filenames only.
+- `## 主文档影响` must name the specific sections to update in each listed document.
+- The two must match. A document listed in one place and missing in the other is a sync error.
+- Sync only implemented behavior and accepted decisions.
 
-### PLAN.md 指针移除
+Common sync targets:
 
-同步完成后：
-1. 将子计划从 PLAN.md "进行中"移到"最近完成"
-2. 保留最近 3 条"最近完成"，超过的直接删除
-3. 子计划文件（`plans/<name>.md`）不移除、不删除 — 它是功能的设计决策记录
-4. PLAN.md 只移除指向子计划的指针
+1. **PROJECT_SPEC.md** - feature scope, technical decisions, interface contracts, non-functional requirements.
+2. **PROJECT_GUIDE.md** - architecture changes, module responsibilities, data flow, directory structure.
+3. **TEST_GUIDE.md** - test commands, test layout, coverage notes, fixture/data strategy.
+4. **CODE_STYLE.md** - new naming, formatting, error handling, import, or project-specific style conventions.
+5. **docs/main/memory/** - durable decisions, facts, and user preferences.
 
-### 覆盖旧仪表盘
+### PLAN.md pointer update
 
-当 PLAN.md "进行中"和"待开始"都为空时，新计划直接基于当前 PLAN.md 结构增量更新。如果旧有延后条目，保留到新仪表盘作为参考。
+After sync:
+
+1. Move the sub-plan from PLAN.md `进行中` to `最近完成`.
+2. Keep only the latest 3 rows in `最近完成`.
+3. Keep `docs/dep/plans/P<phase>-<name>.md` in place. It is the persistent design record.
+4. PLAN.md removes or updates only the pointer row.
+
+### Empty dashboard
+
+When PLAN.md `进行中` and `待开始` are both empty, a new plan updates the existing dashboard structure in place. Keep existing `延后` entries as future planning input unless the user explicitly clears them.
