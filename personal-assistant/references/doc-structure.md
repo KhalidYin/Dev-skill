@@ -2,6 +2,15 @@
 
 Authoritative reference for document paths, naming rules, lifecycle, TASK_STATE.md format, and DEVLOG batch rules.
 
+## 目录
+
+- [Directory tree](#directory-tree)
+- [File reference](#file-reference)
+- [Naming rules](#naming-rules)
+- [DEVLOG round batches](#devlog-round-batches)
+- [TASK_STATE.md - Interrupt checkpoint](#task_statemd---interrupt-checkpoint)
+- [Format ownership](#format-ownership)
+
 ## Directory tree
 
 ```

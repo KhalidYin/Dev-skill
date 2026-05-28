@@ -1,8 +1,13 @@
 # Install script: link project skill directories to ~/.claude/skills/ and ~/.codex/skills/
 # Three-tier strategy: SymbolicLink > Junction > Copy
+# Usage:
+#   .\install.ps1              # Install (skip if already linked)
+#   .\install.ps1 -Force       # Remove old links first, then reinstall
+#   .\install.ps1 -SkillName personal-assistant  # Install a single skill
 
 param(
-    [string]$SkillName = $null
+    [string]$SkillName = $null,
+    [switch]$Force
 )
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
@@ -52,10 +57,15 @@ function Install-SkillsToTarget {
                 continue
             }
 
-            Write-Warning "  [$($skill.Name)] Target exists at $target but is not a link to this project."
-            Write-Warning "  Remove it manually first if you want to replace it, or run:"
-            Write-Warning "    Remove-Item -Recurse -Force '$target'"
-            continue
+            if ($Force) {
+                Write-Host "  [$($skill.Name)] Removing existing target (Force mode)..."
+                Remove-Item -Recurse -Force -Path $target
+            } else {
+                Write-Warning "  [$($skill.Name)] Target exists at $target but is not a link to this project."
+                Write-Warning "  Remove it manually first if you want to replace it, or run:"
+                Write-Warning "    .\install.ps1 -Force"
+                continue
+            }
         }
 
         # Attempt 1: SymbolicLink (needs Developer Mode or admin)

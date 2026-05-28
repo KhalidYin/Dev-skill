@@ -2,6 +2,16 @@
 
 When the user issues an audit/review/inspection command, follow a two-tier approach: **Quick Review** first, then offer **Full Report**.
 
+## 目录
+
+- [Scope determination](#scope-determination)
+- [Quick Review (default)](#quick-review-default)
+- [Full Report (on demand)](#full-report-on-demand)
+- [Plan Sync (mandatory, after Full Report)](#plan-sync-mandatory-after-full-report)
+- [Cross-sub-plan finding classification](#cross-sub-plan-finding-classification)
+- [Layered reading for REVIEWS.md](#layered-reading-for-reviewsmd)
+- [When NOT to generate](#when-not-to-generate)
+
 The review process cross-checks four sources:
 - **Dev log** (`docs/dep/DEVLOG-RXXX-RXXX.md`) — what was claimed as done
 - **Git history** (`git log --oneline --since=<date>`) — what was actually committed

@@ -1,10 +1,24 @@
 #!/usr/bin/env bash
 # Install script: symlink project skill directories to ~/.claude/skills/ and ~/.codex/skills/
+# Usage:
+#   ./install.sh                       # Install (skip if already linked)
+#   ./install.sh --force               # Remove old links first, then reinstall
+#   ./install.sh personal-assistant    # Install a single skill
+#   ./install.sh --force personal-assistant  # Force reinstall a single skill
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills")
-SKILL_NAME="${1:-}"
+FORCE=false
+SKILL_NAME=""
+
+for arg in "$@"; do
+    if [ "$arg" = "--force" ]; then
+        FORCE=true
+    else
+        SKILL_NAME="$arg"
+    fi
+done
 
 # Discover skill directories (those with SKILL.md at project root)
 skills=()
@@ -46,9 +60,15 @@ link_skills() {
                 rm "$target"
             fi
         elif [ -d "$target" ]; then
-            echo "  WARNING: [$name] Real directory exists at $target"
-            echo "  Remove it manually if you want to replace it: rm -rf '$target'"
-            continue
+            if [ "$FORCE" = true ]; then
+                echo "  [$name] Removing existing directory (Force mode)..."
+                rm -rf "$target"
+            else
+                echo "  WARNING: [$name] Real directory exists at $target"
+                echo "  Remove it manually if you want to replace it, or run:"
+                echo "    ./install.sh --force"
+                continue
+            fi
         fi
 
         ln -s "$source" "$target"

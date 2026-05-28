@@ -1,5 +1,13 @@
 # Project contract
 
+## 目录
+
+- [Document locations](#document-locations)
+- [Bootstrap](#bootstrap)
+- [Doc sync rules](#doc-sync-rules)
+- [Main document templates](#main-document-templates)
+- [Plan sync rules](#plan-sync-rules)
+
 ## Document locations
 
 See `references/doc-structure.md` for the authoritative source for all paths, naming conventions, and file lifecycles.

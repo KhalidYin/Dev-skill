@@ -2,6 +2,16 @@
 
 Every non-trivial development action MUST be recorded in a DEVLOG batch file under `docs/dep/`. This log is the primary source the review process uses to cross-check claims against code and docs.
 
+## 目录
+
+- [Round batch system](#round-batch-system)
+- [Format](#format)
+- [Rules](#rules)
+- [Layered reading](#layered-reading)
+- [When to write](#when-to-write)
+- [Quick Fix entry format](#quick-fix-entry-format)
+- [When NOT to write](#when-not-to-write)
+
 ## Round batch system
 
 DEVLOG uses **40-round batches** to control file size. Each file holds exactly one batch.
