@@ -1,13 +1,8 @@
 # Install script: link project skill directories to ~/.claude/skills/ and ~/.codex/skills/
 # Three-tier strategy: SymbolicLink > Junction > Copy
-# Usage:
-#   .\install.ps1              # Install (skip if already linked)
-#   .\install.ps1 -Force       # Remove old links first, then reinstall
-#   .\install.ps1 -SkillName personal-assistant  # Install a single skill
 
 param(
-    [string]$SkillName = $null,
-    [switch]$Force
+    [string]$SkillName = $null
 )
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
@@ -46,26 +41,10 @@ function Install-SkillsToTarget {
         $source = $skill.FullName
         $target = Join-Path $TargetDir $skill.Name
 
+        # Remove existing target if present
         if (Test-Path $target) {
-            $item = Get-Item $target
-            if ($item.LinkType -eq "SymbolicLink" -and (Get-Item $item.Target).FullName -eq $source) {
-                Write-Host "  [$($skill.Name)] Already linked (SymbolicLink) - skipping"
-                continue
-            }
-            if ($item.LinkType -eq "Junction" -and (Get-Item $item.Target).FullName -eq $source) {
-                Write-Host "  [$($skill.Name)] Already linked (Junction) - skipping"
-                continue
-            }
-
-            if ($Force) {
-                Write-Host "  [$($skill.Name)] Removing existing target (Force mode)..."
-                Remove-Item -Recurse -Force -Path $target
-            } else {
-                Write-Warning "  [$($skill.Name)] Target exists at $target but is not a link to this project."
-                Write-Warning "  Remove it manually first if you want to replace it, or run:"
-                Write-Warning "    .\install.ps1 -Force"
-                continue
-            }
+            Remove-Item -Recurse -Force -Path $target
+            Write-Host "  [$($skill.Name)] Removed old link"
         }
 
         # Attempt 1: SymbolicLink (needs Developer Mode or admin)
@@ -91,7 +70,7 @@ function Install-SkillsToTarget {
             Copy-Item -Recurse -Path $source -Destination $target -ErrorAction Stop
             Write-Warning "  [$($skill.Name)] Copied (fallback). Re-run this script after editing."
         } catch {
-            Write-Error "  [$($skill.Name)] Copy also failed: $_"
+            Write-Host "  [$($skill.Name)] Copy also failed: $_" -ForegroundColor Red
         }
     }
 }
@@ -104,4 +83,3 @@ foreach ($targetDir in $TargetDirs) {
 }
 
 Write-Host "Done. Linked skills are available to Claude Code and Codex."
-Write-Host "Verify with: Get-ChildItem '$($TargetDirs[0])'"
