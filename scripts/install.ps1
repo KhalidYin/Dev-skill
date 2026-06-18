@@ -1,4 +1,4 @@
-# Install script: link project skill directories to ~/.claude/skills/ and ~/.codex/skills/
+# Install script: link project skill directories to ~/.claude/skills/, ~/.codex/skills/, and ~/.agent/skills/
 # Three-tier strategy: SymbolicLink > Junction > Copy
 
 param(
@@ -8,7 +8,8 @@ param(
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $TargetDirs = @(
     (Join-Path $HOME ".claude\skills"),
-    (Join-Path $HOME ".codex\skills")
+    (Join-Path $HOME ".codex\skills"),
+    (Join-Path $HOME ".agents\skills")
 )
 
 # Discover skill directories (those with SKILL.md at project root)
@@ -37,15 +38,21 @@ function Install-SkillsToTarget {
         Write-Host "Created $TargetDir"
     }
 
+    # Phase 1: Remove all existing skill links/copies
+    Write-Host "Removing existing skills..."
+    foreach ($skill in $Skills) {
+        $target = Join-Path $TargetDir $skill.Name
+        if (Test-Path $target) {
+            Remove-Item -Recurse -Force -Path $target
+            Write-Host "  [$($skill.Name)] Removed"
+        }
+    }
+
+    # Phase 2: Install new skill links/copies
+    Write-Host "Installing new skills..."
     foreach ($skill in $Skills) {
         $source = $skill.FullName
         $target = Join-Path $TargetDir $skill.Name
-
-        # Remove existing target if present
-        if (Test-Path $target) {
-            Remove-Item -Recurse -Force -Path $target
-            Write-Host "  [$($skill.Name)] Removed old link"
-        }
 
         # Attempt 1: SymbolicLink (needs Developer Mode or admin)
         try {
@@ -82,4 +89,4 @@ foreach ($targetDir in $TargetDirs) {
     Write-Host ""
 }
 
-Write-Host "Done. Linked skills are available to Claude Code and Codex."
+Write-Host "Done. Linked skills are available to Claude Code, Codex, and Agent."

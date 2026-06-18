@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Install script: symlink project skill directories to ~/.claude/skills/ and ~/.codex/skills/
+# Install script: symlink project skill directories to ~/.claude/skills/, ~/.codex/skills/, and ~/.agent/skills/
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills")
+TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills" "${HOME}/.agents/skills")
 SKILL_NAME="${1:-}"
 
 # Discover skill directories (those with SKILL.md at project root)
@@ -31,15 +31,22 @@ for target_dir in "${TARGET_DIRS[@]}"; do
     mkdir -p "$target_dir"
     echo "Linking skill(s) to $target_dir..."
     echo ""
+
+    # Phase 1: Remove all existing skill links/copies
+    echo "Removing existing skills..."
+    for name in "${skills[@]}"; do
+        target="$target_dir/$name"
+        if [ -e "$target" ] || [ -L "$target" ]; then
+            rm -rf "$target"
+            echo "  [$name] Removed"
+        fi
+    done
+
+    # Phase 2: Install new skill links
+    echo "Installing new skills..."
     for name in "${skills[@]}"; do
         source="$PROJECT_ROOT/$name"
         target="$target_dir/$name"
-
-        # Remove existing target if present
-        if [ -e "$target" ] || [ -L "$target" ]; then
-            rm -rf "$target"
-            echo "  [$name] Removed old link"
-        fi
 
         ln -s "$source" "$target"
         echo "  [$name] Linked"
@@ -47,4 +54,4 @@ for target_dir in "${TARGET_DIRS[@]}"; do
     echo ""
 done
 
-echo "Done. Linked skills are available to Claude Code and Codex."
+echo "Done. Linked skills are available to Claude Code, Codex, and Agent."
