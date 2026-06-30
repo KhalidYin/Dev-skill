@@ -25,12 +25,12 @@ Claude Code has a native auto-memory system (`~/.claude/projects/.../memory/`), 
 |--------|---------|----------|----------|
 | **Memory** (`docs/main/memory/`) | Long-term project knowledge: decisions, preferences, constraints, references | Permanent — persists across all sessions | Version-controlled in repo |
 | **TASK_STATE.md** (`docs/dep/`) | Short-term task checkpoint: what's in-progress, working context, resume point | Temporary — exists only during active work | Version-controlled in repo |
-| **DEVLOG batches** (`docs/dep/DEVLOG-RXXX-RXXX.md`) | Historical record: what was done, issues, commits | Permanent append-only log batches | Version-controlled in repo |
+| **DEVLOG storage** (`docs/dep/DEVLOG.md`, `docs/dep/devlog/`) | Historical record: what was done, issues, commits | Permanent indexed log with active/archive/summary layers | Version-controlled in repo |
 
 Flow:
 ```
 Task in progress  → TASK_STATE.md (hot checkpoint)
-Task completes    → TASK_STATE.md → DEVLOG batch (historical record) + Memory (if new knowledge)
+Task completes    → TASK_STATE.md → active DEVLOG batch + INDEX.md (historical record) + Memory (if new knowledge)
 ```
 
 ## Storage location

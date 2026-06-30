@@ -14,10 +14,10 @@ See `references/doc-structure.md` for the authoritative source for all paths, na
 
 Relationship:
 - `docs/main/` defines what the project is.
-- `docs/dep/DEVLOG-RXXX-RXXX.md` records what was done.
+- `docs/dep/DEVLOG.md` and `docs/dep/devlog/` record what was done.
 - `docs/dep/REVIEWS.md` records what was found.
-- `docs/dep/PLAN.md` records what is active or queued.
-- `docs/dep/plans/P<phase>-<name>.md` records planned work in detail.
+- `docs/dep/PLAN.md` records the current dashboard.
+- `docs/dep/plans/<lifecycle>/P<phase>-<name>.md` records planned work in detail and moves through lifecycle directories.
 - `docs/deploy/` describes how to deploy.
 - `USAGE.md` describes how to use the project.
 
@@ -35,7 +35,7 @@ When all four canonical docs are missing from `docs/main/` (or root), auto-gener
 - `docs/main/CODE_STYLE.md` - based on `templates/CODE_STYLE.md.template`; unknown conventions remain TBD.
 - `docs/main/TEST_GUIDE.md` - based on `templates/TEST_GUIDE.md.template`; unknown test details remain TBD.
 - `docs/main/memory/MEMORY.md` - empty index with header only.
-- `docs/dep/` - created; first Development round creates `DEVLOG-R001-R040.md`.
+- `docs/dep/` - created; first Development round runs DEVLOG legacy adoption. If no prior DEVLOG exists, create `DEVLOG.md`, `devlog/INDEX.md`, and `devlog/active/DEVLOG-R001-R040.md`. If legacy DEVLOG files exist, move them unchanged into `devlog/archive/` first and create the next active batch after the highest archived round.
 - `docs/deploy/DEPLOY_GUIDE.md` - TBD placeholder.
 
 Bootstrap rules:
@@ -93,9 +93,22 @@ After sync:
 
 1. Move the sub-plan from PLAN.md `进行中` to `最近完成`.
 2. Keep only the latest 3 rows in `最近完成`.
-3. Keep `docs/dep/plans/P<phase>-<name>.md` in place. It is the persistent design record.
-4. PLAN.md removes or updates only the pointer row.
+3. Move the sub-plan file to `docs/dep/plans/complete/` and set `status: done`.
+4. PLAN.md removes or updates only pointer rows; full history lives in `plans/complete/`.
 
 ### Empty dashboard
 
-When PLAN.md `进行中` and `待开始` are both empty, a new plan updates the existing dashboard structure in place. Keep existing `延后` entries as future planning input unless the user explicitly clears them.
+When PLAN.md `进行中` and `待开始` are both empty, a new plan updates the existing dashboard structure in place. Keep existing `延后` entries as future planning input unless the user explicitly clears them or moves them to `plans/deferred/`.
+
+### Lifecycle sync
+
+Sub-plan lifecycle is represented by directory and frontmatter together:
+
+| Transition | File move | Frontmatter |
+|------------|-----------|-------------|
+| Confirmed but not started | create in `docs/dep/plans/backlog/` | `status: planning` |
+| Starts execution | move to `docs/dep/plans/ongoing/` | `status: in-progress` |
+| Completes and syncs | move to `docs/dep/plans/complete/` | `status: done` |
+| Explicitly postponed | move to `docs/dep/plans/deferred/` | `status: deferred` |
+
+`P0-tech-debt.md` is a rolling debt pool and normally remains `docs/dep/plans/backlog/P0-tech-debt.md` with `status: planning`. Do not keep it in `ongoing/` unless a specific extracted debt plan is actively being executed.

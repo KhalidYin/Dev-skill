@@ -8,16 +8,16 @@ updated: YYYY-MM-DD
 
 | # | 子计划 | 文件 | 当前阶段 | 已用轮次 | 开始日期 |
 |---|--------|------|----------|----------|----------|
-| P1 | 用户认证 | [P1-user-auth.md](plans/P1-user-auth.md) | 内部 P2: API | R004-R006 | YYYY-MM-DD |
-| P0 | 修复认证竞态 | [P0-fix-auth-race.md](plans/P0-fix-auth-race.md) | 内部 P1: 诊断 | R007 | YYYY-MM-DD |
+| P1 | 用户认证 | [P1-user-auth.md](plans/ongoing/P1-user-auth.md) | 内部 P2: API | R004-R006 | YYYY-MM-DD |
+| P0 | 修复认证竞态 | [P0-fix-auth-race.md](plans/ongoing/P0-fix-auth-race.md) | 内部 P1: 诊断 | R007 | YYYY-MM-DD |
 
 ## 待开始
 
 | # | 子计划 | 文件 | 预估轮次 | 依赖 |
 |---|--------|------|----------|------|
-| P0 | 技术债务 | [P0-tech-debt.md](plans/P0-tech-debt.md) | 2-4 | - |
-| P2 | 管理后台 | [P2-admin-panel.md](plans/P2-admin-panel.md) | 5-8 | P1 完成 |
-| P3 | 数据导出 | [P3-data-export.md](plans/P3-data-export.md) | 3-5 | - |
+| P0 | 技术债务池 | [P0-tech-debt.md](plans/backlog/P0-tech-debt.md) | 滚动 | - |
+| P2 | 管理后台 | [P2-admin-panel.md](plans/backlog/P2-admin-panel.md) | 5-8 | P1 完成 |
+| P3 | 数据导出 | [P3-data-export.md](plans/backlog/P3-data-export.md) | 3-5 | - |
 
 ## 最近完成
 
@@ -25,9 +25,9 @@ updated: YYYY-MM-DD
 
 | 日期 | 子计划 | 文件 | 已同步到 |
 |------|--------|------|----------|
-| YYYY-MM-DD | 数据库迁移框架 | [P1-db-migration.md](plans/P1-db-migration.md) | PROJECT_GUIDE, PROJECT_SPEC |
+| YYYY-MM-DD | 数据库迁移框架 | [P1-db-migration.md](plans/complete/P1-db-migration.md) | PROJECT_GUIDE, PROJECT_SPEC |
 
 ## 延后
 
-- OAuth 第三方登录 -> 下个计划周期再评估
+- OAuth 第三方登录 -> [P4-oauth-login.md](plans/deferred/P4-oauth-login.md)
 - 多语言支持 -> 用户量上来后再考虑

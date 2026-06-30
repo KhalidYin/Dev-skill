@@ -14,7 +14,7 @@
         "USAGE.md is created at project root",
         "docs/dep/ and docs/deploy/ directories are created",
         "Development continues with login feature implementation",
-        "Dev log round is appended to active DEVLOG batch file"
+        "Dev log round is appended to docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md and indexed in docs/dep/devlog/INDEX.md"
       ]
     },
     {
@@ -27,7 +27,8 @@
         "Bug is fixed in src/auth.py",
         "Tests are added or updated",
         "Doc consistency check is performed and reported",
-        "Dev log round is appended to the active docs/dep/DEVLOG-RXXX-RXXX.md batch with Done, Issues, Next, Files Changed/Commits",
+        "Dev log round is appended to the active docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md batch with Done, Issues, Next, Files Changed/Commits",
+        "docs/dep/devlog/INDEX.md gets one row for the new round",
         "Response includes risk note, optimization advice, summary, validation, doc consistency result"
       ]
     },
@@ -37,7 +38,8 @@
       "expected_output": "Skill enters Review mode, reads dev log since last review, does Quick Review with 3-5 bullet points, asks about Full Report.",
       "expectations": [
         "Review mode is selected",
-        "Active dev log batch docs/dep/DEVLOG-RXXX-RXXX.md is read",
+        "docs/dep/DEVLOG.md and docs/dep/devlog/INDEX.md are read first",
+        "Relevant active/archive batch sections are read only as needed",
         "git log is checked against dev log claims",
         "Quick Review outputs 3-5 bullet points with cross-check verdict",
         "User is asked whether they want a Full Report appended to docs/dep/REVIEWS.md"
@@ -81,7 +83,7 @@
       "expected_output": "Skill handles mixed-mode request: enters Development first for the fix, completes with dev log, then switches to Review mode for the security audit.",
       "expectations": [
         "Development mode is selected first for the bug fix",
-        "Bug fix completes with dev log entry in the active DEVLOG batch",
+        "Bug fix completes with dev log entry in the active DEVLOG batch and INDEX.md",
         "Review mode is then selected for the security audit",
         "Quick Review is performed on the auth module",
         "Two separate dev log / review entries are created"
@@ -95,7 +97,7 @@
         "TASK_STATE.md is checked first (Development mode step 0)",
         "If TASK_STATE.md exists: checkpoint content is read and presented",
         "User is asked: '发现未完成的任务：[Goal]。继续还是开始新任务？'",
-        "If TASK_STATE.md does not exist: falls back to reading the active DEVLOG batch last round",
+        "If TASK_STATE.md does not exist: falls back to DEVLOG.md plus the active DEVLOG batch last round",
         "No new work starts until user confirms direction"
       ]
     },
@@ -114,12 +116,13 @@
     {
       "id": 12,
       "prompt": "Review the work from last month.",
-      "expected_output": "Skill determines cross-batch scope, reads the relevant sealed DEVLOG-RXXX-RXXX.md batch file in addition to the active batch, performs Quick Review covering the specified round range.",
+      "expected_output": "Skill determines cross-batch scope, reads DEVLOG.md, devlog/INDEX.md, relevant summaries, and only the needed active/archive round sections, then performs Quick Review covering the specified range.",
       "expectations": [
-        "Review scope is determined as cross-batch (spans sealed + active batch)",
-        "Relevant DEVLOG-RXXX-RXXX.md sealed batch file is identified and read",
-        "Only round sections within scope are read (not full batch files)",
-        "Quick Review covers entries from both active and sealed batches",
+        "Review scope is determined as cross-batch (spans archive + active batch)",
+        "devlog/INDEX.md is used to identify relevant rounds and batch paths",
+        "Relevant summary files are read before archive originals",
+        "Only round sections within scope are read from active/archive batches (not full batch files)",
+        "Quick Review covers entries from both active and archived batches",
         "Cross-check against git log uses appropriate date range derived from round dates"
       ]
     },
@@ -132,19 +135,20 @@
         "Progress checklist is displayed with [x]/[ ] status",
         "Working Context is presented (files being edited, last command, blockers)",
         "Resume From instruction is shown",
-        "If TASK_STATE.md does not exist, reads the active DEVLOG batch last round instead"
+        "If TASK_STATE.md does not exist, reads DEVLOG.md plus the active DEVLOG batch last round instead"
       ]
     },
     {
       "id": 14,
       "prompt": "Quick fix — just change the login timeout from 30s to 60s in config.py.",
-      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to the active DEVLOG batch.",
+      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to the active DEVLOG batch and INDEX.md.",
       "expectations": [
         "Quick Fix mode is triggered (user said 'quick fix')",
         "AI validation runs: checks file count, interface change, architecture impact, etc.",
         "Validation passes (single config file, no interface/architecture impact)",
         "Change is made to config.py",
         "One-line QF entry is written to the active DEVLOG batch (not a full round format)",
+        "docs/dep/devlog/INDEX.md gets one row for the QF round",
         "TASK_STATE.md is NOT created",
         "Doc consistency check is skipped",
         "Output is brief: one-line summary + '已写入 dev log'"
@@ -165,7 +169,7 @@
     {
       "id": 16,
       "prompt": "继续上次的任务。",
-      "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with the active DEVLOG batch last round time. If the DEVLOG batch is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
+      "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with the active DEVLOG batch last round time found through DEVLOG.md. If the DEVLOG batch is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
       "expectations": [
         "TASK_STATE.md is read (step 0)",
         "Expiry check: TASK_STATE.updated is compared with DEVLOG last round time",
@@ -188,11 +192,12 @@
     {
       "id": 18,
       "prompt": "我要做一个用户权限系统，涉及角色管理、权限分配、API 鉴权，帮我先规划一下。",
-      "expected_output": "Skill creates or updates docs/dep/PLAN.md as a dashboard and creates a phase-indexed sub-plan under docs/dep/plans/ with the feature breakdown, then asks the user to confirm before starting implementation.",
+      "expected_output": "Skill creates or updates docs/dep/PLAN.md as a dashboard and creates a phase-indexed sub-plan under docs/dep/plans/backlog/ with the feature breakdown, then asks the user to confirm before starting implementation.",
       "expectations": [
         "PLAN.md is created or updated at docs/dep/PLAN.md as a dashboard",
-        "A sub-plan is created at docs/dep/plans/P<phase>-<name>.md",
-        "Sub-plan frontmatter includes phase_index, status, priority, estimated_rounds, depends_on, and syncs_to",
+        "A sub-plan is created at docs/dep/plans/backlog/P<phase>-<name>.md",
+        "Sub-plan frontmatter includes phase_index, status, priority, estimated_rounds, depends_on, tags, and syncs_to",
+        "Sub-plan status is planning and matches the backlog lifecycle directory",
         "Sub-plan includes Goal/Context, Phase breakdown, completion criteria, boundaries, decisions, and main-doc sync targets",
         "Status is set to 'planning' in the sub-plan",
         "User is asked to review and confirm the plan before implementation begins",
@@ -221,6 +226,19 @@
         "USAGE.md includes Go-specific quick start (go build, go test, etc.)",
         "TBD placeholders used where project specifics are unknown",
         "Language guidance in policy.md is followed — match Go conventions"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "这个老项目已经有 docs/dep/DEVLOG.md 和 docs/dep/DEVLOG-R001-R040.md，现在开始下一轮开发。",
+      "expected_output": "Skill runs DEVLOG legacy adoption before writing a new round: moves old detailed and root-level batch logs unchanged into docs/dep/devlog/archive/, creates the lightweight DEVLOG entrypoint and INDEX if missing, then starts the active batch after the highest archived round.",
+      "expectations": [
+        "DEVLOG legacy adoption runs before new Development logging",
+        "Root-level docs/dep/DEVLOG-R001-R040.md is moved unchanged to docs/dep/devlog/archive/DEVLOG-R001-R040.md",
+        "Old detailed docs/dep/DEVLOG.md is moved unchanged to docs/dep/devlog/archive/DEVLOG-legacy.md before a new lightweight entrypoint is created",
+        "Legacy DEVLOG content is not split, merged, renumbered, reformatted, or edited",
+        "If highest archived round is R040, the next active batch is docs/dep/devlog/active/DEVLOG-R041-R080.md rather than restarting at R001",
+        "INDEX backfill is performed only when cheap and reliable; otherwise archive links are preserved in DEVLOG.md"
       ]
     }
   ]

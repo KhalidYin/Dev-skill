@@ -13,7 +13,7 @@ When the user issues an audit/review/inspection command, follow a two-tier appro
 - [When NOT to generate](#when-not-to-generate)
 
 The review process cross-checks four sources:
-- **Dev log** (`docs/dep/DEVLOG-RXXX-RXXX.md`) — what was claimed as done
+- **Dev log** (`docs/dep/DEVLOG.md`, `docs/dep/devlog/INDEX.md`, summaries, and active/archive batches) — what was claimed as done
 - **Git history** (`git log --oneline --since=<date>`) — what was actually committed
 - **Main docs** (`docs/main/`) — what the architecture/spec says should exist
 - **Actual code** — what is really there
@@ -25,16 +25,16 @@ Review scope is determined by the user's request. If unspecified, default to: **
 | User says | Scope |
 |-----------|-------|
 | "review the codebase" | All rounds since last review (or last 10 rounds if no prior review) |
-| "review last week" | DEVLOG rounds from the past 7 days (identify via date headers) |
+| "review last week" | DEVLOG rounds from the past 7 days (identify via `devlog/INDEX.md` first, then batch sections as needed) |
 | "review the auth module" | Rounds that touch auth-related files, regardless of date |
-| "review R020 to R035" | Rounds R020–R035, may cross batch boundaries |
-| "review everything" | All DEVLOG rounds across all batches |
+| "review R020 to R035" | Rounds R020–R035, may cross active/archive boundaries |
+| "review everything" | All DEVLOG rounds using `INDEX.md` + summaries first, archives only as evidence requires |
 
-When scope crosses batch boundaries, read both the active batch and the relevant sealed batch — only the round sections within scope.
+When scope crosses batch boundaries, read `devlog/INDEX.md` and relevant summaries first. Open active/archive batch originals only for the round sections within scope or when evidence is needed.
 
 ## Quick Review (default)
 
-Always start here. Read dev log rounds within scope. Run `git log --oneline --since=<scope start date>` to cross-check claims against actual commits. Output 3-5 bullet points directly in the response — no file is written.
+Always start here. Read `docs/dep/DEVLOG.md`, `docs/dep/devlog/INDEX.md`, and summaries for the scope. Open original active/archive round sections only as needed. Run `git log --oneline --since=<scope start date>` to cross-check claims against actual commits. Output 3-5 bullet points directly in the response — no file is written.
 
 Format:
 
@@ -135,13 +135,15 @@ Only include sections that have content — skip empty sections entirely, do not
 Review 报告写入 `REVIEWS.md` 后，必须立即执行以下检查，确保 Review 发现不会与 `PLAN.md` 断裂：
 
 1. **阻断/P0 同步**：将本轮 Review 中 `Status=open` 的阻断 issue 写入对应位置：
-   - 属于现有子计划 → 写入该子计划 `docs/dep/plans/P<phase>-<name>.md` 的 execution findings 表。
-   - 不属于任何子计划 → 创建独立 `docs/dep/plans/P0-<desc>.md`，PLAN.md 只保留子计划指针。
-2. **非阻断技术债务同步**：将本轮 Review 中非阻断的技术债务写入或创建 `docs/dep/plans/P0-tech-debt.md`。该文件是单一技术债务 track，内部用 Phase 或条目区分来源和处理批次。
-3. **老化检测**：读取 `P0-tech-debt.md` 和所有 open 的 `P0-*.md`。如果 open issues 积压超过 3 个 DEVLOG 轮次未被标记为 resolved → 在本轮 Review Findings 中标记为 `aging`。
+   - 属于现有子计划 → 写入该子计划 `docs/dep/plans/<lifecycle>/P<phase>-<name>.md` 的 execution findings 表。
+   - 不属于任何子计划且需要立即修复 → 创建独立 `docs/dep/plans/ongoing/P0-<desc>.md`，PLAN.md 只保留子计划指针。
+   - 不属于任何子计划但不需要立即修复 → 创建独立 `docs/dep/plans/backlog/P0-<desc>.md`，排在 backlog 最高位。
+2. **非阻断技术债务同步**：将本轮 Review 中非阻断的技术债务写入或创建 `docs/dep/plans/backlog/P0-tech-debt.md`。该文件是单一技术债务池，内部用 Phase 或条目区分来源和处理批次，不长期放入 `ongoing/`。
+3. **老化检测**：读取 `backlog/P0-tech-debt.md` 和所有 open 的 `P0-*.md`。如果 open issues 积压超过 3 个 DEVLOG 轮次未被标记为 resolved → 在本轮 Review Findings 中标记为 `aging`。
 4. **状态刷新**：
-   - 已 resolved 的 issues → 从 PLAN.md 技术债务 track 移除，记入"最近完成"
-   - 仍 open 的 issues → 保留在 PLAN.md，更新积压天数
+   - 已 resolved 的独立 P0 issues → 移动到 `plans/complete/`，记入 PLAN.md “最近完成”
+   - 仍 open 的独立 P0 issues → 保留在 `ongoing/` 或 `backlog/`，更新积压轮次
+   - `P0-tech-debt.md` 中已处理的条目 → 标记 resolved；如拆出独立执行计划，则在池子中记录目标文件链接
 
 ### Cross-sub-plan finding classification
 
@@ -149,12 +151,12 @@ Review 报告写入 `REVIEWS.md` 后，必须立即执行以下检查，确保 R
 
 | 发现类型 | 归属 |
 |----------|------|
-| 阻断型 bug / 安全 / 数据完整性问题 | 创建独立 `docs/dep/plans/P0-<desc>.md`，PLAN.md 最高优先级 |
-| 非阻断技术债务（Bug、性能、维护性） | 创建或更新 `docs/dep/plans/P0-tech-debt.md`，PLAN.md 只保留一行指针 |
+| 阻断型 bug / 安全 / 数据完整性问题 | 创建独立 `docs/dep/plans/ongoing/P0-<desc>.md` 或 `docs/dep/plans/backlog/P0-<desc>.md`，PLAN.md 最高优先级 |
+| 非阻断技术债务（Bug、性能、维护性） | 创建或更新 `docs/dep/plans/backlog/P0-tech-debt.md`，PLAN.md 可在 backlog 中保留一行指针 |
 | 新功能需求 | 按 `references/planning-protocol.md` 的“执行中插入新计划”流程创建新子计划 |
 | 架构改进 | 归入最相关的现有子计划，或创建新子计划 |
 
-所有 Review 生成的子计划都遵循 `templates/sub-plan.md.template`。`P0-tech-debt.md` 的 frontmatter 使用 `phase_index: 0`，`priority` 低于独立阻断型 `P0-<desc>.md`。PLAN.md 仪表盘只保留指针，不内联详细任务表。
+所有 Review 生成的子计划都遵循 `templates/sub-plan.md.template`。`backlog/P0-tech-debt.md` 的 frontmatter 使用 `phase_index: 0`、`status: planning`，`priority` 低于独立阻断型 `P0-<desc>.md`。PLAN.md 仪表盘只保留指针，不内联详细任务表。
 
 ### Layered reading for REVIEWS.md
 

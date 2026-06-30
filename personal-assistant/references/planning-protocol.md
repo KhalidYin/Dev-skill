@@ -9,7 +9,7 @@ Planning Protocol 解决的是“复杂任务如何从讨论变成可执行合�
 三层体系的目标：
 
 - **PLAN.md**：告诉读者现在什么在进行、什么排队、什么刚完成。
-- **plans/Pn-name.md**：保存某个功能、修复或重构的完整 Phase-Gate 合同。
+- **plans/<lifecycle>/Pn-name.md**：保存某个功能、修复或重构的完整 Phase-Gate 合同，并用目录表示生命周期。
 - **TASK_STATE.md**：只记录当前 Phase 的短期执行进度和恢复点。
 
 ## 目录
@@ -32,7 +32,7 @@ Planning Protocol 解决的是“复杂任务如何从讨论变成可执行合�
 
 ```
 docs/dep/PLAN.md             -> 仪表盘层：活跃项、排队项、最近完成、延后项
-docs/dep/plans/Pn-name.md    -> 合同层：功能/修复/重构的 Phase-Gate 实施方案
+docs/dep/plans/<lifecycle>/Pn-name.md -> 合同层：功能/修复/重构的 Phase-Gate 实施方案
 docs/dep/TASK_STATE.md       -> 执行层：当前 Phase 内的单步进度与恢复点
 ```
 
@@ -40,7 +40,7 @@ docs/dep/TASK_STATE.md       -> 执行层：当前 Phase 内的单步进度与�
 
 ### 职责边界
 
-| 信息 | PLAN.md | plans/Pn-name.md | TASK_STATE.md |
+| 信息 | PLAN.md | plans/<lifecycle>/Pn-name.md | TASK_STATE.md |
 |------|:---:|:---:|:---:|
 | 子计划名称和文件路径 | yes | - | 引用当前子计划 |
 | 当前 Phase 和状态 | yes | yes | yes |
@@ -60,7 +60,7 @@ docs/dep/TASK_STATE.md       -> 执行层：当前 Phase 内的单步进度与�
 子计划文件使用 Phase-indexed 命名：
 
 ```
-docs/dep/plans/P<phase>-<name>.md
+docs/dep/plans/<lifecycle>/P<phase>-<name>.md
 ```
 
 示例：
@@ -74,25 +74,49 @@ docs/dep/plans/P<phase>-<name>.md
 
 ### 命名规则
 
-- `P0` 可随时插入：Review 发现阻断型 bug -> 创建独立 `P0-<desc>.md` -> 插入 PLAN.md 最高位 -> 当前 Phase 完成后优先执行。
-- Review 发现的非阻断技术债务统一写入 `P0-tech-debt.md`，单个文件内部按 Phase 或条目区分。
+- `P0` 可随时插入：Review 发现阻断型 bug -> 创建独立 `P0-<desc>.md` -> 放入 `plans/backlog/` 最高位，或在接受为立即修复时放入 `plans/ongoing/`。
+- Review 发现的非阻断技术债务统一写入 `plans/backlog/P0-tech-debt.md`，单个文件内部按 Phase 或条目区分。
 - 不再使用旧的固定“技术债修复”文件名；统一进入 `P0-*.md` 命名体系。
 - `P1+` 表示执行先后，不表示功能重要度。
 - 编号不连续可以接受；不要为了插入新计划而重编号已有子计划。
 - 一个功能可以跨多个编号，例如 `P1-user-auth-model.md` 与 `P3-user-auth-api.md`。
 - `<name>` 使用 kebab-case，描述具体目标，避免过宽泛的 `misc`、`cleanup`。
+- 关键词分类写入 frontmatter `tags`，不要创建 `plans/auth/`、`plans/api/` 这类关键词目录。
+
+### 生命周期目录
+
+| 目录 | `status` | 含义 |
+|------|----------|------|
+| `plans/ongoing/` | `in-progress` | 当前正在执行的计划，或已接受为立即修复的 P0 阻断项 |
+| `plans/backlog/` | `planning` | 已确认但未开始的计划；`P0-tech-debt.md` 长期位于这里 |
+| `plans/complete/` | `done` | 已完成、验证并同步主文档的历史计划 |
+| `plans/deferred/` | `deferred` | 明确延后，不进入当前计划周期 |
+
+目录和 frontmatter `status` 必须一致。计划推进时通过移动文件表达生命周期变化：
+
+```
+plans/backlog/P2-admin-panel.md  -> plans/ongoing/P2-admin-panel.md
+plans/ongoing/P2-admin-panel.md  -> plans/complete/P2-admin-panel.md
+plans/backlog/P4-oauth-login.md  -> plans/deferred/P4-oauth-login.md
+```
+
+技术债规则：
+- `plans/backlog/P0-tech-debt.md` 是滚动债务池，不视为正在执行。
+- 阻断型债务创建独立 `P0-<desc>.md`。
+- 当某批非阻断债务被选中处理时，从 `P0-tech-debt.md` 拆出独立执行计划，如 `plans/ongoing/P0-reduce-auth-flakiness.md`。
 
 ### Frontmatter 字段
 
 ```yaml
 ---
 phase_index: 0
-status: planning | in-progress | done
+status: planning | in-progress | done | deferred
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 priority: 1
 estimated_rounds: 4-8
 depends_on: []
+tags: []
 syncs_to:
   - PROJECT_SPEC.md
   - PROJECT_GUIDE.md
@@ -104,10 +128,11 @@ syncs_to:
 | 字段 | 规则 |
 |------|------|
 | `phase_index` | 文件名前缀的数字部分。`P0-fix-auth-race.md` 必须写 `0` |
-| `status` | `planning`、`in-progress`、`done` 三选一 |
+| `status` | `planning`、`in-progress`、`done`、`deferred` 四选一，且必须与生命周期目录一致 |
 | `priority` | 同一 `phase_index` 内排序，数字越小越优先 |
 | `estimated_rounds` | 预估 DEVLOG 轮次范围 |
 | `depends_on` | 依赖的其他子计划文件名，如 `["P1-user-auth.md"]` |
+| `tags` | 关键词分类，如 `["auth", "api", "security"]`；用于检索，不用于目录分层 |
 | `syncs_to` | 完成后必须同步的 `docs/main/` 主文档清单 |
 
 ### DEVLOG 标注映射
@@ -123,7 +148,7 @@ DEVLOG 使用子计划文件 stem 作为标注，保留 `P0/P1` 前缀，避免�
 
 ## 子计划文件模板
 
-子计划模板只定义一次，位于 `templates/sub-plan.md.template`。创建子计划时复制该模板，并按命名规范保存为 `docs/dep/plans/P<phase>-<name>.md`。
+子计划模板只定义一次，位于 `templates/sub-plan.md.template`。创建子计划时复制该模板，并按生命周期保存为 `docs/dep/plans/<lifecycle>/P<phase>-<name>.md`。
 
 模板必须包含：
 - frontmatter 字段
@@ -141,11 +166,11 @@ UI 类 Phase 的额外要求见 [UI 类 Phase 额外要求](#ui-类-phase-额外
 PLAN.md 模板只定义一次，位于 `templates/plan-dashboard.md.template`。PLAN.md 是仪表盘，不是实施文档，只存指针、状态和排序。
 
 维护规则：
-- **进行中**：每个活跃子计划一行。当前 Phase 和已用轮次在 Gate 通过后更新。
-- **待开始**：按 `phase_index` 升序、同编号内按 `priority` 升序排列。`P0` 位于最高优先级。
-- **最近完成**：仅保留最近 3 条，超过的直接删除。
-- **延后**：不立即处理的增强建议，下个计划周期作为输入。
-- **状态一致性**：PLAN.md 中当前 Phase 必须与子计划文件的 Phase 总览一致。
+- **进行中**：指向 `plans/ongoing/`。每个活跃子计划一行。当前 Phase 和已用轮次在 Gate 通过后更新。
+- **待开始**：指向 `plans/backlog/`。按 `phase_index` 升序、同编号内按 `priority` 升序排列。`P0` 位于最高优先级。
+- **最近完成**：指向 `plans/complete/`。PLAN.md 仅保留最近 3 条完成指针，完整历史留在 `plans/complete/`。
+- **延后**：指向 `plans/deferred/`，或记录尚未形成子计划的延后想法。
+- **状态一致性**：PLAN.md 中当前 Phase 必须与子计划文件的 Phase 总览一致；子计划目录必须与 `status` 一致。
 
 ## 规划触发与决策
 
@@ -164,8 +189,8 @@ PLAN.md 模板只定义一次，位于 `templates/plan-dashboard.md.template`。
 | 全新功能模块 | 必须 | 必须 | 技术选型、架构影响需要用户拍板 |
 | 引入新技术栈 | 必须 | 必须 | 迁移成本、长期维护需要评估 |
 | 跨模块大重构 | 必须 | 必须 | 影响面大，方案需要用户确认 |
-| Review 阻断型 bug | 必须，`P0-<desc>.md` | 可轻量 | 必须显式进入计划队列 |
-| Review 非阻断技术债务 | 必须，`P0-tech-debt.md` | 不需要 | 统一积压和老化追踪 |
+| Review 阻断型 bug | 必须，`ongoing/P0-<desc>.md` 或 `backlog/P0-<desc>.md` | 可轻量 | 必须显式进入计划队列 |
+| Review 非阻断技术债务 | 必须，`backlog/P0-tech-debt.md` | 不需要 | 统一积压和老化追踪，但不占用 ongoing |
 | 已有模块加小功能 | 可选 | 轻量 | 2-3 个选项快速确认即可 |
 | Bug 修复（原因已知） | 不建 | 不需要 | 直接写 TASK_STATE.md |
 | Bug 修复（原因不明） | 可选 | 不需要 | 调查本身可作为第一 Phase |
@@ -251,7 +276,7 @@ AI 将范围拆解为 2-6 个 Phase：
 用户调整后确认。
 ```
 
-确认后创建 `docs/dep/plans/P<phase>-<name>.md`，并在 PLAN.md 中注册。
+确认后创建 `docs/dep/plans/backlog/P<phase>-<name>.md`，并在 PLAN.md 中注册。
 
 ## 快速规划
 
@@ -304,7 +329,7 @@ AI 将范围拆解为 2-6 个 Phase：
 
 ```markdown
 ## Goal
-P2 — 实现注册/登录 API（子计划：docs/dep/plans/P1-user-auth.md）
+P2 — 实现注册/登录 API（子计划：docs/dep/plans/ongoing/P1-user-auth.md）
 
 ## Phase Context
 - **输入条件**：[引用子计划中 P2 的输入条件]
@@ -337,7 +362,7 @@ TASK_STATE.md 的完整格式由 `references/doc-structure.md` 定义。
 
 | 类型 | 定义 | 处理 |
 |------|------|------|
-| **阻断** | 不处理会导致后续 Phase 无法进行或产生大量返工 | 当前子计划内新增 Phase，或拆成独立 `P0-<desc>.md` |
+| **阻断** | 不处理会导致后续 Phase 无法进行或产生大量返工 | 当前子计划内新增 Phase，或拆成独立 `plans/ongoing/P0-<desc>.md` |
 | **增强** | 显著改善质量，与未开始 Phase 自然关联 | 合并到相关未开始 Phase 的完成标准或产出 |
 | **延后** | 锦上添花，不影响核心目标 | 移入 PLAN.md “延后”区域 |
 
@@ -349,7 +374,7 @@ Phase Gate 时发现新的 D 条目：
 1. AI 逐条判断类型
 2. 阻断型：
    - 若属于当前子计划范围，新增 Phase 并更新依赖链
-   - 若会阻塞其他计划或来自 Review，创建独立 P0-<desc>.md
+   - 若会阻塞其他计划或来自 Review，创建独立 `plans/ongoing/P0-<desc>.md` 或 `plans/backlog/P0-<desc>.md`
 3. 增强型：
    - 建议合并到哪个未开始 Phase
    - 用户确认后更新完成标准或产出
@@ -378,11 +403,11 @@ Step 2: 快速评估
 Step 3: 规划
   - 新功能/新技术/大重构 -> 正式头脑风暴
   - 已有模块加功能 -> 轻量讨论
-  - Review 阻断型 bug -> P0-<desc>.md
-  - Review 非阻断技术债务 -> P0-tech-debt.md
+  - Review 阻断型 bug -> ongoing/P0-<desc>.md 或 backlog/P0-<desc>.md
+  - Review 非阻断技术债务 -> backlog/P0-tech-debt.md
 
 Step 4: 创建或更新子计划
-  - 写入 docs/dep/plans/P<phase>-<name>.md
+  - 写入 docs/dep/plans/<lifecycle>/P<phase>-<name>.md
   - 在 PLAN.md 注册到“待开始”
   - P0 位于最高优先级
 
@@ -425,8 +450,8 @@ Step 5: 当前 Phase Gate 时告知用户
 同步完成后：
 - 关键决策写入或更新 `docs/main/memory/`。
 - 在子计划文件中标注“已同步”及日期。
-- PLAN.md 将子计划从“进行中”移到“最近完成”。
-- 子计划文件保留在 `plans/`，不删除。
+- 将子计划文件移动到 `docs/dep/plans/complete/`，并将 `status` 改为 `done`。
+- PLAN.md 将子计划从“进行中”移到“最近完成”，只保留最近 3 条完成指针。
 
 ## UI 类 Phase 额外要求
 

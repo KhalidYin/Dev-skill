@@ -6,6 +6,7 @@ updated: YYYY-MM-DD
 priority: 1
 estimated_rounds: 4-8
 depends_on: []
+tags: []
 syncs_to:
   - PROJECT_SPEC.md
   - PROJECT_GUIDE.md
@@ -13,6 +14,10 @@ syncs_to:
 ---
 
 # [功能/修复/模块名称]
+
+> Lifecycle rule: this file's directory and `status` must match.
+> `plans/backlog/` = `planning`; `plans/ongoing/` = `in-progress`; `plans/complete/` = `done`; `plans/deferred/` = `deferred`.
+> Use `tags` for keywords such as auth/api/security; do not create keyword directories.
 
 ## 目标
 
