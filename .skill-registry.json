@@ -6,7 +6,21 @@
       "category": "dev-tooling",
       "last_modified": "2026-06-29",
       "has_evals": true,
-      "tags": ["documentation", "dev-tooling", "python", "r", "review", "devops"]
+      "tags": [
+        "documentation",
+        "dev-tooling",
+        "python",
+        "r",
+        "review",
+        "devops"
+      ]
+    },
+    "sub-brainstorm": {
+      "status": "active",
+      "category": "design",
+      "last_modified": "2026-06-30",
+      "has_evals": false,
+      "tags": ["brainstorming", "design", "planning"]
     }
   }
 }

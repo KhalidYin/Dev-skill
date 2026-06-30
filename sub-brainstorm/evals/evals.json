@@ -1,0 +1,15 @@
+{
+  "skill_name": "sub-brainstorm",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Example prompt that should trigger this skill",
+      "expected_output": "Description of expected result",
+      "files": [],
+      "expectations": [
+        "The skill should be triggered",
+        "The output should include X"
+      ]
+    }
+  ]
+}
