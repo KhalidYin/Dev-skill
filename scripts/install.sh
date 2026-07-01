@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills" "${HOME}/.agents/skills")
+TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills" "${HOME}/.agents/skills" "${HOME}/.codebuddy/skills" "${HOME}/.workbuddy/skills")
 SKILL_NAME="${1:-}"
 
 # Discover skill directories (those with SKILL.md at project root)
@@ -28,7 +28,10 @@ if [ ${#skills[@]} -eq 0 ]; then
 fi
 
 for target_dir in "${TARGET_DIRS[@]}"; do
-    mkdir -p "$target_dir"
+    if [ ! -d "$target_dir" ]; then
+        echo "Skipping $target_dir (not found)"
+        continue
+    fi
     echo "Linking skill(s) to $target_dir..."
     echo ""
 
@@ -37,6 +40,11 @@ for target_dir in "${TARGET_DIRS[@]}"; do
     for name in "${skills[@]}"; do
         target="$target_dir/$name"
         if [ -e "$target" ] || [ -L "$target" ]; then
+            # Skip if target is the source directory (prevent deleting project files)
+            if [ "$(realpath "$target")" = "$(realpath "$PROJECT_ROOT/$name")" ]; then
+                echo "  [$name] Skipped (source directory)"
+                continue
+            fi
             rm -rf "$target"
             echo "  [$name] Removed"
         fi

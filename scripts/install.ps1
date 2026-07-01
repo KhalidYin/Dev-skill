@@ -9,7 +9,9 @@ $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $TargetDirs = @(
     (Join-Path $HOME ".claude\skills"),
     (Join-Path $HOME ".codex\skills"),
-    (Join-Path $HOME ".agents\skills")
+    (Join-Path $HOME ".agents\skills"),
+    (Join-Path $HOME ".codebuddy\skills"),
+    (Join-Path $HOME ".workbuddy\skills")
 )
 
 # Discover skill directories (those with SKILL.md at project root)
@@ -34,8 +36,8 @@ function Install-SkillsToTarget {
     )
 
     if (-not (Test-Path $TargetDir)) {
-        New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
-        Write-Host "Created $TargetDir"
+        Write-Host "Skipping $TargetDir (not found)"
+        return
     }
 
     # Phase 1: Remove all existing skill links/copies
@@ -43,6 +45,11 @@ function Install-SkillsToTarget {
     foreach ($skill in $Skills) {
         $target = Join-Path $TargetDir $skill.Name
         if (Test-Path $target) {
+            # Skip if target is the source directory (prevent deleting project files)
+            if ((Get-Item $target).FullName -eq $skill.FullName) {
+                Write-Host "  [$($skill.Name)] Skipped (source directory)"
+                continue
+            }
             Remove-Item -Recurse -Force -Path $target
             Write-Host "  [$($skill.Name)] Removed"
         }
