@@ -4,7 +4,7 @@
     "personal-assistant": {
       "status": "stable",
       "category": "dev-tooling",
-      "last_modified": "2026-06-29",
+      "last_modified": "2026-07-01",
       "has_evals": true,
       "tags": [
         "documentation",
@@ -18,8 +18,8 @@
     "sub-brainstorm": {
       "status": "active",
       "category": "design",
-      "last_modified": "2026-06-30",
-      "has_evals": false,
+      "last_modified": "2026-07-01",
+      "has_evals": true,
       "tags": ["brainstorming", "design", "planning"]
     }
   }

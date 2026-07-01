@@ -1,6 +1,6 @@
 ---
 name: personal-assistant
-description: "Document-first development copilot. Use whenever the user wants to change code, fix bugs, add tests, refactor modules, reconcile docs with implementation, review or audit code, summarize changes, deploy or ship code, or work in a project that uses PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, and TEST_GUIDE.md."
+description: "Document-first development copilot and planning router. Use whenever the user wants to plan a feature, change code, fix bugs, add tests, refactor modules, reconcile docs with implementation, review or audit code, summarize changes, deploy or ship code, or work in a project that uses PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, and TEST_GUIDE.md."
 ---
 
 # Personal Assistant
@@ -31,7 +31,7 @@ This skill routes tasks into one of six modes:
 |------|---------|--------------|
 | **Bootstrap** | Project has no docs at all | Generate minimal doc skeleton + USAGE.md, then proceed |
 | **Consultation** | "what is", "how does", "explain", "find" — read-only | Read docs + code, answer, no edits |
-| **Planning** | "帮我规划", "先想清楚再做", "plan this", "设计一下方案" | Multi-round interactive planning → write PLAN.md → enter Development |
+| **Planning** | "帮我规划", "先想清楚再做", "plan this", "设计一下方案" | Route formal design to `sub-brainstorm`; keep lightweight planning local; then enter Development only after approval |
 | **Development** | "fix", "add", "change", "refactor", "implement" | Check TASK_STATE → Phase-Gate check → implement → test → update docs → validate → write dev log → update memory |
 | **Review** | "review", "audit", "检查", "审核", "inspect" | Determine scope → Quick Review first; ask if Full Report needed |
 | **Deployment** | "deploy", "部署", "上线", "发布", "ship" | Generate or update deployment guide in `docs/deploy/DEPLOY_GUIDE.md` |
@@ -69,24 +69,31 @@ Planning uses a three-tier system: `docs/dep/PLAN.md` (dashboard) → `docs/dep/
 
 **Route to the right planning mode:**
 
-| 场景 | 模式 | 输出 |
-|------|------|------|
-| 全新功能模块 / 新技术栈 / 大重构 | 正式头脑风暴 (Storm-R1 → R4) | 子计划文件 |
-| 已有模块加小功能 | 轻量讨论 | 子计划文件 |
-| Review 阻断型 bug | P0 前置修复 | `docs/dep/plans/ongoing/P0-<desc>.md` 或 `docs/dep/plans/backlog/P0-<desc>.md` |
-| Review 非阻断技术债务 | P0 技术债务池 | `docs/dep/plans/backlog/P0-tech-debt.md` |
-| Bug 修复（原因已知） | 跳过规划 | TASK_STATE.md |
-| Bug 修复（原因不明） | 跳过规划 | TASK_STATE.md (P1 = 调查) |
-| 配置调整 / 性能优化 | 跳过规划 | TASK_STATE.md |
+| 场景 | 模式 | 处理者 | 输出 |
+|------|------|--------|------|
+| 全新功能模块 / 新技术栈 / 大重构 | 正式头脑风暴 | `sub-brainstorm` | 子计划文件 |
+| 复杂或设计稿驱动的 UI | 正式头脑风暴 | `sub-brainstorm` | UI 合同型子计划 |
+| 存在多个重要方案或需求/证据/验收边界不明确 | 正式头脑风暴 | `sub-brainstorm` | 子计划文件 |
+| 已有模块加小功能，1-2 个 Phase 且无架构决策 | 轻量讨论 | `personal-assistant` | 子计划文件 |
+| Review 阻断型 bug | P0 前置修复 | `personal-assistant` | `docs/dep/plans/ongoing/P0-<desc>.md` 或 `docs/dep/plans/backlog/P0-<desc>.md` |
+| Review 非阻断技术债务 | P0 技术债务池 | `personal-assistant` | `docs/dep/plans/backlog/P0-tech-debt.md` |
+| Bug 修复（原因已知） | 跳过规划 | `personal-assistant` | TASK_STATE.md |
+| Bug 修复（原因不明） | 跳过规划 | `personal-assistant` | TASK_STATE.md (P1 = 调查) |
+| 配置调整 / 明确的性能优化 | 跳过规划 | `personal-assistant` | TASK_STATE.md |
 
-**正式头脑风暴 (新功能/新技术/大重构):**
+**Formal planning delegation:**
 
-1. **Storm-R1 — 现状与目标**：阅读相关文档和代码 → 输出当前状态、目标、约束 → 用户确认
-2. **Storm-R2 — 方案对比**：提出 ≥ 2 个可行方案，含优劣、复杂度、影响面、预估轮次 → 推荐一个方案 → 用户选择
-3. **Storm-R3 — 范围边界**：确认包含/不包含范围、主文档影响、风险
-4. **Storm-R4 — Phase 拆解初稿**：拆解为 2-6 个 Phase，确认依赖链
-5. 写入 `docs/dep/plans/backlog/P<phase>-<name>.md`（包含背景、方案来源、Phase 合同、头脑风暴结论摘要）
-6. 在 `docs/dep/PLAN.md` "待开始" 中注册
+1. Inspect `docs/main/`, existing plans, and relevant code enough to classify the request and detect filename/phase conflicts.
+2. Load and follow the installed `sub-brainstorm` skill in **delegated mode**. This is skill routing in the current agent, not subagent spawning.
+3. Pass a delegation context packet containing the user request, known constraints, relevant doc/code paths, existing plan inventory, suggested phase index/path, UI flag, and caller=`personal-assistant`.
+4. Suspend this skill's local Storm-R1 → R4 and all sub-plan/PLAN writes while delegated. `sub-brainstorm` is the only writer for the new sub-plan and its PLAN registration.
+5. Handle the returned status:
+   - `approved-written` + `plan_registered: yes`: verify both files exist and agree, then ask whether to enter Development.
+   - `cancelled`: make no planning writes and remain in Planning.
+   - `blocked`: report the blocker and do not enter Development.
+6. Never repeat design approval, recreate the sub-plan, or register the same PLAN row after a successful return.
+
+If `sub-brainstorm` is unavailable, state that formal delegation is unavailable and use the fallback Storm-R1 → R4 in `references/planning-protocol.md`. Mark this as fallback behavior; do not silently pretend delegation occurred.
 
 **轻量讨论 (已有模块加功能):**
 
@@ -94,6 +101,8 @@ Planning uses a three-tier system: `docs/dep/PLAN.md` (dashboard) → `docs/dep/
 2. 如果一种做法 → 直接确认；如果多种 → 列选项让用户选
 3. 确认后直接进入 Phase 细化（跳过方案对比和范围确认）
 4. 写入子计划文件，注册到 PLAN.md
+
+Do not delegate lightweight planning merely because `sub-brainstorm` is installed.
 
 **子计划完成与 PLAN.md 移除:**
 
@@ -157,6 +166,8 @@ If full Development, continue to step 3.
 12. **Phase-Gate validation (if sub-plan exists)** — when TASK_STATE.md items are all checked:
     - Verify each completion criterion in the sub-plan file for the current Phase
     - Check for boundary violations (did we do things the Phase explicitly excluded?)
+    - For UI Phases, cross-check the design baseline, UI contract matrix, implementation, behavior tests, and deviation approvals; passing tests alone is insufficient
+    - For UI Phases, verify default/loading/empty/error/partial/narrow states and reject display values without a declared data source
     - Review "执行中发现" entries and classify new ones as 阻断/增强/延后 (see `references/planning-protocol.md` § 执行中发现)
     - All pass + no violations → check off completion criteria in sub-plan, update Phase overview, update PLAN.md dashboard
     - Failures → fix gaps before proceeding. Do not start next Phase.

@@ -3,12 +3,48 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Example prompt that should trigger this skill",
-      "expected_output": "Description of expected result",
+      "prompt": "personal-assistant 已用 caller=personal-assistant 委派：规划一个数据分析 Dashboard。设计稿有四个默认 KPI 槽位、可切换分组变量、卡片可跳转详情，筛选条件需要通过 URL 恢复。先讨论方案并输出子计划，不要实现。",
+      "expected_output": "The skill discusses alternatives, obtains approval, then writes a canonical backlog sub-plan with a complete UI behavior contract and no implementation work.",
       "files": [],
       "expectations": [
-        "The skill should be triggered",
-        "The output should include X"
+        "Delegated mode is detected from caller=personal-assistant and the context packet is verified against the workspace",
+        "No sub-plan or code is written before the user approves the design",
+        "Two or three approaches are compared with a recommendation",
+        "The canonical personal-assistant planning protocol and sub-plan template are read rather than maintaining a separate schema",
+        "The output plan is registered under docs/dep/plans/backlog/ and docs/dep/PLAN.md",
+        "The plan contains 设计基线与偏差清单, 页面/组件/状态/交互矩阵, and 视觉与行为验收清单",
+        "The four default KPI slots, grouping change, card navigation, filter linkage, and URL restoration have explicit UI IDs and test assertions",
+        "Displayed metrics identify payload fields or explicit fallback behavior",
+        "Default, loading, empty, error, partial-data, and narrow-screen states are covered",
+        "Pending design deviations are not treated as approved implementation scope",
+        "The skill returns status=approved-written, plan_registered=yes, the sub-plan path, decisions, unresolved items, and recommended_next",
+        "The skill returns control without starting implementation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use delegated mode to plan a new notification center. After seeing the approach comparison, the user says they do not want to continue.",
+      "expected_output": "The skill stops planning, writes no sub-plan or PLAN row, and returns a consistent cancelled contract.",
+      "files": [],
+      "expectations": [
+        "The user decision is treated as cancellation rather than implicit approval",
+        "No file is created under docs/dep/plans/backlog/",
+        "docs/dep/PLAN.md is not modified",
+        "The return contract contains status=cancelled, sub_plan=null, plan_registered=no, and recommended_next=wait",
+        "No implementation starts and personal-assistant receives control"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use delegated mode to plan a new reporting module, but personal-assistant/templates/sub-plan.md.template cannot be found.",
+      "expected_output": "The skill does not invent a replacement schema or write partial planning files; it returns a blocked contract.",
+      "files": [],
+      "expectations": [
+        "The missing canonical authority file is named as the blocker",
+        "No sub-plan or PLAN row is written",
+        "The skill does not recreate the template from memory",
+        "The return contract contains status=blocked, plan_registered=no, and recommended_next=wait",
+        "No implementation starts and control returns to personal-assistant"
       ]
     }
   ]

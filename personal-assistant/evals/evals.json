@@ -192,15 +192,19 @@
     {
       "id": 18,
       "prompt": "我要做一个用户权限系统，涉及角色管理、权限分配、API 鉴权，帮我先规划一下。",
-      "expected_output": "Skill creates or updates docs/dep/PLAN.md as a dashboard and creates a phase-indexed sub-plan under docs/dep/plans/backlog/ with the feature breakdown, then asks the user to confirm before starting implementation.",
+      "expected_output": "Skill classifies this as formal planning, explicitly delegates the design dialogue and plan writes to sub-brainstorm, validates its return contract, and only then asks whether to enter Development.",
       "expectations": [
-        "PLAN.md is created or updated at docs/dep/PLAN.md as a dashboard",
-        "A sub-plan is created at docs/dep/plans/backlog/P<phase>-<name>.md",
+        "Formal planning is selected because this is a new cross-module feature",
+        "The installed sub-brainstorm skill is loaded in delegated mode",
+        "A delegation context packet includes the original request, verified constraints/paths, existing plans, suggested phase/path, and UI flag",
+        "personal-assistant suspends its local Storm-R1 to R4 and performs no duplicate planning writes while delegated",
+        "sub-brainstorm owns creation of docs/dep/plans/backlog/P<phase>-<name>.md and its PLAN.md registration",
         "Sub-plan frontmatter includes phase_index, status, priority, estimated_rounds, depends_on, tags, and syncs_to",
         "Sub-plan status is planning and matches the backlog lifecycle directory",
         "Sub-plan includes Goal/Context, Phase breakdown, completion criteria, boundaries, decisions, and main-doc sync targets",
-        "Status is set to 'planning' in the sub-plan",
-        "User is asked to review and confirm the plan before implementation begins",
+        "personal-assistant receives status=approved-written and plan_registered=yes, then verifies the files agree",
+        "No second approval, sub-plan recreation, or duplicate PLAN row is performed after return",
+        "User is asked whether to enter Development only after successful verification",
         "TASK_STATE.md is NOT created yet (waiting for plan confirmation)"
       ]
     },
@@ -239,6 +243,50 @@
         "Legacy DEVLOG content is not split, merged, renumbered, reformatted, or edited",
         "If highest archived round is R040, the next active batch is docs/dep/devlog/active/DEVLOG-R041-R080.md rather than restarting at R001",
         "INDEX backfill is performed only when cheap and reliable; otherwise archive links are preserved in DEVLOG.md"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "根据现有 Figma 设计规划一个临床试验 DM 页面，包含 Baseline、Demographics、Disposition。先做计划，不实现。",
+      "expected_output": "Skill classifies this as complex design-driven UI planning, delegates to sub-brainstorm, then validates the returned UI contract without starting implementation.",
+      "expectations": [
+        "The request is explicitly delegated to sub-brainstorm because complex design-driven UI requires formal planning",
+        "personal-assistant does not run a parallel local brainstorming flow or write a duplicate PLAN row",
+        "Sub-plan contains the three required UI sections: 设计基线与偏差清单, 页面/组件/状态/交互矩阵, and 视觉与行为验收清单",
+        "The UI matrix assigns stable UI IDs and maps visible content/actions to payload paths or other declared evidence",
+        "Default, loading, empty, error, partial-data, and narrow-screen states are covered or marked N/A with a reason",
+        "Module order, first-view defaults, shared KPIs, navigation/filter/group interactions, and URL restoration are explicit where applicable",
+        "Missing evidence has an explicit placeholder/hide/disable/error behavior and no undeclared derivation",
+        "Each deviation records original design, adjustment, reason, and user approval; pending deviations cannot enter implementation",
+        "Acceptance assertions verify core behavior rather than only title or static text presence",
+        "UI Phase completion criteria reference owned UI IDs",
+        "No CSS utility classes, pixel-level styling, or internal function names are prescribed unless they are genuine constraints",
+        "Implementation does not start after the planning return"
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "现有用户列表加一个导出当前筛选结果的按钮，接口已经存在，简单规划一下。",
+      "expected_output": "Skill keeps this bounded one-to-two-phase change in local lightweight planning and does not delegate to sub-brainstorm.",
+      "expectations": [
+        "Lightweight planning is selected because the feature is bounded, uses an existing API, and has no architecture decision",
+        "sub-brainstorm is not loaded merely because it is installed",
+        "personal-assistant performs one-round confirmation and writes the sub-plan/PLAN registration itself if a sub-plan is needed",
+        "Completion criteria, boundaries, and main-doc sync targets are still present",
+        "No formal Storm-R1 to R4 sequence is run"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "规划一个新的支付模块，但当前环境没有安装 sub-brainstorm。",
+      "expected_output": "Skill reports that formal delegation is unavailable, runs the documented local Storm-R1 to R4 fallback, and labels the result as fallback rather than claiming delegation.",
+      "expectations": [
+        "The missing sub-brainstorm dependency is reported explicitly",
+        "The formal planning request is not silently downgraded to lightweight planning",
+        "The planning-protocol Storm-R1 to R4 fallback is used",
+        "The canonical sub-plan template and PLAN registration are still used",
+        "The final response states that fallback planning was used",
+        "No claim is made that sub-brainstorm was delegated"
       ]
     }
   ]
