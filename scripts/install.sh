@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Install script: symlink project skill directories to ~/.claude/skills/, ~/.codex/skills/, and ~/.agent/skills/
+# Install script: symlink project skill directories to Claude, Codex, Agents, and Workbuddy skill roots.
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills" "${HOME}/.agents/skills" "${HOME}/.codebuddy/skills" "${HOME}/.workbuddy/skills")
+TARGET_DIRS=("${HOME}/.claude/skills" "${HOME}/.codex/skills" "${HOME}/.agents/skills" "${HOME}/.workbuddy/skills")
 SKILL_NAME="${1:-}"
 
 # Discover skill directories (those with SKILL.md at project root)
@@ -62,4 +62,4 @@ for target_dir in "${TARGET_DIRS[@]}"; do
     echo ""
 done
 
-echo "Done. Linked skills are available to Claude Code, Codex, and Agent."
+echo "Done. Linked skills are available to Claude Code, Codex, Agents, and Workbuddy."

@@ -20,7 +20,7 @@ For recurring checks, suggest or use simple tools such as `pre-commit`, `styler`
 
 ## Quick Fix mode
 
-Quick Fix is a lightweight sub-mode of Development for small, low-risk changes. It reduces ceremony while maintaining a minimum audit trail.
+Quick Fix is a lightweight sub-mode of Development for small, low-risk changes. It reduces ceremony and maintains an audit trail only when the project already has DEVLOG tracking.
 
 ### When to use Quick Fix
 
@@ -42,7 +42,7 @@ Before entering Quick Fix, analyze the planned change against these criteria. **
 | Spec boundary | Crosses feature boundaries defined in PROJECT_SPEC.md |
 | Naming convention | Introduces new naming that conflicts with CODE_STYLE.md |
 
-If none of the above apply, proceed with Quick Fix.
+Checks against project documents apply only when those documents exist. Missing docs do not reject Quick Fix and do not trigger Bootstrap. If none of the applicable checks reject it, proceed with Quick Fix.
 
 ### Quick Fix flow
 
@@ -50,8 +50,9 @@ If none of the above apply, proceed with Quick Fix.
 1. Validate change scope (AI autonomous check above)
 2. Make the change
 3. Run related tests (if test suite exists)
-4. Write one-line entry to the active DEVLOG batch and `devlog/INDEX.md` (not a full round — see dev-log-protocol.md)
-5. Done — skip: TASK_STATE.md, doc consistency check, output discipline
+4. If DEVLOG tracking exists, write a one-line entry to the active batch and `devlog/INDEX.md`
+5. If DEVLOG tracking does not exist, do not initialize any documentation or tracking files
+6. Done — skip: TASK_STATE.md and doc consistency check
 ```
 
 ### Rejection message format
@@ -67,9 +68,9 @@ When Quick Fix is rejected:
 
 ## Dev log
 
-After every completed round of work in Development mode, write a dev log entry to the active `docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md` batch and one row to `docs/dep/devlog/INDEX.md`. This is non-negotiable — the review process depends on it.
+When DEVLOG tracking exists or legacy DEVLOG adoption is required, every completed full Development round writes to the active batch and INDEX. An untracked repository does not acquire DEVLOG merely because Development ran.
 
-**Quick Fix exception**: Quick Fix uses a one-line entry format instead of a full round. See `references/dev-log-protocol.md` for both formats.
+**Quick Fix exception**: If DEVLOG tracking exists, Quick Fix uses a one-line entry format instead of a full round. See `references/dev-log-protocol.md` for both formats.
 
 ## Doc consistency check
 
@@ -115,7 +116,7 @@ Output verbosity scales with change size. Determine the level before responding:
 
 ```
 [一句话 summary]
-已写入 dev log。
+[如果已有 DEVLOG：已写入 dev log。]
 ```
 
 Skip: risk note, optimization advice, validation, doc consistency.

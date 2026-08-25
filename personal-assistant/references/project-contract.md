@@ -3,6 +3,7 @@
 ## 目录
 
 - [Document locations](#document-locations)
+- [Document adoption](#document-adoption)
 - [Bootstrap](#bootstrap)
 - [Doc sync rules](#doc-sync-rules)
 - [Main document templates](#main-document-templates)
@@ -25,9 +26,19 @@ Reviews cross-check DEVLOG claims against main docs, usage docs, git history, an
 
 Use these docs as the source of truth when they exist. If the repo uses different filenames or paths, map them to these roles once and keep that mapping consistent.
 
+## Document adoption
+
+Missing canonical documents mean the repository has not adopted this document system; they are not an error and do not trigger Bootstrap by themselves.
+
+- Bootstrap requires an explicit user request or explicit acceptance of a Bootstrap proposal.
+- Consultation, Quick Fix, Review, and Deployment do not create `docs/main/`, `USAGE.md`, DEVLOG, or TASK_STATE merely because those files are absent.
+- Full Development may proceed using code and tests without adopting the document system. Offer Bootstrap separately when durable architecture or interface contracts would materially help, and do not block implementation solely on missing docs.
+- Existing canonical, planning, DEVLOG, or mapped equivalent documents remain authoritative for their roles and must be maintained when the task affects them.
+- Partial adoption does not authorize filling every missing document during an unrelated task. Create missing skeletons only inside an approved Bootstrap operation.
+
 ## Bootstrap
 
-When all four canonical docs are missing from `docs/main/` (or root), auto-generate a minimal skeleton from the bundled templates:
+When Bootstrap is explicitly requested or accepted, generate the missing parts of the minimal skeleton from the bundled templates:
 
 - `USAGE.md` - quick start filled with detected info; prerequisites and FAQ marked TBD.
 - `docs/main/PROJECT_GUIDE.md` - based on `templates/PROJECT_GUIDE.md.template`; fill only observed language/framework and top-level structure.
@@ -39,6 +50,7 @@ When all four canonical docs are missing from `docs/main/` (or root), auto-gener
 - `docs/deploy/DEPLOY_GUIDE.md` - TBD placeholder.
 
 Bootstrap rules:
+- Do not enter Bootstrap solely because all four canonical docs are missing.
 - Generate only what is immediately observable: project language, framework, top-level structure, commands found in package/config files.
 - Use `TBD` placeholders for anything requiring human input.
 - Do not invent architecture, scope, or conventions.

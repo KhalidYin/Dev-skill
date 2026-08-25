@@ -67,7 +67,7 @@ Authoritative reference for document paths, naming rules, lifecycle, TASK_STATE.
 
 | File | Writes | When | Format |
 |------|--------|------|--------|
-| `USAGE.md` | Bootstrap / Development | Bootstrap creates; Development updates when usage changes | Quick start, prerequisites, common commands, FAQ |
+| `USAGE.md` | Bootstrap / Development | Approved Bootstrap creates; Development updates only when it already exists and usage changes | Quick start, prerequisites, common commands, FAQ |
 
 ### docs/main/ - Blueprint
 
@@ -88,13 +88,13 @@ The four canonical main docs follow bundled templates:
 |------|--------|------|-----------|
 | `docs/dep/PLAN.md` | Planning / Development / Review | When any sub-plan is active or queued | Dashboard only; stores pointers, not Phase details |
 | `docs/dep/plans/<lifecycle>/P<phase>-<name>.md` | Planning / Development / Review | When a feature, refactor, P0 repair, or technical debt track is planned | Persistent design record; moved between lifecycle directories |
-| `docs/dep/DEVLOG.md` | Development / Review | Bootstrap or first Development round; updated when batches rotate | Lightweight entrypoint to active batch, index, summaries, and archive |
+| `docs/dep/DEVLOG.md` | Development / Review | Approved Bootstrap or adopted DEVLOG tracking; updated when batches rotate | Lightweight entrypoint to active batch, index, summaries, and archive |
 | `docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md` | Development | After each completed round | Exactly one active writable batch |
 | `docs/dep/devlog/archive/DEVLOG-RXXX-RYYY.md` | Development / Review | When an active batch is sealed | Immutable original log evidence |
 | `docs/dep/devlog/summary/SUMMARY-RXXX-RYYY.md` | Development / Review | Generated when a batch is sealed | Derived summary; archive is authoritative if conflicts exist |
 | `docs/dep/devlog/INDEX.md` | Development / Review | One row per DEVLOG round | Searchable round index |
 | `docs/dep/REVIEWS.md` | Review | Only after user confirms Full Report | Single append-only file |
-| `docs/dep/TASK_STATE.md` | Development | Created at task start, updated at checkpoints, deleted at completion | Temporary interrupt checkpoint |
+| `docs/dep/TASK_STATE.md` | Development | Created only for tracked full Development, updated at checkpoints, deleted at completion | Temporary interrupt checkpoint |
 
 ### docs/deploy/ - Deployment
 
@@ -159,6 +159,8 @@ The directory and frontmatter `status` must match. Tags classify subject matter;
 
 DEVLOG uses an entrypoint, one active batch, immutable archives, batch summaries, and a searchable index.
 
+These storage rules apply after DEVLOG tracking has been explicitly adopted, already exists, or is detected through legacy DEVLOG files. Do not initialize this structure solely because an untracked repository receives a Development or Quick Fix request.
+
 ```
 - Entry point: docs/dep/DEVLOG.md
 - One active file at a time: docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md
@@ -171,7 +173,7 @@ DEVLOG uses an entrypoint, one active batch, immutable archives, batch summaries
 
 ### Global round counter
 
-Read the last round number from `docs/dep/devlog/active/` to determine the next value. If no active DEVLOG file exists, inspect `docs/dep/devlog/archive/` for the highest archived round and create the next active range after it. If no active or archived round exists, create `docs/dep/devlog/active/DEVLOG-R001-R040.md` and start at R001.
+When a tracked round is authorized, read the last round number from `docs/dep/devlog/active/` to determine the next value. If no active DEVLOG file exists, inspect `docs/dep/devlog/archive/` for the highest archived round and create the next active range after it. If tracking has been adopted but no active or archived round exists, create `docs/dep/devlog/active/DEVLOG-R001-R040.md` and start at R001.
 
 ## DEVLOG legacy adoption
 
@@ -208,7 +210,7 @@ TASK_STATE.md enables cross-session task resumption. It is not a design document
 ### Lifecycle
 
 ```
-Task starts        -> Create TASK_STATE.md with status: in-progress
+Tracked full task -> Create TASK_STATE.md with status: in-progress
 Task progresses    -> Update checklist and Working Context
 Task interrupted   -> TASK_STATE.md persists
 New session starts -> Development mode checks TASK_STATE.md first

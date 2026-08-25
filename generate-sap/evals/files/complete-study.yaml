@@ -1,0 +1,59 @@
+schema_version: "0.1"
+request:
+  mode: create
+  scope: full-sap
+  output_language: English
+  maturity: review-draft
+  target_template: generic
+  external_research: prohibited
+source_inventory:
+  - source_id: SRC-PROTOCOL
+    source_type: protocol
+    title: Synthetic Study ABC Protocol
+    version: "2.0"
+    date: "2026-05-01"
+    status: approved
+    locator: synthetic fixture
+    precedence: 1
+study:
+  identifiers: {protocol_id: SYN-ABC-001}
+  phase: Phase III
+  indication: synthetic inflammatory condition
+  objectives: [Compare active treatment with placebo on symptom improvement at Week 24]
+  design: {allocation: randomized, masking: double-blind, structure: parallel-group, control: placebo}
+  treatments: [active treatment, placebo]
+  randomization: {ratio: "1:1"}
+  stratification: [region]
+  visits: [Baseline, Week 4, Week 8, Week 12, Week 24]
+  endpoints:
+    - endpoint_id: EP-PRIMARY
+      role: primary
+      scale: continuous
+      definition: change from baseline in synthetic symptom score at Week 24
+      repeated: true
+      visits: [Week 4, Week 8, Week 12, Week 24]
+  intercurrent_events: [treatment discontinuation, rescue medication]
+confirmed_decisions:
+  estimands:
+    - endpoint_id: EP-PRIMARY
+      population: randomized participants
+      treatment: randomized treatment
+      variable: Week 24 change from baseline
+      ice_strategy: {treatment discontinuation: treatment policy, rescue medication: treatment policy}
+      summary: difference in adjusted mean change
+  analysis_populations:
+    - {name: Full Analysis Set, definition: all randomized participants analyzed as randomized, use: primary efficacy}
+    - {name: Safety Set, definition: all participants receiving at least one dose analyzed as treated, use: safety}
+  statistical_methods:
+    - endpoint_id: EP-PRIMARY
+      family: MMRM
+      response: change from baseline at post-baseline visits
+      fixed_effects: [treatment, visit, treatment-by-visit, baseline, region]
+      contrast: active treatment versus placebo at Week 24
+      covariance_structure: unresolved
+      degrees_of_freedom: unresolved
+  missing_data:
+    - {primary assumption: MAR conditional on model variables}
+  sensitivity_analyses:
+    - {type: delta-adjusted multiple imputation, delta_values: unresolved}
+constraints: [Do not invent unresolved model specifications]

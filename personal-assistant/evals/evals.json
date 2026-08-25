@@ -4,22 +4,19 @@
     {
       "id": 1,
       "prompt": "This is a brand new Python project with no documentation yet. I need to add a user login feature.",
-      "expected_output": "Skill enters Bootstrap mode, generates docs/main/ skeleton + USAGE.md, then switches to Development mode for the login feature.",
+      "expected_output": "Skill enters Development without auto-Bootstrap, implements and tests the login feature, and does not create the canonical document/tracking skeleton unless the user separately accepts documentation adoption.",
       "expectations": [
-        "Bootstrap mode is detected (no docs exist)",
-        "docs/main/PROJECT_GUIDE.md is created with detected language/framework",
-        "docs/main/PROJECT_SPEC.md is created with TBD placeholder",
-        "docs/main/CODE_STYLE.md is created with TBD placeholder",
-        "docs/main/TEST_GUIDE.md is created with TBD placeholder",
-        "USAGE.md is created at project root",
-        "docs/dep/ and docs/deploy/ directories are created",
-        "Development continues with login feature implementation",
-        "Dev log round is appended to docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md and indexed in docs/dep/devlog/INDEX.md"
+        "Missing docs are treated as repository state rather than a Bootstrap trigger",
+        "Development mode is selected for the login feature",
+        "Code and relevant tests are implemented",
+        "docs/main/, docs/dep/, docs/deploy/, USAGE.md, DEVLOG, and TASK_STATE are not created automatically",
+        "Bootstrap may be offered separately if durable contracts would help, but implementation is not blocked",
+        "No claim is made that a dev log was written"
       ]
     },
     {
       "id": 2,
-      "prompt": "Fix the bug in src/auth.py where login times out after 30 seconds.",
+      "prompt": "This project already uses docs/main and DEVLOG tracking. Fix the bug in src/auth.py where login times out after 30 seconds.",
       "expected_output": "Skill enters Development mode, reads relevant docs, fixes the bug, runs tests, updates docs if needed, validates doc consistency, writes dev log.",
       "expectations": [
         "Development mode is selected",
@@ -52,7 +49,8 @@
       "expectations": [
         "Deployment mode is selected",
         "Deployment guide is created/updated at docs/deploy/DEPLOY_GUIDE.md",
-        "Guide includes: Environments, Prerequisites, Steps, Configuration, Rollback, Verification"
+        "Guide includes: Environments, Prerequisites, Steps, Configuration, Rollback, Verification",
+        "Missing docs/main files do not trigger Bootstrap"
       ]
     },
     {
@@ -94,7 +92,7 @@
       "prompt": "上次的任务还没做完，继续吧。",
       "expected_output": "Skill checks TASK_STATE.md first (step 0), reads the checkpoint, presents in-progress task to user, asks whether to continue or start fresh.",
       "expectations": [
-        "TASK_STATE.md is checked first (Development mode step 0)",
+        "TASK_STATE.md is checked at the start of tracked full Development (step 1)",
         "If TASK_STATE.md exists: checkpoint content is read and presented",
         "User is asked: '发现未完成的任务：[Goal]。继续还是开始新任务？'",
         "If TASK_STATE.md does not exist: falls back to DEVLOG.md plus the active DEVLOG batch last round",
@@ -107,7 +105,7 @@
       "expected_output": "In the new session, Development mode checks TASK_STATE.md, finds the interrupted task, presents the checkpoint with Resume From instructions, and asks user whether to continue.",
       "expectations": [
         "TASK_STATE.md exists from the previous session's interruption",
-        "Development mode step 0 detects TASK_STATE.md",
+        "Development mode step 1 detects TASK_STATE.md",
         "Checkpoint content is presented: Goal, Progress, Working Context, Resume From",
         "User is asked whether to continue or start fresh",
         "If continuing, the Resume From instruction is used as the starting point"
@@ -140,13 +138,13 @@
     },
     {
       "id": 14,
-      "prompt": "Quick fix — just change the login timeout from 30s to 60s in config.py.",
-      "expected_output": "Skill validates the change scope (single file, config only, no interface impact), accepts Quick Fix mode, makes the change, writes one-line QF entry to the active DEVLOG batch and INDEX.md.",
+      "prompt": "This project already has docs/dep/DEVLOG.md and an active DEVLOG batch. Quick fix — just change the local login timeout from 30s to 60s in auth.py.",
+      "expected_output": "Skill validates the change scope (single local file, no interface impact), accepts Quick Fix mode, makes the change, and writes a one-line QF entry because DEVLOG tracking already exists.",
       "expectations": [
         "Quick Fix mode is triggered (user said 'quick fix')",
         "AI validation runs: checks file count, interface change, architecture impact, etc.",
-        "Validation passes (single config file, no interface/architecture impact)",
-        "Change is made to config.py",
+        "Validation passes (single local file, no interface/architecture impact)",
+        "Change is made to auth.py",
         "One-line QF entry is written to the active DEVLOG batch (not a full round format)",
         "docs/dep/devlog/INDEX.md gets one row for the QF round",
         "TASK_STATE.md is NOT created",
@@ -156,7 +154,7 @@
     },
     {
       "id": 15,
-      "prompt": "Quick fix — refactor the auth module to use JWT instead of session cookies.",
+      "prompt": "This project already uses docs/main and docs/dep tracking. Quick fix — refactor the auth module to use JWT instead of session cookies.",
       "expected_output": "AI validation rejects Quick Fix because the change affects interfaces (auth mechanism), architecture (PROJECT_GUIDE.md auth flow), and multiple files. Skill explains why and upgrades to full Development mode.",
       "expectations": [
         "Quick Fix validation runs and detects: interface change (auth mechanism), architecture impact, multi-file change",
@@ -171,7 +169,7 @@
       "prompt": "继续上次的任务。",
       "expected_output": "Skill checks TASK_STATE.md, finds it exists, compares its 'updated' time with the active DEVLOG batch last round time found through DEVLOG.md. If the DEVLOG batch is newer, TASK_STATE is detected as stale and user is asked to confirm cleanup.",
       "expectations": [
-        "TASK_STATE.md is read (step 0)",
+        "TASK_STATE.md is read (tracked full Development step 1)",
         "Expiry check: TASK_STATE.updated is compared with DEVLOG last round time",
         "If DEVLOG time >= TASK_STATE.updated: stale detection triggers",
         "User is prompted: 'TASK_STATE 显示任务在 [time] 中断，但 DEVLOG 显示 [time] 已有完成记录。这个任务是否已完成？'",
@@ -180,13 +178,15 @@
     },
     {
       "id": 17,
-      "prompt": "把 config.py 里的超时值从 30 改成 60。",
-      "expected_output": "Skill makes the change and outputs at Level 1 verbosity: one-line summary and dev log confirmation only. No risk note, no optimization advice, no doc consistency check.",
+      "prompt": "这个项目没有 docs/ 和 DEVLOG。把 auth.py 里的局部超时值从 30 改成 60。",
+      "expected_output": "Skill treats the request as an untracked Quick Fix, changes and tests the code, returns a one-line summary, and creates no documentation or tracking files.",
       "expectations": [
         "Change is detected as small (single file, <10 lines, no interface change)",
         "Output Discipline Level 1 is applied",
-        "Output contains only: one-line summary + '已写入 dev log'",
-        "No risk note, optimization advice, validation section, or doc consistency check in output"
+        "The code change and available focused test are completed",
+        "No docs/main, docs/dep, USAGE.md, DEVLOG, INDEX, or TASK_STATE file is created",
+        "Output contains a one-line summary and does not claim a dev log was written",
+        "No risk note, optimization advice, or doc consistency section is added"
       ]
     },
     {
@@ -287,6 +287,18 @@
         "The canonical sub-plan template and PLAN registration are still used",
         "The final response states that fallback planning was used",
         "No claim is made that sub-brainstorm was delegated"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "这个仓库没有任何 docs。解释一下 src/cache.py 的缓存失效逻辑，不要修改。",
+      "expected_output": "Skill enters Consultation, reads the relevant code, answers without creating a document skeleton or any tracking files.",
+      "expectations": [
+        "Consultation mode is selected before considering Bootstrap",
+        "The answer is based on src/cache.py",
+        "No files are modified",
+        "No docs/main, USAGE.md, docs/dep, DEVLOG, or TASK_STATE is created",
+        "Missing documentation may be noted only if relevant; it is not treated as an initialization request"
       ]
     }
   ]

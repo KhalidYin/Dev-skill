@@ -1,0 +1,18 @@
+schema_version: "0.1"
+open_questions:
+  - query_id: Q-EST-001
+    origin_section: SEC-07
+    query_type: missing-decision
+    severity: blocking
+    topic: intercurrent-event-strategy
+    question: Confirm the strategy for treatment discontinuation and rescue medication.
+    status: open
+    affected_sections: [SEC-07, SEC-12]
+  - query_id: Q-TERM-001
+    origin_section: SEC-04
+    query_type: verification-needed
+    severity: non-blocking
+    topic: terminology
+    question: Confirm use of participant rather than subject.
+    status: resolved
+    affected_sections: [SEC-04]

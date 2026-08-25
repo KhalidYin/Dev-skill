@@ -1,0 +1,23 @@
+schema_version: "0.1"
+request: {mode: create, scope: full-sap, output_language: English, maturity: review-draft, target_template: generic}
+source_inventory:
+  - {source_id: SRC-PROTOCOL, source_type: protocol, title: Synthetic Partial Protocol, version: "1.0", date: "2026-04-01", status: approved, locator: synthetic fixture, precedence: 1}
+study:
+  identifiers: {protocol_id: SYN-PARTIAL-001}
+  phase: Phase III
+  indication: synthetic chronic condition
+  objectives: [Evaluate efficacy at Week 24]
+  design: {allocation: randomized, masking: double-blind, structure: parallel-group, control: placebo}
+  treatments: [active treatment, placebo]
+  visits: [Baseline, Week 12, Week 24]
+  endpoints:
+    - {endpoint_id: EP-PRIMARY, role: primary, scale: continuous, definition: change from baseline in synthetic score at Week 24, repeated: true, visits: [Week 12, Week 24]}
+  intercurrent_events: [treatment discontinuation, rescue medication]
+confirmed_decisions:
+  estimands: []
+  analysis_populations: []
+  statistical_methods:
+    - {endpoint_id: EP-PRIMARY, family: MMRM under consideration}
+  missing_data: []
+  sensitivity_analyses: []
+unknowns: [ICE strategies, analysis population definitions, covariance structure, degrees-of-freedom method, multiplicity strategy, safety treatment-emergent window]

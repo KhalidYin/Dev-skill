@@ -1,0 +1,7 @@
+interface:
+  display_name: "Generate SAP"
+  short_description: "Generate traceable clinical trial SAP drafts"
+  default_prompt: "Use $generate-sap to draft a complete, traceable SAP review document from the supplied study materials."
+
+policy:
+  allow_implicit_invocation: false

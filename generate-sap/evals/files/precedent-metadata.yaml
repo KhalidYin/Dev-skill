@@ -1,0 +1,30 @@
+current_study:
+  indication: synthetic inflammatory condition
+  phase: Phase III
+  design: randomized double-blind parallel-group placebo-controlled
+  endpoint: continuous repeated endpoint with Week 24 primary timepoint
+verified_precedents:
+  - study: {title: Example public trial document, registry_id: NCT04157088, sponsor: listed in source document}
+    document:
+      title: Statistical Analysis Plan
+      document_type: sap
+      version: unknown
+      date: unknown
+      status: unknown
+      source_repository: ClinicalTrials.gov
+      direct_url: https://cdn.clinicaltrials.gov/large-docs/88/NCT04157088/SAP_001.pdf
+      retrieved_date: "2026-08-17"
+    location: {section: to be verified from document, page: null}
+    similarity: {level: medium, matched: [public SAP, longitudinal analysis topic], differences: [indication and intervention require verification]}
+  - study: {title: Synthetic FDA-reviewed study example, registry_id: unknown, sponsor: unknown}
+    document:
+      title: Statistical Review and Evaluation
+      document_type: regulatory-review
+      version: unknown
+      date: unknown
+      status: final
+      source_repository: FDA
+      direct_url: https://www.fda.gov/media/168488/download
+      retrieved_date: "2026-08-17"
+    location: {section: Statistical Evaluation, page: 11}
+    similarity: {level: low, matched: [statistical review], differences: [not an SAP, study design requires verification]}

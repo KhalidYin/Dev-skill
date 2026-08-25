@@ -4,7 +4,7 @@
     "personal-assistant": {
       "status": "stable",
       "category": "dev-tooling",
-      "last_modified": "2026-07-01",
+      "last_modified": "2026-08-25",
       "has_evals": true,
       "tags": [
         "documentation",
@@ -20,7 +20,24 @@
       "category": "design",
       "last_modified": "2026-07-01",
       "has_evals": true,
-      "tags": ["brainstorming", "design", "planning"]
+      "tags": [
+        "brainstorming",
+        "design",
+        "planning"
+      ]
+    },
+    "generate-sap": {
+      "status": "draft",
+      "category": "clinical-statistics",
+      "last_modified": "2026-08-17",
+      "has_evals": true,
+      "tags": [
+        "clinical-trials",
+        "sap",
+        "authoring",
+        "traceability",
+        "precedent-research"
+      ]
     }
   }
 }

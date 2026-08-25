@@ -1,6 +1,6 @@
 ---
 name: personal-assistant
-description: "Document-first development copilot and planning router. Use whenever the user wants to plan a feature, change code, fix bugs, add tests, refactor modules, reconcile docs with implementation, review or audit code, summarize changes, deploy or ship code, or work in a project that uses PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, and TEST_GUIDE.md."
+description: "Development copilot and planning router for repositories with or without an adopted document system. Use whenever the user wants to plan a feature, change code, fix bugs, add tests, refactor modules, reconcile docs with implementation, review or audit code, summarize changes, deploy or ship code, or work in a project that uses PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, and TEST_GUIDE.md."
 ---
 
 # Personal Assistant
@@ -29,31 +29,34 @@ This skill routes tasks into one of six modes:
 
 | Mode | Trigger | What happens |
 |------|---------|--------------|
-| **Bootstrap** | Project has no docs at all | Generate minimal doc skeleton + USAGE.md, then proceed |
+| **Bootstrap** | User explicitly asks to initialize/adopt the document system | Generate minimal doc skeleton + USAGE.md, then proceed |
 | **Consultation** | "what is", "how does", "explain", "find" — read-only | Read docs + code, answer, no edits |
 | **Planning** | "帮我规划", "先想清楚再做", "plan this", "设计一下方案" | Route formal design to `sub-brainstorm`; keep lightweight planning local; then enter Development only after approval |
-| **Development** | "fix", "add", "change", "refactor", "implement" | Check TASK_STATE → Phase-Gate check → implement → test → update docs → validate → write dev log → update memory |
+| **Development** | "fix", "add", "change", "refactor", "implement" | Classify Quick Fix first → implement/test → maintain only already-adopted docs and tracking |
 | **Review** | "review", "audit", "检查", "审核", "inspect" | Determine scope → Quick Review first; ask if Full Report needed |
 | **Deployment** | "deploy", "部署", "上线", "发布", "ship" | Generate or update deployment guide in `docs/deploy/DEPLOY_GUIDE.md` |
 
 ### Mode selection
 
-1. Check if `docs/main/` exists with the four canonical docs. If entirely missing → **Bootstrap**
+1. If the user explicitly asks to initialize/adopt project documentation → **Bootstrap**
 2. If the request mentions deployment → **Deployment**
 3. If the request is read-only (asking questions, understanding code) → **Consultation**
 4. If the request asks for planning / design before implementation → **Planning**
 5. If the request asks for a review/audit/inspection → **Review**
-6. If the request asks to change something → **Development**
+6. If the request asks to change something → **Development**, then classify Quick Fix before any documentation setup
+
+Missing `docs/main/` is repository state, not a Bootstrap trigger. Consultation, Quick Fix, Review, and Deployment must not create the canonical document skeleton merely because it is absent. See `references/project-contract.md` for adoption rules.
 
 ## Quick start by mode
 
 ### Bootstrap
-1. Check if `docs/main/` exists with any of the four canonical docs
-2. If entirely missing, auto-generate a minimal skeleton (outline only, no speculative content)
-3. Generate `USAGE.md` at project root: quick start, detected prerequisites, common commands (TBD where unknown)
-4. Create `docs/dep/` and `docs/deploy/` directories
-5. Tell the user what was created and ask them to fill in project-specific details later
-6. Proceed with the original request in the appropriate mode
+1. Enter only when the user explicitly requests documentation initialization/adoption, or explicitly accepts a Bootstrap proposal
+2. Check which canonical documents already exist
+3. Generate only missing skeleton files (outline only, no speculative content)
+4. Generate `USAGE.md` at project root: quick start, detected prerequisites, common commands (TBD where unknown)
+5. Create `docs/dep/` and `docs/deploy/` directories
+6. Tell the user what was created and ask them to fill in project-specific details later
+7. Proceed with the original request in the appropriate mode
 
 See `references/project-contract.md` for bootstrap rules.
 
@@ -77,9 +80,9 @@ Planning uses a three-tier system: `docs/dep/PLAN.md` (dashboard) → `docs/dep/
 | 已有模块加小功能，1-2 个 Phase 且无架构决策 | 轻量讨论 | `personal-assistant` | 子计划文件 |
 | Review 阻断型 bug | P0 前置修复 | `personal-assistant` | `docs/dep/plans/ongoing/P0-<desc>.md` 或 `docs/dep/plans/backlog/P0-<desc>.md` |
 | Review 非阻断技术债务 | P0 技术债务池 | `personal-assistant` | `docs/dep/plans/backlog/P0-tech-debt.md` |
-| Bug 修复（原因已知） | 跳过规划 | `personal-assistant` | TASK_STATE.md |
-| Bug 修复（原因不明） | 跳过规划 | `personal-assistant` | TASK_STATE.md (P1 = 调查) |
-| 配置调整 / 明确的性能优化 | 跳过规划 | `personal-assistant` | TASK_STATE.md |
+| Bug 修复（原因已知） | 跳过规划 | `personal-assistant` | Development；已采用跟踪时使用 TASK_STATE.md |
+| Bug 修复（原因不明） | 跳过规划 | `personal-assistant` | Development 调查；已采用跟踪时使用 TASK_STATE.md |
+| 配置调整 / 明确的性能优化 | 跳过规划 | `personal-assistant` | Development；不因缺文档而 Bootstrap |
 
 **Formal planning delegation:**
 
@@ -114,10 +117,28 @@ Do not delegate lightweight planning merely because `sub-brainstorm` is installe
 
 ### Development
 
-#### Step 0: Check interrupt checkpoint
+#### Step 0: Route to Quick Fix or Full Development
+
+Classify the requested change before Bootstrap, DEVLOG adoption, TASK_STATE creation, or other documentation writes.
+
+- **Quick Fix triggers**: User says "quick fix", "小改动", "快速修一下"; or the change is obviously small (single file, local behavior, typo)
+- **AI validation is mandatory** — see `references/policy.md` § Quick Fix mode. If any check fails, upgrade to full Development and explain why.
+
+If Quick Fix:
+```
+1. Make the change
+2. Run related tests if available
+3. If DEVLOG tracking already exists, write one-line QF entry and INDEX row
+4. If DEVLOG tracking does not exist, do not create docs/main, docs/dep, DEVLOG, TASK_STATE, or USAGE.md
+5. Done
+```
+
+If full Development, continue below. Do not auto-Bootstrap solely because project docs are absent.
+
+#### Step 1: Check interrupt checkpoint
 
 1. If `docs/dep/TASK_STATE.md` exists, read it
-2. **Expiry check** — compare TASK_STATE.md `updated` time with the active DEVLOG batch's last round time:
+2. **Expiry check** — if an active DEVLOG exists, compare TASK_STATE.md `updated` time with its last round time:
    - If DEVLOG last round time >= TASK_STATE.updated → the task may have already completed and TASK_STATE is a stale leftover
    - Prompt: "TASK_STATE.md 显示任务在 [updated time] 中断，但 DEVLOG 显示 [last round time] 已有完成记录。这个任务是否已完成？我可以清理 TASK_STATE.md。"
    - If user confirms → delete TASK_STATE.md, proceed as new task
@@ -125,44 +146,27 @@ Do not delegate lightweight planning merely because `sub-brainstorm` is installe
 3. If TASK_STATE is valid (not expired), present the in-progress task(s) to the user
 4. Ask: "发现未完成的任务：[Goal]。继续还是开始新任务？"
 5. If user continues, use the checkpoint's `Resume From` as the starting point
-6. If no TASK_STATE.md exists, proceed to step 1
+6. If no TASK_STATE.md exists, proceed to step 2
 
-#### Step 1: Check for unfinished work
+#### Step 2: Check for unfinished tracked work
 
-First apply DEVLOG legacy adoption if old root-level DEVLOG files exist: move previous detailed/batch logs directly into `docs/dep/devlog/archive/` without rewriting them, then use the new entrypoint/index/active layout (see `references/dev-log-protocol.md`). Read `docs/dep/DEVLOG.md`, then the last round in `docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md`. If `Next` has open items not covered by TASK_STATE.md, ask: "上次 [round] 还有未完成的任务：xxx。继续上次的任务还是开始新任务？"
+If old root-level DEVLOG files exist, apply DEVLOG legacy adoption before writing a new tracked round. If modern DEVLOG tracking exists, read its entrypoint and active last round. If neither exists, skip DEVLOG setup without creating it. When the tracked last round has open `Next` items not covered by TASK_STATE.md, ask whether to continue them.
 
-#### Step 2: Route to Quick Fix or Full Development
+#### Full Development (steps 3–16)
 
-Determine if this is a Quick Fix or full Development task:
-
-- **Quick Fix triggers**: User says "quick fix", "小改动", "快速修一下"; or the change is obviously small (single file, config tweak, typo)
-- **AI validation is mandatory** — see `references/policy.md` § Quick Fix mode for the autonomous validation rules. If any check fails, reject Quick Fix and explain why.
-
-If Quick Fix:
-```
-3. Make the change
-4. Run related tests
-5. Write one-line QF entry to the active DEVLOG batch and add one row to `docs/dep/devlog/INDEX.md` (see dev-log-protocol.md)
-6. Done
-```
-
-If full Development, continue to step 3.
-
-#### Full Development (steps 3–15)
-
-3. Inspect the relevant docs, nearby code, and project memory (`docs/main/memory/`)
+3. Inspect available relevant docs, nearby code, and existing project memory
 4. State the constraint or design choice that matters
 5. **Phase-Gate check (if sub-plan exists)** — before starting work, verify current Phase:
    - Read the active sub-plan file (`docs/dep/plans/ongoing/P<phase>-<name>.md`) current Phase's input conditions, completion criteria, and boundaries
    - If previous Phase has unchecked completion criteria → flag and ask user before proceeding
    - If TASK_STATE.md exists from previous session, verify its Goal matches the current sub-plan Phase
    - If current request would cross Phase boundaries → flag and ask user
-6. **Create TASK_STATE.md** — write the initial checkpoint with goal, progress checklist, and working context (see `references/doc-structure.md` § TASK_STATE.md). If a sub-plan is active, Goal must reference the sub-plan file and current Phase (e.g., "P2 — 实现注册/登录 API（子计划：docs/dep/plans/ongoing/P1-user-auth.md）"), and include Phase Context section with input conditions, completion criteria, and boundaries from the sub-plan.
+6. **Create TASK_STATE.md when tracking is adopted** — if `docs/dep/` planning/tracking artifacts already exist, write the checkpoint described in `references/doc-structure.md`. Otherwise do not create documentation artifacts solely for execution tracking.
 7. Make the smallest viable implementation
-8. **Update TASK_STATE.md** — after each significant step, update the progress checklist and working context
+8. **Update TASK_STATE.md if created** — after each significant step, update the progress checklist and working context
 9. Add or update tests
-10. Update the relevant docs in `docs/main/` and `USAGE.md` if applicable
-11. **Validate consistency** — cross-check `docs/main/*.md` (excl. memory/) + `USAGE.md` for terminology drift or conflicts (see `references/policy.md` § Doc consistency check)
+10. Update existing relevant docs and `USAGE.md` if applicable; do not create the canonical skeleton as a side effect
+11. **Validate consistency when the document system exists** — cross-check existing canonical docs and `USAGE.md`; if the user requested a docs consistency review but docs are absent, report that the check is unavailable
 12. **Phase-Gate validation (if sub-plan exists)** — when TASK_STATE.md items are all checked:
     - Verify each completion criterion in the sub-plan file for the current Phase
     - Check for boundary violations (did we do things the Phase explicitly excluded?)
@@ -172,16 +176,16 @@ If full Development, continue to step 3.
     - All pass + no violations → check off completion criteria in sub-plan, update Phase overview, update PLAN.md dashboard
     - Failures → fix gaps before proceeding. Do not start next Phase.
     - Boundary violation → flag and ask user: expand this Phase's scope, or defer to later Phase?
-13. **Write a dev log round** — append to the active `docs/dep/devlog/active/DEVLOG-RXXX-RYYY.md` batch and add one row to `docs/dep/devlog/INDEX.md`. If a sub-plan is active, include sub-plan and Phase annotation in the round header: `### RXXX [HH:MM] [P1-user-auth] P2: [简短描述]` (see `references/dev-log-protocol.md`)
-14. **Delete TASK_STATE.md** — task/phase is complete, checkpoint is no longer needed
-15. Update context memory if new decisions, facts, or user preferences emerged
+13. **Write a dev log round when DEVLOG tracking exists** — append to the active batch and INDEX. Do not initialize DEVLOG solely because Development ran.
+14. **Delete TASK_STATE.md if created** — task/phase is complete, checkpoint is no longer needed
+15. Update existing context memory if new durable decisions, facts, or user preferences emerged
 16. **Output discipline** — verbosity scales with change size (see `references/policy.md` § Output discipline)
 
 ### Review
 1. **Determine scope** — parse the user's request to identify time range, module, or "all" (see `references/review-protocol.md` § Scope determination). Default: all entries since last review
-2. Read dev log rounds within scope (use layered reading — `DEVLOG.md` + `devlog/INDEX.md` + summaries first, then active/archive sections as needed, see `references/dev-log-protocol.md`)
+2. If DEVLOG tracking exists, read rounds within scope using layered reading. If it does not exist, continue with Git/code evidence and state that DEVLOG cross-checking is unavailable; do not create tracking files.
 3. Run `git log --oneline --since=<scope start date>` and cross-check against dev log claims
-4. Inspect the relevant docs in `docs/main/` and the actual code
+4. Inspect existing relevant docs and actual code. If document consistency was requested but no project docs exist, report that part as unavailable rather than bootstrapping.
 5. Perform **Quick Review** — output 3-5 bullet points + cross-check verdict (include git/dev-log mismatches if found)
 6. Ask the user: "需要我生成完整的审查报告到 `docs/dep/REVIEWS.md` 吗？"
 7. Only if the user confirms, append a Full Report to `docs/dep/REVIEWS.md` (see `references/review-protocol.md`)

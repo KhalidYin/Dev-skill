@@ -1,0 +1,89 @@
+{
+  "skill_name": "generate-sap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $generate-sap to create a full English SAP review draft from the attached complete synthetic study context. External web research is prohibited for this test.",
+      "expected_output": "A complete 18-section generic SAP review draft plus a generation evidence ledger, open-question index, reference list, and consistency findings.",
+      "files": ["files/complete-study.yaml"],
+      "expectations": [
+        "All top-level SAP sections from SEC-01 through SEC-18 are present",
+        "Primary efficacy content is traceable to supplied facts and confirmed decisions",
+        "The output does not invent a covariance structure, degrees-of-freedom method, alpha value, or imputation parameter",
+        "search_summary.status is prohibited",
+        "The output requires qualified statistician review and does not claim approval or compliance"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $generate-sap to draft the complete SAP structure from the attached partial study context. Do not stop after asking questions.",
+      "expected_output": "A structurally complete review draft with supported prose and local author queries for missing estimand, population, covariance, missing-data, multiplicity, and safety details.",
+      "files": ["files/partial-study.yaml"],
+      "expectations": [
+        "All 18 top-level sections remain present",
+        "Missing information is raised in the affected sections rather than only in a global preamble",
+        "One stable query ID is reused when the missing ICE strategy affects estimand, primary analysis, and sensitivity sections",
+        "Unaffected sections continue to contain supported content",
+        "No unconfirmed study-specific value is silently filled"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $generate-sap to revise the SAP from the attached conflicting source inventory and show all conflicts requiring resolution.",
+      "expected_output": "A complete review draft preserving both conflicting statements, one stable conflict query, and a traceable impact list.",
+      "files": ["files/conflicting-sources.yaml"],
+      "expectations": [
+        "The skill does not silently select one endpoint timepoint",
+        "Both statements retain source IDs and locators",
+        "The conflict query is placed in the endpoint section and referenced by affected analysis sections",
+        "Unrelated sections continue to be drafted"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use $generate-sap for a Phase III parallel-group continuous repeated-endpoint study, but assume this host has no web search or browser tools. Generate the full review draft and document the research limitation.",
+      "expected_output": "A complete draft with search_summary.status unavailable and no fabricated precedent records.",
+      "files": [],
+      "expectations": [
+        "Search unavailability is explicit",
+        "The output does not claim that no comparable trials exist",
+        "No precedent title, document version, page number, URL, or evidence ID is fabricated",
+        "The SAP structure is still generated"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use $generate-sap to summarize the attached verified precedent metadata before drafting the primary efficacy section. Treat it as precedent, not a requirement.",
+      "expected_output": "A precedent comparison with direct references, similarities, differences, document types, and conditional use in the current SAP.",
+      "files": ["files/precedent-metadata.yaml"],
+      "expectations": [
+        "Every precedent includes a direct URL, document type, retrieval date, section or page, similarities, and differences",
+        "A protocol or regulatory review is not mislabeled as an SAP",
+        "No majority-vote conclusion is used",
+        "Study-specific parameter values are not copied into the current SAP"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use $generate-sap to generate TFL shells and ADaM specifications from an approved SAP.",
+      "expected_output": "A concise not-applicable handoff without generating TFL shells, ADaM specifications, or statistical code.",
+      "files": [],
+      "expectations": [
+        "The skill does not perform the requested downstream work",
+        "The response identifies the SAP-authoring boundary",
+        "No SAP redesign is introduced"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Use $generate-sap to produce a clean draft while unresolved blocking author queries remain in the supplied generation record.",
+      "expected_output": "A clean-formatted draft that still exposes unresolved blocking items inline or through explicit linked references.",
+      "files": ["files/open-queries.yaml"],
+      "expectations": [
+        "Unresolved blocking items are not silently removed",
+        "Resolved markers may be removed",
+        "Stable query IDs remain traceable to affected sections"
+      ]
+    }
+  ]
+}

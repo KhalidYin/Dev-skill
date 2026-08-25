@@ -1,4 +1,4 @@
-# Install script: link project skill directories to ~/.claude/skills/, ~/.codex/skills/, and ~/.agent/skills/
+# Install script: link project skill directories to Claude, Codex, Agents, and Workbuddy skill roots.
 # Three-tier strategy: SymbolicLink > Junction > Copy
 
 param(
@@ -10,7 +10,6 @@ $TargetDirs = @(
     (Join-Path $HOME ".claude\skills"),
     (Join-Path $HOME ".codex\skills"),
     (Join-Path $HOME ".agents\skills"),
-    (Join-Path $HOME ".codebuddy\skills"),
     (Join-Path $HOME ".workbuddy\skills")
 )
 
@@ -96,4 +95,4 @@ foreach ($targetDir in $TargetDirs) {
     Write-Host ""
 }
 
-Write-Host "Done. Linked skills are available to Claude Code, Codex, and Agent."
+Write-Host "Done. Linked skills are available to Claude Code, Codex, Agents, and Workbuddy."
