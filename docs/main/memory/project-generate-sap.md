@@ -13,3 +13,5 @@ type: project
 **同类研究：** 宿主搜索可用时，先形成 Study Fingerprint，再广泛发现、短名单筛选和深入阅读公开 SAP 或替代资料。Trial precedent 与 normative reference 分开；Reference 记录真实文档类型、直接 URL、版本/日期/状态、章节/页码、检索日期、相似点和差异。搜索不可用或证据不足时显式降级。
 
 **边界：** 不实现知识图谱、向量库、搜索服务、独立 Validation Engine、GUI、TFL/ADaM 或统计程序。
+
+**Ledger 序列化：** 当宿主写文件时，模型逐条提供受限 JSON 记录，`build_evidence_ledger.py` 先拒绝无效语法、重复单例或重复稳定 ID，再按固定顶层顺序生成 UTF-8 YAML。该脚本只保证机械序列化，不推导统计结论、不修复语义，也不替代 `validate_output_contract.py`。正式临床 Gate 的失败产物不得借此回写修补；新 Gate 必须使用全新 Run ID。

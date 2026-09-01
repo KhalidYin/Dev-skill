@@ -8,7 +8,10 @@
       "files": ["files/complete-study.yaml"],
       "expectations": [
         "All top-level SAP sections from SEC-01 through SEC-18 are present",
+        "The generic Markdown level-2 headings use the exact titles and order defined by the output contract",
         "Primary efficacy content is traceable to supplied facts and confirmed decisions",
+        "Current-study source IDs appear in document.source_versions and source_facts, never in external references",
+        "When file artifacts are written, the Ledger is assembled from individually validated JSON records into parseable deterministic YAML rather than hand-appended as one large YAML stream",
         "The output does not invent a covariance structure, degrees-of-freedom method, alpha value, or imputation parameter",
         "search_summary.status is prohibited",
         "The output requires qualified statistician review and does not claim approval or compliance"
@@ -58,6 +61,7 @@
       "files": ["files/precedent-metadata.yaml"],
       "expectations": [
         "Every precedent includes a direct URL, document type, retrieval date, section or page, similarities, and differences",
+        "ContentUnit.references contains only IDs defined in the external references collection",
         "A protocol or regulatory review is not mislabeled as an SAP",
         "No majority-vote conclusion is used",
         "Study-specific parameter values are not copied into the current SAP"

@@ -1,3 +1,5 @@
+# Logical Ledger shape. When creating a file, stage individual JSON records and
+# assemble this YAML with scripts/build_evidence_ledger.py; do not hand-append it.
 schema_version: "0.1"
 document:
   title: ""
@@ -10,38 +12,79 @@ section_status:
     status: tbd
     content_ids: []
     query_ids: []
+  - section_id: SEC-02
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-03
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-04
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-05
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-06
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-07
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-08
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-09
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-10
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-11
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-12
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-13
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-14
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-15
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-16
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-17
+    status: tbd
+    content_ids: []
+    query_ids: []
+  - section_id: SEC-18
+    status: tbd
+    content_ids: []
+    query_ids: []
 
-content_units:
-  - content_id: SAP-00-001
-    section_id: SEC-00
-    topic: example
-    generation_mode: tbd
-    status: blocked
-    source_facts: []
-    applied_rules: []
-    assumptions: []
-    derivation_summary: ""
-    alternatives: []
-    references: []
-    generated_content:
-      paragraph_id: SAP-00-P1
-      text: "[TBD]"
-    open_questions: [Q-EXAMPLE-001]
-    downstream_sections: []
-
-open_questions:
-  - query_id: Q-EXAMPLE-001
-    origin_section: SEC-00
-    query_type: missing-input
-    severity: blocking
-    topic: example
-    known: []
-    missing_or_conflicting: []
-    impact: []
-    question: ""
-    owner: statistician
-    status: open
-    affected_sections: []
+# Populate at least one material ContentUnit before delivery. Current-study
+# source IDs belong in source_facts; references contains external IDs only.
+content_units: []
+open_questions: []
 
 references: []
 consistency_findings: []
@@ -52,5 +95,6 @@ search_summary:
   candidates_found: 0
   shortlisted: 0
   deeply_reviewed: 0
-  stop_reason: ""
-  limitations: []
+  stop_reason: "Precedent research has not yet been performed."
+  limitations:
+    - "Update this record when research is completed, limited, unavailable, or prohibited."

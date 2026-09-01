@@ -17,6 +17,7 @@ Generate a reviewable clinical-trial Statistical Analysis Plan. Treat this skill
 6. Keep a structured generation record linking drafted content to facts, rules, assumptions, references, and open questions.
 7. Never silently fill study-specific parameters from generic knowledge or another trial.
 8. Require qualified statistician review. Never label output approved or regulator-compliant.
+9. Keep current-study sources in `document.source_versions` and `source_facts`; reserve `references` for verified external material.
 
 ## Required outputs
 
@@ -45,16 +46,20 @@ Do not perform standalone SAP compliance review, TFL or ADaM generation, statist
 5. Generate each content unit under one allowed generation mode.
 6. Add inline `TBD`, `AUTHOR QUERY`, or `CONFLICT` markers where support is insufficient.
 7. Check cross-section consistency and assemble the three required outputs.
+8. When writing artifacts as files, build the Ledger from individually validated JSON records with the packaged deterministic builder; do not hand-append the final YAML.
+9. Apply the output contract. When Draft and Ledger files exist, run the packaged structural validator and report any failures without rewriting the artifacts.
 
 ## Load core resources
 
 - Read [input-contract.md](references/input-contract.md) for every invocation.
+- Read [output-contract.md](references/output-contract.md) for every invocation before drafting.
 - Read [source-precedence.md](references/source-precedence.md) whenever sources, guidance, precedents, or conflicts are involved.
 - Read [precedent-research.md](references/precedent-research.md) before drafting substantive statistical sections when external research is allowed; use its explicit degraded states when search cannot be performed.
 - Read [content-unit-contract.md](references/content-unit-contract.md) before drafting any material section.
 - Read [section-map.md](references/section-map.md) when selecting or instantiating a structure.
 - Use [sap-template.md](assets/sap-template.md) when no Sponsor template is supplied.
 - Use [generation-record-template.yaml](assets/generation-record-template.yaml) for the evidence ledger and query index.
+- Use `scripts/build_evidence_ledger.py` when creating the Ledger as a file; it validates record syntax and serializes YAML without changing record meaning.
 - Read [cross-section-checks.md](references/cross-section-checks.md) before final assembly.
 
 Load section-specific rules only for sections being drafted:

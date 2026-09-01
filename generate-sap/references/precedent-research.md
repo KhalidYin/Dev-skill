@@ -155,7 +155,7 @@ Use one status:
 
 ```yaml
 search_summary:
-  status: completed | limited | unavailable | prohibited
+  status: completed | limited | unavailable | prohibited | not-run
   queries_run: []
   repositories_checked: []
   candidates_found: 0
@@ -166,3 +166,5 @@ search_summary:
 ```
 
 `limited` includes cases with no accessible full SAP, no high-similarity record, incomplete version information, or only secondary descriptions. Do not equate `limited` with evidence of absence.
+
+Use `not-run` only when research has not yet been performed and was neither prohibited nor attempted with unavailable tooling. A run that explicitly forbids external research is `prohibited`, not `not-run`.
