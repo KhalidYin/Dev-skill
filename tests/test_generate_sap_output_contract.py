@@ -209,14 +209,28 @@ class OutputContractTests(unittest.TestCase):
         self.assertTrue(any("precedent-not-normative" in error for error in errors))
         self.assertTrue(any("search_summary.status is invalid" in error for error in errors))
 
+    def test_sourced_mode_rejects_proposed_assumptions_or_alternatives(self) -> None:
+        for field, value in (
+            ("assumptions", ["Use participant-level worst-grade counting."]),
+            ("alternatives", ["Use the Sponsor-standard counting convention after confirmation."]),
+        ):
+            with self.subTest(field=field):
+                ledger = valid_ledger()
+                ledger["content_units"][0][field] = value
+                errors = VALIDATOR.validate(generic_draft(), ledger)
+                self.assertTrue(
+                    any("sourced mode" in error and field in error for error in errors),
+                    errors,
+                )
+
 
 class ExistingBlindRunRegressionTests(unittest.TestCase):
     OUTPUTS = ROOT / ".validation-work" / "generate-sap" / "oncology-phase1-2" / "outputs"
 
     @unittest.skipUnless(OUTPUTS.exists(), "local blind-run artifacts are intentionally not versioned")
-    def test_existing_objective_outcomes_are_preserved(self) -> None:
+    def test_existing_runs_are_rechecked_without_rewriting_artifacts(self) -> None:
         expected = {
-            ("CASE-ONC-004", "ONC004-C01"): (True, ()),
+            ("CASE-ONC-004", "ONC004-C01"): (False, ("sourced mode with assumptions",)),
             ("CASE-ONC-001", "ONC001-C03"): (False, ("reference_type is invalid",)),
             ("CASE-ONC-001", "ONC001-C04"): (False, ("Section 1 title", "reference_type is invalid")),
             ("CASE-ONC-001", "ONC001-P01"): (False, ("document.status is invalid", "precedent-not-normative")),

@@ -35,7 +35,7 @@ Dev-skill 是一个 Codex Skill 工厂，用于创建、维护、校验、安装
 - **职责**：把研究资料和确认的统计决定转换为结构完整的 SAP review draft，并保留生成依据、Author Query 和明确 Reference。
 - **入口**：`generate-sap/SKILL.md`
 - **资源**：输入/内容项契约、完整章节映射、核心章节规则、同类研究检索规则和通用模板按需加载。
-- **当前切片**：完整通用 SAP 结构；深度覆盖研究设计、Endpoints、Estimands/ICE、Analysis Populations、Primary Efficacy、Missing Data/Sensitivity；安全性仅提供基础 authoring 约束。
+- **当前切片**：完整通用 SAP 结构；深度覆盖研究设计、Endpoints、Estimands/ICE、Analysis Populations、Primary Efficacy、Missing Data/Sensitivity；对 adaptive/Bayesian 方法要求完整转录当前研究的 prior、阈值和决策规则；安全性仍是基础 authoring 约束，但未确认计数约定必须显式 proposed。
 - **边界**：仅属于 Skill Layer；不实现 Workflow、知识图谱、向量库、独立 Validation Engine、GUI、TFL/ADaM 或统计编程。
 
 ## 数据流

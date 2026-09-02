@@ -46,3 +46,4 @@
 | R042 | 2026-08-31 | 21:53 | P0-generate-sap-output-contract | P2 | ONC004 P02 通过四道 Gate，R16 L1 六槽达到 6/6 locked | `.validation-work/.../remediation-16/`, `docs/dep/` | active/DEVLOG-R041-R080.md |
 | R043 | 2026-08-31 | 22:05 | P0-generate-sap-output-contract | P2 | 固化 4+1 匿名包并恢复原 P2 盲评入口 | `.validation-work/.../l2-review/`, `docs/dep/` | active/DEVLOG-R041-R080.md |
 | R044 | 2026-09-01 | 10:21 | P2-generate-sap-blind-validation | P4 | 完成两案例版本对齐、五份事实预审和匿名包验证，转入单统计师盲评 | `.validation-work/.../comparison/`, `.validation-work/.../l2-review/`, `docs/dep/` | active/DEVLOG-R041-R080.md |
+| R045 | 2026-09-02 | 13:15 | generate-sap-post-review-remediation | - | 收紧 evidence mode、早期肿瘤 adaptive/Bayesian 完整性和 Protocol 内部一致性约束 | `generate-sap/`, `tests/`, `docs/dep/`, `docs/main/` | active/DEVLOG-R041-R080.md |

@@ -1,0 +1,43 @@
+schema_version: "0.1"
+request:
+  mode: create
+  scope: full-sap
+  output_language: English
+  maturity: review-draft
+  target_template: generic
+  external_research: prohibited
+source_inventory:
+  - source_id: SRC-PROTOCOL
+    source_type: protocol
+    title: Synthetic Early-phase Oncology Protocol
+    version: "1.0"
+    date: "2026-06-01"
+    status: approved
+    locator: synthetic fixture
+    precedence: 1
+study:
+  identifiers: {protocol_id: SYN-ONC-001}
+  phase: Phase I/II
+  indication: synthetic advanced solid tumors
+  design:
+    allocation: nonrandomized
+    masking: open-label
+    structure: dose escalation followed by indication-specific expansion
+  protocol_extracts:
+    - locator: Synopsis, p. 12
+      fact: Phase II contains three sub-arms with 40 participants each and up to 120 participants overall.
+    - locator: Section 6.3, p. 48
+      fact: Phase II contains two named sub-arms with 40 participants each and up to 120 participants overall.
+    - locator: Section 6.2.3, pp. 42-44
+      fact: MTD requires at least six evaluable participants, the protocol posterior target-toxicity condition, and confirmation that the dose is the maximum recommended by the model or integrated clinical review.
+    - locator: Section 6.2.4, p. 45
+      fact: Intra-participant escalation is prohibited during Cycles 1-4 and later requires no related Grade 2 or higher toxicity plus prior evaluation of the higher dose.
+    - locator: Appendix 8, Table A8-3
+      fact: The response probability prior is Jeffreys Beta(0.5, 0.5).
+    - locator: Appendix 8, Table A8-7
+      fact: The BLRM prior is a two-component mixture with weights 0.8 and 0.2; EWOC excludes doses with posterior excessive-toxicity probability of 25% or greater.
+    - locator: Section 10.5.3, p. 90
+      fact: Treatment-emergent adverse events are summarized by system organ class, preferred term, CTCAE grade and relationship; no participant-level worst-grade counting convention is specified.
+constraints:
+  - Do not resolve the sub-arm and sample-size inconsistency silently.
+  - Do not import study-specific parameters from another trial.

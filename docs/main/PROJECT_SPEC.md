@@ -32,6 +32,7 @@
 | 2026-08-17 | 输入不足处理 | 阻断整份文档 / 省略章节 / 完整结构加局部问题 | 完整结构加局部问题 | 保持 SAP 可审阅，缺口只阻断受影响内容项 |
 | 2026-08-17 | 同类研究 | 不搜索 / 外部知识库 / 宿主自主广搜 | 宿主自主广搜并明确降级 | 保持 Skill Layer 最小实现，同时要求直接引用和先例边界 |
 | 2026-08-28 | Ledger 文件序列化 | 模型手写完整 YAML / 逐记录 JSON + 确定性组装 | 逐记录 JSON + 确定性组装 | 将语法可靠性从长文本生成中分离，同时不改写模型给出的语义或统计判断 |
+| 2026-09-02 | 临床评审后修复范围 | 个案提示 / 扩展工作流 / 最小生成约束 | 最小生成约束 | 只固化跨运行重复的 evidence-mode、adaptive/Bayesian 完整性和 Protocol 内部冲突检查，不把评分治理或参考 SAP 后续决定写入 Skill |
 
 ## 接口契约
 
@@ -43,6 +44,9 @@
 - 当前研究的 Protocol、修订、确认决定和 Sponsor 约定只进入 Ledger 的 `document.source_versions` / `source_facts`；外部 `references` 只记录规范、同类研究和方法学来源。
 - 写入文件时，`Generation Evidence Ledger` 由逐条、受限、可解析的 JSON 记录暂存后确定性序列化为 YAML；组装器不得推断、补写或修复语义内容。
 - 每个 material content unit 只能标记为 `sourced`、`derived`、`proposed`、`tbd`、`conflict` 或 `not-applicable`。
+- `sourced` 内容项不得包含 assumptions 或 alternatives；混合来源事实与研究特定提议时必须拆分，提议项必须在正文显式标记并关联 Query。
+- 当 Protocol 提供 adaptive/Bayesian 方法时，必须从正文和附录完整提取适用的 prior、参数化、阈值、borrowing、升降级、停止和剂量推荐规则；已存在的来源事实不得降级为 TBD 或裸引用。
+- 组装前必须核对 synopsis、设计正文、统计章节和附录中的 arm/sub-arm、cohort 和 sample-size 逻辑；不一致时保留 `conflict` 并生成稳定 Query。
 - 同类研究 Reference 必须记录真实文档类型、版本/日期/状态、直接 URL、章节或页码、检索日期、相似点和重要差异。
 - 所有输出必须要求合格统计师审核，不得声称已批准或已完成法规合规判断。
 

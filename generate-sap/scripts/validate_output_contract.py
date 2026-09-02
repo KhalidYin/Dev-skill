@@ -172,6 +172,14 @@ def validate_content_units(
         referenced_external.update(str(value) for value in references if has_value(value))
         if mode == "sourced" and not (facts or references):
             errors.append(f"{prefix} uses sourced mode without source_facts or external references.")
+        if mode == "sourced" and record.get("assumptions"):
+            errors.append(
+                f"{prefix} uses sourced mode with assumptions; split the content or use proposed mode."
+            )
+        if mode == "sourced" and record.get("alternatives"):
+            errors.append(
+                f"{prefix} uses sourced mode with alternatives; split the content or use proposed mode."
+            )
         if mode == "derived" and (not record.get("applied_rules") or not has_value(record.get("derivation_summary"))):
             errors.append(f"{prefix} uses derived mode without rules and a derivation summary.")
         if mode == "proposed" and (not record.get("assumptions") or not record.get("alternatives")):

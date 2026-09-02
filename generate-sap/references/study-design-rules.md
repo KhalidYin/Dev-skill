@@ -11,6 +11,7 @@ Load this file for Sections 5, 6, 7.1, 8, 10, or 15.
 - visit schedule, treatment duration and follow-up;
 - rescue/concomitant treatment and discontinuation rules;
 - endpoint hierarchy, variable, assessment, derivation and timepoint.
+- for adaptive or dose-finding designs: cohort evaluability, escalation/de-escalation, stopping, MTD/RP2D, dose recommendation and intra-participant escalation rules.
 
 ## Rules
 
@@ -20,6 +21,8 @@ Load this file for Sections 5, 6, 7.1, 8, 10, or 15.
 - `DES-004`: Distinguish repeated measurements from a single primary-timepoint analysis; do not infer the estimator from repetition alone.
 - `DES-005`: Treat sample size, randomization, stratification, multiplicity and interim decisions as study-specific. Never copy their numeric values from another trial.
 - `DES-006`: Identify rescue medication, treatment discontinuation, prohibited treatment, death and missed assessment as potential ICE or missing-data topics without assigning a strategy unless supported.
+- `DES-007`: For adaptive or dose-finding designs, enumerate source-specified cohort evaluability, escalation/de-escalation, stopping, MTD/RP2D, dose-recommendation and intra-participant escalation criteria. A general citation to the Protocol does not replace material operational decision rules.
+- `DES-008`: Reconcile arm and sub-arm names, cohort counts, per-arm sample sizes and total sample size across the synopsis, design body, statistical sections and appendices. Preserve any mismatch as `conflict` with one stable query; do not choose one statement silently.
 
 ## Output pattern
 

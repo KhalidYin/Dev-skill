@@ -32,9 +32,9 @@ python scripts/generate_index.py
 
 - Skill frontmatter、name 和 description 基础规则。
 - 注册表驱动的 skill 发现和索引生成。
-- `generate-sap` 的 7 个行为评测和 5 个合成 fixture，覆盖完整输入、部分输入、来源冲突、检索不可用、先例引用、下游越界和 clean-draft 未决问题。
+- `generate-sap` 的 8 个行为评测和 6 个合成 fixture，覆盖完整输入、部分输入、来源冲突、检索不可用、先例引用、下游越界、clean-draft 未决问题，以及 early-phase adaptive/Bayesian 参数、决策规则、样本量冲突和安全性 proposed convention。
 - `generate-sap` 的独立前向测试：输入不足仍保留完整结构；先例有直接引用但不被当成规范性要求。
-- `generate-sap` 的 11 个单元测试：7 个输出合同测试和 4 个 Ledger builder 测试；覆盖确定性组装、UTF-8、重复 ID/单例拒绝、错误 JSON 不污染暂存、必需单例、禁止覆盖最终文件及既有盲测失败回归。
+- `generate-sap` 的 12 个单元测试：8 个输出合同测试和 4 个 Ledger builder 测试；覆盖确定性组装、UTF-8、重复 ID/单例拒绝、错误 JSON 不污染暂存、必需单例、禁止覆盖最终文件、`sourced` 模式夹带 assumptions/alternatives 的拒绝，以及既有盲测产物的新规则回放。
 - Ledger 序列化非临床 smoke：本地大记录集通过；真实 CLI 生成 60 条目标记录，最终 YAML 可解析且暂存已清除。真实 CLI 曾把 `question_id` 写成 `query_id` 合同以外字段，构建器安全拒绝后以相同语义重试，因此结果记为 `pass_with_recovery`，不是零错误通过。
 
 ### 未覆盖
@@ -48,6 +48,8 @@ python scripts/generate_index.py
 - 高风险专业 skill 必须验证不伪造证据、不越权给出最终批准结论。
 - SAP authoring skill 必须验证18个顶层章节存在，且缺失输入不会省略受影响章节。
 - SAP authoring skill 必须验证 `sourced`、`derived`、`proposed`、`tbd`、`conflict` 和 `not-applicable` 的行为边界。
+- `sourced` 内容项夹带 assumption 或 alternative 时 validator 必须失败；安全性计数等未确认约定必须以 proposed + Query 表达。
+- Early-phase adaptive/Bayesian 行为评测必须验证附录中的 prior/阈值不被降级为 TBD，MTD/升降级规则被完整保留，以及 arm/cohort/sample-size 冲突不被静默解决。
 - 同类研究评测必须验证直接文档引用、真实文档类型、相似点/差异和检索失败降级，不得用搜索结果摘要冒充证据。
 - Clean Draft 测试必须验证未解决的阻断问题不会被静默删除。
 - Ledger builder 测试必须验证单条 JSON 在进入暂存前完成语法、大小、单例和稳定 ID 检查；builder 只负责机械组装，不能代替输出合同校验器或专业审核。

@@ -1,7 +1,7 @@
 ---
 status: in-progress
 created: 2026-08-17 11:40
-updated: 2026-09-01 10:20
+updated: 2026-09-02 13:15
 ---
 
 # Current Tasks
@@ -180,3 +180,36 @@ status: blocked
 ### Resume From
 
 用户完成精确清理命令后，复核六个旧路径均不存在并删除本检查点。
+
+## Task 4: Generate SAP 临床评审后最小修复
+
+status: done
+
+### Goal
+
+根据 REV-101 至 REV-105 的 AI 候选评审中重复出现的缺口，最小修复 `generate-sap` 的证据模式、adaptive/Bayesian 规则完整性和 Protocol 内部一致性检查；保留历史验证产物不变。
+
+### Progress
+
+- [x] 确认三类跨运行重复缺口及最小修复边界
+- [x] 先增加 evidence-mode validator 失败测试
+- [x] 修改 content-unit、safety、study-design、efficacy 和 cross-section 规则
+- [x] 通过单元测试、Skill 校验、项目校验和安装
+- [x] 同步项目文档、注册索引与开发日志
+
+### Working Context
+
+- **Files edited**: `generate-sap/references/`, `generate-sap/scripts/validate_output_contract.py`, `generate-sap/evals/`, `tests/test_generate_sap_output_contract.py`, `docs/main/`, `docs/dep/`
+- **Last validation**: 12 个单元测试通过；8 个 eval 与 6 个 fixture 可解析；3 个项目 Skill 通过 `validate_all.py`；`generate-sap` 通过系统 quick validator 并已重新安装。
+- **Key decisions**: 不增加 Agent Workflow 或新的临床知识库；不回写 REV 产物和评分；仅将可复现缺口固化为生成约束。现有 P4 产物只作为修复前基线，不能证明当前版本有效。
+- **Blocker**: None
+
+### Phase Context
+
+- **Sub-plan**: none（已知原因的局部修复）
+- **Completion criteria**: sourced/proposed 混合记录可被机械拒绝；adaptive/Bayesian 精确参数和决策规则有明确生成要求；arm/cohort/sample-size 内部冲突有必须检查；全部校验通过。
+- **Boundaries**: 不修改 `.validation-work` 历史产物、参考 SAP、评分阈值或映射；不将后续 Sponsor 决定固化为通用规则。
+
+### Resume From
+
+使用未见案例或新增合成案例做一次独立前向生成，验证三类约束确实改变生成行为；不要用历史评分倒推或改写既有 REV 产物。

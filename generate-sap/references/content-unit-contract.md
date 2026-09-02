@@ -15,6 +15,13 @@ Use one `ContentUnit` for every material SAP statement or tightly related paragr
 
 Never use `approved`, `validated`, or `compliant` as a generation mode.
 
+## Mode integrity
+
+- A `sourced` unit contains only statements directly supported by its recorded current source facts or external references. Its `assumptions` and `alternatives` must be empty.
+- If a paragraph mixes supported facts with a study-specific recommendation, split it into separate `sourced` and `proposed` units. Do not hide a proposal inside a sourced paragraph.
+- Render every material proposed choice explicitly in the review draft as proposed or conditional and place its stable author query next to the affected content. A proposal recorded only in the Ledger is insufficient.
+- When a supplied source contains an exact parameter or decision rule, transcribe it or cite it with enough detail to execute the rule. Do not downgrade an available fact to `tbd` merely because it is located in an appendix or table.
+
 ## ContentUnit schema
 
 ```yaml
@@ -82,6 +89,7 @@ affected_sections: []
 ## Traceability rules
 
 - Every material paragraph must map to at least one fact, rule, confirmed decision, or explicit proposed assumption.
+- Every material sentence inside that paragraph must be compatible with the unit's generation mode; split mixed-mode paragraphs before final assembly.
 - Every proposed choice must state what would change it.
 - Every external claim must map to a resolvable reference.
 - Every query must point to affected content and every affected content item must point back to the query.

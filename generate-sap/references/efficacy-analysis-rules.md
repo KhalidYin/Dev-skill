@@ -37,6 +37,21 @@ For any primary analysis, seek and record:
 - `EFF-CR-004`: Never invent covariance structure, fallback order, Kenward-Roger/Satterthwaite choice, or baseline-by-visit interaction. Mark unspecified items locally.
 - `EFF-CR-005`: State whether post-discontinuation/rescue observations are included, because this must follow the estimand rather than model convention.
 
+## Adaptive and Bayesian methods
+
+When a current study source specifies an adaptive, Bayesian, dose-exposure or dose-toxicity method, seek and record every applicable item:
+
+- likelihood, model equation, parameterization and reference dose;
+- complete prior distributions, mixture components, weights, correlations and hyperparameters;
+- posterior intervals, decision thresholds, admissibility criteria and reported posterior quantities;
+- borrowing, down-weighting, schedule-transition and model-update rules;
+- cohort evaluability, escalation/de-escalation, stopping and MTD/RP2D or dose-recommendation criteria;
+- operating-characteristic assumptions and any source-specified fallback or model-failure handling.
+
+- `EFF-AB-001`: Transcribe source-specified numeric priors, thresholds and decision criteria from both the main text and appendices. Do not replace an available specification with `TBD` or a bare cross-reference.
+- `EFF-AB-002`: If any applicable item is absent, retain the supported components, mark only the missing component `tbd` or `proposed`, and create a local query. Do not import the missing value from a precedent.
+- `EFF-AB-003`: Keep protocol-defined decision criteria distinct from later implementation settings such as code, simulation seeds, convergence diagnostics or Sponsor-selected borrowing weights.
+
 ## Other endpoint families
 
 For binary, time-to-event, count, ordinal, recurrent-event, cluster, adaptive, Bayesian, non-inferiority, or complex multiplicity designs, preserve the complete section and supported facts. Generate a method only when supplied rules and verified references are sufficient; otherwise use `proposed` or `tbd` and request specialist confirmation. Do not pretend first-version coverage.

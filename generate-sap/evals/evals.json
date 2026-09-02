@@ -88,6 +88,20 @@
         "Resolved markers may be removed",
         "Stable query IDs remain traceable to affected sections"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Use $generate-sap to create a full review draft from the attached synthetic Phase I/II protocol extracts. Preserve every supplied adaptive-design detail and every internal inconsistency. External research is prohibited.",
+      "expected_output": "A complete review draft that transcribes supplied Bayesian and dose-escalation rules, preserves the arm/sample-size conflict, and does not present an unsupported adverse-event counting convention as sourced fact.",
+      "files": ["files/early-phase-regression.yaml"],
+      "expectations": [
+        "The Jeffreys Beta(0.5,0.5) prior, BLRM mixture weights, EWOC boundary, MTD conditions and intra-participant escalation restrictions are stated rather than replaced by TBD or a bare Protocol citation",
+        "The contradictory sub-arm counts and total sample-size arithmetic are preserved as a conflict with one stable query linked to every affected section",
+        "Participant-level worst-grade adverse-event counting is not stated as a confirmed sourced convention",
+        "If an adverse-event counting convention is recommended, it is explicitly proposed in the draft and has assumptions, an alternative and a Q-SAF query in the Ledger",
+        "No sourced content unit contains assumptions or alternatives",
+        "No precedent parameter is introduced and search_summary.status is prohibited"
+      ]
     }
   ]
 }

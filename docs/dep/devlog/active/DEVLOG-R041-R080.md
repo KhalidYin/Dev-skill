@@ -110,3 +110,33 @@
 - `.validation-work/generate-sap/oncology-phase1-2/l2-review/`（local ignored package supplements and case-insensitive blinding fix, modified/added）— `(uncommitted)`
 - `docs/dep/PLAN.md`, `docs/dep/TASK_STATE.md`, `docs/dep/plans/ongoing/P2-generate-sap-blind-validation.md`（modified）— `(uncommitted)`
 - `docs/dep/devlog/active/DEVLOG-R041-R080.md`, `docs/dep/devlog/INDEX.md`（modified）— `(uncommitted)`
+
+---
+
+## 2026-09-02
+
+### R045 [13:15] Generate SAP 临床评审后最小修复
+
+#### Done
+
+- 将 `sourced` 内容单元携带 `assumptions` 或 `alternatives` 定义为输出合同错误，并以先失败后通过的单元测试固化；要求混合段落拆分为 sourced/proposed，proposed 决策必须在正文显式标识并绑定稳定 query。
+- 补齐早期肿瘤 adaptive/Bayesian 生成约束：逐项转录模型参数化、完整先验与混合权重、EWOC/后验阈值、可评估性、升降级/停止、MTD/RP2D 和个体内递增规则，不得以裸 Protocol 引用或无依据 TBD 代替。
+- 增加 Protocol 内 arm/sub-arm/cohort、单臂与总样本量一致性检查，并收紧 AE 计数/最差等级等安全性惯例：无当前来源或 Sponsor 确认时只能作为显式 proposed 方案与 query。
+- 新增合成早期肿瘤回归 fixture 和第 8 个 eval；12 个单元测试通过，8 个 eval 与 6 个 fixture 均可解析，全部 3 个项目 Skill 和 `generate-sap` 系统 quick validator 通过，安装脚本成功以 Junction 更新本机技能目录。
+- 更新项目规范、测试指南、长期记忆、注册信息和 P2 验证说明；`.validation-work`、REV scorecard 和历史生成产物均未修改。
+
+#### Issues / Blockers
+
+- 当前 validator 会拒绝历史 `ONC004-C01` 中一个 `sourced + assumptions` 内容单元。根因是旧合同允许来源事实和设计假设共存；这是新规则捕获到的真实历史缺口，不回写冻结基线。
+- P4 评分与聚合报告只代表修复前版本，不能作为当前工作树的前向验证证据。当前无实现 blocker。
+
+#### Next
+
+1. 用未见案例或新增合成案例独立运行当前 Skill，确认 evidence mode、adaptive/Bayesian 参数和内部冲突三类约束在生成产物中实际生效。
+2. 若继续 P4-B，只用于完成修复前基线的归因；不要混入当前版本结论。
+
+#### Files Changed / Commits
+
+- `generate-sap/references/`, `generate-sap/scripts/validate_output_contract.py`, `generate-sap/evals/`（modified/added）— `(uncommitted)`
+- `tests/test_generate_sap_output_contract.py`（modified）— `(uncommitted)`
+- `.skill-registry.json`, `docs/main/`, `docs/dep/`（modified）— `(uncommitted)`

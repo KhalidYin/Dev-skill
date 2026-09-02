@@ -16,6 +16,8 @@ Run these checks after drafting. They are internal authoring checks, not an inde
 | XCHK-008 | Multiplicity family -> endpoint hierarchy -> testing order and alpha allocation |
 | XCHK-009 | Sample-size assumptions -> primary effect measure and variance/event assumptions |
 | XCHK-010 | Source versions on title/purpose sections -> source inventory used throughout |
+| XCHK-011 | Synopsis/body/statistical sections/appendices -> arm and sub-arm names -> cohort counts -> per-arm and total sample size |
+| XCHK-012 | Adaptive/Bayesian source specification -> model and prior parameters -> decision thresholds -> escalation/stopping or dose-recommendation rules |
 
 ## Finding schema
 
