@@ -1,0 +1,80 @@
+# Answer key for sap-seeded.md reviewed against protocol-excerpt.md.
+# Do not give this file to the model under test. Score after the run.
+# A defect counts as detected when a finding names the location and the nature of the defect
+# and lists at least one of the expected checklist items. Severity counts as correct when it
+# falls inside expected_severity.
+fixture: sap-seeded.md
+comparator: protocol-excerpt.md
+design_tags: [rct, tte]
+defects:
+  - id: D1
+    location: "SAP 8.1 vs SAP 2 Synopsis and Protocol 10.1"
+    description: Sample size in 8.1 is 400 (200/arm); the synopsis and the Protocol say 420 (210/arm).
+    expected_items: [INT-03, PRO-05]
+    expected_type: [inconsistency, error]
+    expected_severity: [Critical]
+  - id: D2
+    location: "SAP 3 vs SAP 7.1 and Protocol 3"
+    description: Primary endpoint timepoint is Week 26 in Section 3, but Week 24 in 7.1 and in the Protocol.
+    expected_items: [PRO-02, INT-01, INT-07]
+    expected_type: [inconsistency, error]
+    expected_severity: [Critical]
+  - id: D3
+    location: "SAP 7.4 vs SAP 3 and Protocol 10.5"
+    description: The fixed sequence tests an undefined "PGI-S responder" endpoint in place of key secondary 1 (WIS responder).
+    expected_items: [INT-05, PRO-08]
+    expected_type: [inconsistency, error]
+    expected_severity: [Critical, Major]
+  - id: D4
+    location: "SAP 5 vs Protocol 10.3 and SAP 10"
+    description: The PPS compliance threshold is 70% versus 80% in the Protocol, and the difference is not declared in the changes section.
+    expected_items: [PRO-04, PRO-12]
+    expected_type: [inconsistency]
+    expected_severity: [Major]
+  - id: D5
+    location: "SAP 6.2"
+    description: Week 12 (Days 71-98) and Week 16 (Days 92-126) windows overlap.
+    expected_items: [PRG-03]
+    expected_type: [error, ambiguity]
+    expected_severity: [Major]
+  - id: D6
+    location: "SAP 6.1 vs SAP 9"
+    description: Non-WIS baseline is "value at the Day 1 visit" in 6.1, but "last non-missing before first dose" for labs in 9. The two definitions conflict and the 6.1 rule is not operational (pre- or post-dose, missing value).
+    expected_items: [INT-11, PRG-01]
+    expected_type: [inconsistency, ambiguity]
+    expected_severity: [Major]
+  - id: D7
+    location: "SAP 7.3"
+    description: Censoring rules for time to first rescue (a key secondary TTE endpoint) are missing.
+    expected_items: [PRG-05]
+    expected_type: [omission]
+    expected_severity: [Critical, Major]
+  - id: D8
+    location: "SAP 8.2 vs SAP 7.4 and Protocol 10.6"
+    description: The SAP plans two efficacy interims with O'Brien-Fleming spending. The Protocol plans one non-binding futility-only interim with no alpha spent, and 7.4 still tests at full 0.05.
+    expected_items: [PRO-09, INT-06]
+    expected_type: [inconsistency, error]
+    expected_severity: [Critical]
+  - id: D9
+    location: "SAP 8.2"
+    description: Cross-reference to non-existent Section 11.4.
+    expected_items: [INT-12]
+    expected_type: [error]
+    expected_severity: [Editorial, Minor]
+  - id: D10
+    location: "SAP 6.4"
+    description: Partial date imputation is deferred to unspecified "standard programming conventions".
+    expected_items: [PRG-08]
+    expected_type: [ambiguity, omission]
+    expected_severity: [Major, Minor]
+decoys:
+  - id: X1
+    location: "SAP 7.2 and 10"
+    description: The tipping-point sensitivity analysis is absent from the Protocol, but it is declared and justified in Section 10.
+    must_not: Reported as an undeclared difference or a PRO inconsistency.
+not_assessable_expected: [PRG-14, PRG-15]
+# PRG-14 passes or is a finding only if the reviewer explicitly uses the Protocol SoA as the CRF substitute.
+scoring:
+  recall_target: "at least 8 of 10 defects detected"
+  critical_recall_target: "D1, D2, D8 all detected"
+  false_positive_limit: "at most 1 Critical or Major finding not in the key and not defensible from the text"

@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "This is a brand new Python project with no documentation yet. I need to add a user login feature.",
-      "expected_output": "Skill enters Development without auto-Bootstrap, implements and tests the login feature, and does not create the canonical document/tracking skeleton unless the user separately accepts documentation adoption.",
+      "expected_output": "Robustness case: under the narrowed description this prompt should not auto-trigger the skill. If the skill is invoked explicitly: Skill enters Development without auto-Bootstrap, implements and tests the login feature, and does not create the canonical document/tracking skeleton unless the user separately accepts documentation adoption.",
       "expectations": [
         "Missing docs are treated as repository state rather than a Bootstrap trigger",
         "Development mode is selected for the login feature",
@@ -12,7 +12,8 @@
         "docs/main/, docs/dep/, docs/deploy/, USAGE.md, DEVLOG, and TASK_STATE are not created automatically",
         "Bootstrap may be offered separately if durable contracts would help, but implementation is not blocked",
         "No claim is made that a dev log was written"
-      ]
+      ],
+      "should_trigger": false
     },
     {
       "id": 2,
@@ -179,7 +180,7 @@
     {
       "id": 17,
       "prompt": "这个项目没有 docs/ 和 DEVLOG。把 auth.py 里的局部超时值从 30 改成 60。",
-      "expected_output": "Skill treats the request as an untracked Quick Fix, changes and tests the code, returns a one-line summary, and creates no documentation or tracking files.",
+      "expected_output": "Robustness case: under the narrowed description this prompt should not auto-trigger the skill. If the skill is invoked explicitly: Skill treats the request as an untracked Quick Fix, changes and tests the code, returns a one-line summary, and creates no documentation or tracking files.",
       "expectations": [
         "Change is detected as small (single file, <10 lines, no interface change)",
         "Output Discipline Level 1 is applied",
@@ -187,7 +188,8 @@
         "No docs/main, docs/dep, USAGE.md, DEVLOG, INDEX, or TASK_STATE file is created",
         "Output contains a one-line summary and does not claim a dev log was written",
         "No risk note, optimization advice, or doc consistency section is added"
-      ]
+      ],
+      "should_trigger": false
     },
     {
       "id": 18,
@@ -292,13 +294,47 @@
     {
       "id": 23,
       "prompt": "这个仓库没有任何 docs。解释一下 src/cache.py 的缓存失效逻辑，不要修改。",
-      "expected_output": "Skill enters Consultation, reads the relevant code, answers without creating a document skeleton or any tracking files.",
+      "expected_output": "Robustness case: under the narrowed description this prompt should not auto-trigger the skill. If the skill is invoked explicitly: Skill enters Consultation, reads the relevant code, answers without creating a document skeleton or any tracking files.",
       "expectations": [
         "Consultation mode is selected before considering Bootstrap",
         "The answer is based on src/cache.py",
         "No files are modified",
         "No docs/main, USAGE.md, docs/dep, DEVLOG, or TASK_STATE is created",
         "Missing documentation may be noted only if relevant; it is not treated as an initialization request"
+      ],
+      "should_trigger": false
+    },
+    {
+      "id": 24,
+      "should_trigger": false,
+      "prompt": "这个 Node 项目没有 docs/main 和 docs/dep。在 utils.js 里加一个日期格式化函数并补测试。",
+      "expected_output": "personal-assistant is not triggered; the agent handles the change as an ordinary coding task.",
+      "expectations": [
+        "personal-assistant is not loaded or selected",
+        "No docs/main, docs/dep, USAGE.md, DEVLOG, or TASK_STATE is created",
+        "The function and its test are implemented normally"
+      ]
+    },
+    {
+      "id": 25,
+      "should_trigger": false,
+      "prompt": "帮我审核一下这份 SAP，看看和方案是否一致。",
+      "expected_output": "personal-assistant Review mode is not entered; the request is routed to review-sap (explicit invocation) or handled as a document review.",
+      "expectations": [
+        "personal-assistant Review mode is not selected",
+        "No Quick Review of code or DEVLOG is produced",
+        "review-sap is suggested or used when available"
+      ]
+    },
+    {
+      "id": 26,
+      "should_trigger": true,
+      "prompt": "这个仓库已经有 docs/dep/PLAN.md 和 docs/main/PROJECT_SPEC.md。修一下 parser.py 里的空指针问题。",
+      "expected_output": "personal-assistant is triggered and routes to Development with Quick Fix classification first.",
+      "expectations": [
+        "personal-assistant is triggered",
+        "Quick Fix validation runs before any documentation writes",
+        "Existing tracking (TASK_STATE or DEVLOG) is maintained only if already adopted"
       ]
     }
   ]

@@ -4,7 +4,7 @@
     "personal-assistant": {
       "status": "stable",
       "category": "dev-tooling",
-      "last_modified": "2026-08-25",
+      "last_modified": "2026-11-03",
       "has_evals": true,
       "tags": [
         "documentation",
@@ -37,6 +37,20 @@
         "authoring",
         "traceability",
         "precedent-research"
+      ]
+    },
+    "review-sap": {
+      "status": "draft",
+      "category": "clinical-statistics",
+      "last_modified": "2026-11-03",
+      "has_evals": true,
+      "tags": [
+        "clinical-trials",
+        "sap",
+        "review",
+        "qc",
+        "traceability",
+        "excel"
       ]
     }
   }

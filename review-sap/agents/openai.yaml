@@ -1,0 +1,7 @@
+interface:
+  display_name: "Review SAP"
+  short_description: "Evidence-linked review of external clinical trial SAPs"
+  default_prompt: "Use $review-sap to review the supplied SAP against the Protocol and return the Excel issue log."
+
+policy:
+  allow_implicit_invocation: false

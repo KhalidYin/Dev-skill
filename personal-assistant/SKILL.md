@@ -1,11 +1,17 @@
 ---
 name: personal-assistant
-description: "Development copilot and planning router for repositories with or without an adopted document system. Use whenever the user wants to plan a feature, change code, fix bugs, add tests, refactor modules, reconcile docs with implementation, review or audit code, summarize changes, deploy or ship code, or work in a project that uses PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, and TEST_GUIDE.md."
+description: "Development copilot for repositories that have adopted the docs/main and docs/dep document system (PROJECT_GUIDE.md, PROJECT_SPEC.md, CODE_STYLE.md, TEST_GUIDE.md, PLAN.md, TASK_STATE.md, DEVLOG). Use when the current repository already contains docs/main or docs/dep and the user wants to plan a feature, change code, fix bugs, add tests, refactor, reconcile docs with implementation, review code or dev-log history, resume an interrupted task, or write a deployment guide; or when the user explicitly asks to initialize or adopt this document system. Do not use in repositories without docs/main or docs/dep unless the user asks to adopt the system. Do not use for reviewing or drafting clinical or other non-code documents such as SAPs or protocols; use review-sap or generate-sap for those."
 ---
 
 # Personal Assistant
 
-Use this skill for small to medium engineering tasks in any codebase where documentation, tests, implementation, and project memory need to stay aligned.
+Use this skill for small to medium engineering tasks in repositories that use (or are adopting) the docs/main and docs/dep document system, where documentation, tests, implementation, and project memory need to stay aligned.
+
+## Scope
+
+- Primary scope: repositories that already contain `docs/main/` or `docs/dep/`, plus explicit requests to adopt this document system.
+- If the skill is invoked in a repository without either directory and adoption was not requested, follow the no-docs rules below (no Bootstrap, no tracking files). Do not add process the repository has not adopted.
+- Review mode covers code, project docs, and DEVLOG history only. Requests to review clinical or other non-code documents (SAP, Protocol, CSR) belong to `review-sap` or a domain skill, not to this skill.
 
 ## Document system
 
@@ -33,7 +39,7 @@ This skill routes tasks into one of six modes:
 | **Consultation** | "what is", "how does", "explain", "find" — read-only | Read docs + code, answer, no edits |
 | **Planning** | "帮我规划", "先想清楚再做", "plan this", "设计一下方案" | Route formal design to `sub-brainstorm`; keep lightweight planning local; then enter Development only after approval |
 | **Development** | "fix", "add", "change", "refactor", "implement" | Classify Quick Fix first → implement/test → maintain only already-adopted docs and tracking |
-| **Review** | "review", "audit", "检查", "审核", "inspect" | Determine scope → Quick Review first; ask if Full Report needed |
+| **Review** | "review", "audit", "检查", "审核", "inspect" — about code, project docs, or DEVLOG history | Determine scope → Quick Review first; ask if Full Report needed |
 | **Deployment** | "deploy", "部署", "上线", "发布", "ship" | Generate or update deployment guide in `docs/deploy/DEPLOY_GUIDE.md` |
 
 ### Mode selection

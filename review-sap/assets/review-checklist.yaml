@@ -1,0 +1,578 @@
+# review-sap checklist
+# Minimum review baseline for external SAPs. Item text is a paraphrased review check,
+# not a quotation of any guideline. See references/checklist-basis.md for sources.
+checklist_version: "0.1.0"
+checklist_date: "2026-11-03"
+status: draft
+dimensions:
+  STR: Structural completeness
+  INT: Internal consistency
+  PRO: Consistency with Protocol
+  PRG: Programmability (ADaM/TFL readiness)
+design_tags: [all, rct, early-phase, tte, non-inferiority, adaptive, bayesian, multi-cohort]
+# requires: documents needed to assess the item. If any are missing, coverage = not-assessable.
+# severity_hint: usual severity when the item fails; final severity follows references/finding-rules.md.
+
+# Machine-readable basis register. Narrative, verification notes, and revision rules: references/checklist-basis.md
+basis_register:
+  - {id: B-GAMBLE2017, citation: "Gamble C, et al. Guidelines for the Content of Statistical Analysis Plans in Clinical Trials. JAMA 2017;318(23):2337-2343", url: "https://eprints.whiterose.ac.uk/id/eprint/125763/1/2017-JAMA-SAP.pdf", verification: "checked 2026-11-03"}
+  - {id: B-HOMER2022, citation: "Homer V, et al. Early phase clinical trials extension to guidelines for the content of SAPs. BMJ 2022;376:e068177", url: "https://www.bmj.com/content/376/bmj-2021-068177", verification: "themes checked 2026-11-03; item numbers to map"}
+  - {id: B-ICHE9, citation: "ICH E9 Statistical Principles for Clinical Trials (1998)", url: "https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline", verification: "checked 2026-11-03"}
+  - {id: B-ICHE9R1, citation: "ICH E9(R1) Addendum on Estimands and Sensitivity Analysis (2019)", url: "https://www.ema.europa.eu/en/ich-e9-statistical-principles-clinical-trials-scientific-guideline", verification: "checked 2026-11-03"}
+  - {id: B-SPIRIT2025, citation: "Chan A-W, et al. SPIRIT 2025 statement. BMJ 2025;389:e081477", url: "https://discovery.ucl.ac.uk/10207932/1/SPIRIT%202025%20BMJ.pdf", verification: "checked 2026-11-03"}
+  - {id: B-ICHM11, citation: "ICH M11 CeSHarP guideline, template and technical specification, Step 4 2025-11-19", url: "https://database.ich.org/sites/default/files/ICH_Step4_M11_Final_Template_2025_1119.pdf", verification: "adoption date checked 2026-11-03"}
+  - {id: B-NMPA2016, citation: "药物临床试验的生物统计学指导原则（2016年第93号通告）", url: "", verification: "to verify: official URL not recorded"}
+  - {id: B-ADAM, citation: "CDISC ADaM / ADaMIG traceability and analysis-ready principles", url: "https://www.cdisc.org/standards/foundational/adam", verification: "to verify version at use"}
+  - {id: B-FDA-TCG, citation: "FDA Study Data Technical Conformance Guide (traceability)", url: "", verification: "to verify version at use"}
+  - {id: B-PRACTICE, citation: "Reviewer reconciliation and reproducibility practice (not normative)", url: "", verification: "n/a"}
+
+items:
+  # ---------------- STR: structural completeness ----------------
+  - id: STR-01
+    dimension: STR
+    title: Administrative identification
+    check: Title, trial identifier or registration number, SAP version and date, and the Protocol version and date the SAP is based on are all stated.
+    basis: [{id: B-GAMBLE2017, locator: "items 1a, 1b, 2, 3"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-02
+    dimension: STR
+    title: Revision history
+    check: Each SAP version is listed with a change summary, the reason for each change, and when the change was made relative to interim analyses, unblinding, or database lock.
+    basis: [{id: B-GAMBLE2017, locator: "items 4a-4c"}, {id: B-ICHE9, locator: "section 5.1"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+    notes: For a first version, a statement that it is the initial version passes.
+  - id: STR-03
+    dimension: STR
+    title: Roles and sign-off
+    check: Authors, responsible statistician, and clinical lead roles are named and a signature or approval block exists.
+    basis: [{id: B-GAMBLE2017, locator: "items 5, 6a-6c"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-04
+    dimension: STR
+    title: Objectives stated
+    check: Primary and secondary objectives are stated, with hypotheses for confirmatory objectives.
+    basis: [{id: B-GAMBLE2017, locator: "items 7, 8"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-05
+    dimension: STR
+    title: Design and randomization described
+    check: Design type, arms, allocation ratio, randomization method, stratification factors, and blinding are described.
+    basis: [{id: B-GAMBLE2017, locator: "items 9, 10"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+    notes: For non-randomized early-phase designs, assignment and cohort rules replace randomization.
+  - id: STR-06
+    dimension: STR
+    title: Sample size summary
+    check: Sample size, its key assumptions (effect, variability or event rates, alpha, power, dropout), and the method are summarized or explicitly referenced.
+    basis: [{id: B-GAMBLE2017, locator: "item 11"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-07
+    dimension: STR
+    title: Hypothesis framework
+    check: The testing framework (superiority, non-inferiority, equivalence) is stated, with the margin and its scale where relevant.
+    basis: [{id: B-GAMBLE2017, locator: "item 12"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Critical
+  - id: STR-08
+    dimension: STR
+    title: Interim analyses
+    check: Number, timing, and purpose of interim analyses, alpha adjustment, and stopping guidelines are given, or the SAP states that none are planned.
+    basis: [{id: B-GAMBLE2017, locator: "items 13a-13c"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-09
+    dimension: STR
+    title: Timing of final analysis and assessments
+    check: The trigger for the final analysis and the timing of outcome assessments are stated.
+    basis: [{id: B-GAMBLE2017, locator: "items 14, 15"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-10
+    dimension: STR
+    title: Significance level, sidedness, and confidence intervals
+    check: The significance level, one- or two-sided testing, and the confidence interval level are stated.
+    basis: [{id: B-GAMBLE2017, locator: "items 16, 18"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-11
+    dimension: STR
+    title: Multiplicity strategy
+    check: The multiplicity approach is described, or the SAP explains why none is needed.
+    basis: [{id: B-GAMBLE2017, locator: "item 17"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-12
+    dimension: STR
+    title: Adherence and protocol deviations
+    check: Adherence or compliance is defined and its presentation described. Protocol deviation categories and their summary are described.
+    basis: [{id: B-GAMBLE2017, locator: "items 19a-19d"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-13
+    dimension: STR
+    title: Analysis populations defined
+    check: Each analysis population is defined, together with the analyses that use it.
+    basis: [{id: B-GAMBLE2017, locator: "item 20"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Critical
+  - id: STR-14
+    dimension: STR
+    title: Disposition and withdrawal
+    check: Screening and eligibility summaries, a participant flow (CONSORT-style), and the levels, timing, and reporting of withdrawal and loss to follow-up are described.
+    basis: [{id: B-GAMBLE2017, locator: "items 21-24c"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-15
+    dimension: STR
+    title: Baseline characteristics
+    check: Baseline variables to summarize and the descriptive statistics to use are listed.
+    basis: [{id: B-GAMBLE2017, locator: "items 25a, 25b"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-16
+    dimension: STR
+    title: Outcome definitions
+    check: Every endpoint is specified with timing, measurement, units, and any calculation or transformation.
+    basis: [{id: B-GAMBLE2017, locator: "items 26a-26c"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-17
+    dimension: STR
+    title: Estimands
+    check: The primary estimand (and key secondary estimands, where confirmatory) specifies treatment, population, variable, intercurrent events with their handling strategies, and population-level summary.
+    basis: [{id: B-ICHE9R1, locator: "sections A.3.1-A.3.3"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-18
+    dimension: STR
+    title: Analysis method per endpoint
+    check: Each endpoint has an analysis method, an effect measure, and a covariate set.
+    basis: [{id: B-GAMBLE2017, locator: "items 27a, 27b"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-19
+    dimension: STR
+    title: Assumption checks and fallbacks
+    check: How model assumptions will be checked, and the alternative method if they fail, are stated.
+    basis: [{id: B-GAMBLE2017, locator: "items 27c, 27d"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-20
+    dimension: STR
+    title: Sensitivity and subgroup analyses listed
+    check: Sensitivity analyses and subgroup analyses are listed with their purpose.
+    basis: [{id: B-GAMBLE2017, locator: "items 27e, 27f"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: STR-21
+    dimension: STR
+    title: Missing data handling
+    check: Missing data handling is described for each analysis that needs it.
+    basis: [{id: B-GAMBLE2017, locator: "item 28"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-22
+    dimension: STR
+    title: Safety analyses
+    check: Safety and harms analyses are described, including the definitions of treatment-emergent events.
+    basis: [{id: B-GAMBLE2017, locator: "item 30"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-23
+    dimension: STR
+    title: Software and references
+    check: Statistical software is named, and references are given for non-standard methods and for related documents (data management plan, SOPs).
+    basis: [{id: B-GAMBLE2017, locator: "items 31, 32a-32d"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Editorial
+  - id: STR-24
+    dimension: STR
+    title: Changes from Protocol section
+    check: The SAP has a section that lists changes from the Protocol-planned analyses, or states that there are none.
+    basis: [{id: B-ICHE9, locator: "section 5.1"}, {id: B-GAMBLE2017, locator: "item 4b"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-EP-01
+    dimension: STR
+    title: Early-phase decision rules
+    check: Dose escalation, de-escalation, and skipping rules, cohort size, stopping rules, and the end-of-trial definition are explicit.
+    basis: [{id: B-HOMER2022, locator: "design and objectives items (theme-level mapping; item numbers to be confirmed)"}]
+    applies_to: [early-phase]
+    requires: [sap]
+    severity_hint: Critical
+  - id: STR-EP-02
+    dimension: STR
+    title: Early-phase model and operating characteristics
+    check: For model-based or Bayesian designs, the model, priors, decision thresholds, how model adequacy will be evaluated, and the simulation report on operating characteristics are given or referenced.
+    basis: [{id: B-HOMER2022, locator: "statistical methods and simulation-report items (theme-level mapping)"}]
+    applies_to: [early-phase, bayesian, adaptive]
+    requires: [sap]
+    severity_hint: Major
+  - id: STR-EP-03
+    dimension: STR
+    title: Early-phase evaluability and DLT definitions
+    check: The DLT definition and observation window, the population that is evaluable for DLT, and the rules for replacing participants are stated.
+    basis: [{id: B-HOMER2022, locator: "population and outcome items (theme-level mapping)"}]
+    applies_to: [early-phase]
+    requires: [sap]
+    severity_hint: Major
+
+  # ---------------- INT: internal consistency ----------------
+  - id: INT-01
+    dimension: INT
+    title: Objective-endpoint-estimand-analysis chain
+    check: Each objective maps to an endpoint, each endpoint to an estimand where one is defined, and each to an analysis, with the same variable, timepoint, and summary measure throughout.
+    basis: [{id: B-ICHE9R1, locator: "section A.2"}, {id: B-PRACTICE, locator: "chain review"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Critical
+  - id: INT-02
+    dimension: INT
+    title: Population use
+    check: The population named for each analysis exists in the population section and matches the estimand population.
+    basis: [{id: B-PRACTICE, locator: "population cross-check"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: INT-03
+    dimension: INT
+    title: Numeric parameter consistency
+    check: Sample size, allocation ratio, alpha, power, margin, dropout rate, and event targets are identical everywhere they appear (synopsis, body, appendices).
+    basis: [{id: B-PRACTICE, locator: "numeric reconciliation"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Critical
+  - id: INT-04
+    dimension: INT
+    title: Arm, cohort, and treatment labels
+    check: Arm, sub-arm, cohort, and treatment names and counts are consistent across sections, tables, and appendices.
+    basis: [{id: B-PRACTICE, locator: "label reconciliation"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: INT-05
+    dimension: INT
+    title: Multiplicity hierarchy matches endpoint list
+    check: Every endpoint in the testing hierarchy appears in the endpoint section in the same role and order, and the alpha allocation adds up.
+    basis: [{id: B-PRACTICE, locator: "hierarchy reconciliation"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Critical
+  - id: INT-06
+    dimension: INT
+    title: Interim and final boundary consistency
+    check: The interim timing and the spending function or boundaries agree with the final-analysis significance level stated elsewhere.
+    basis: [{id: B-PRACTICE, locator: "alpha reconciliation"}]
+    applies_to: [rct, adaptive]
+    requires: [sap]
+    severity_hint: Critical
+  - id: INT-07
+    dimension: INT
+    title: Timepoint and visit consistency
+    check: The primary timepoint, analysis visits, and visit windows are named consistently across endpoint, analysis, and convention sections.
+    basis: [{id: B-PRACTICE, locator: "visit reconciliation"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: INT-08
+    dimension: INT
+    title: Intercurrent events and data handling
+    check: The handling strategy stated for each intercurrent event agrees with the data-use, censoring, and missing-data rules in the analysis sections.
+    basis: [{id: B-ICHE9R1, locator: "section A.3.2"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Major
+  - id: INT-09
+    dimension: INT
+    title: Sensitivity analyses aligned to stated assumptions
+    check: Each sensitivity analysis is labelled with the estimand it targets, and the assumption it varies is one that the primary analysis states.
+    basis: [{id: B-ICHE9R1, locator: "section A.5.2"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Minor
+    notes: Structural check only. Whether the chosen sensitivity method is adequate is methodology and out of scope for v1.
+  - id: INT-10
+    dimension: INT
+    title: Stratification and model covariates
+    check: Randomization stratification factors and the covariates in the analysis model are either the same or differ for a stated reason.
+    basis: [{id: B-PRACTICE, locator: "covariate reconciliation"}]
+    applies_to: [rct]
+    requires: [sap]
+    severity_hint: Minor
+  - id: INT-11
+    dimension: INT
+    title: Definitions used consistently
+    check: Terms such as baseline, study day, treatment-emergent, and on-treatment have one definition that is used the same way throughout.
+    basis: [{id: B-PRACTICE, locator: "definition reconciliation"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: INT-12
+    dimension: INT
+    title: Cross-references and document hygiene
+    check: Section, table, and appendix cross-references resolve. The table of contents matches the headings. Abbreviations are defined.
+    basis: [{id: B-PRACTICE, locator: "document hygiene"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Editorial
+
+  # ---------------- PRO: consistency with Protocol ----------------
+  - id: PRO-01
+    dimension: PRO
+    title: Protocol version alignment
+    check: The Protocol version and amendments cited by the SAP are the ones supplied for review, and no later amendment is ignored.
+    basis: [{id: B-GAMBLE2017, locator: "item 3"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+  - id: PRO-02
+    dimension: PRO
+    title: Objectives and endpoints
+    check: Primary, key secondary, secondary, and exploratory objectives and endpoints match the Protocol in role, definition, and timepoint.
+    basis: [{id: B-SPIRIT2025, locator: "objectives and outcomes items"}, {id: B-ICHE9, locator: "section 2.2.2"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-03
+    dimension: PRO
+    title: Estimands and intercurrent events
+    check: The estimands and intercurrent-event strategies match the Protocol's, where the Protocol defines them.
+    basis: [{id: B-ICHE9R1, locator: "section A.6"}, {id: B-ICHM11, locator: "estimands section of template"}]
+    applies_to: [rct]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-04
+    dimension: PRO
+    title: Analysis populations
+    check: The population definitions match the Protocol, or each difference is listed under STR-24.
+    basis: [{id: B-SPIRIT2025, locator: "statistical methods items"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+  - id: PRO-05
+    dimension: PRO
+    title: Sample size
+    check: The sample size and its assumptions match the Protocol.
+    basis: [{id: B-SPIRIT2025, locator: "sample size item"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-06
+    dimension: PRO
+    title: Design, randomization, and blinding
+    check: The design, arms, doses, periods, allocation ratio, stratification factors, and blinding match the Protocol.
+    basis: [{id: B-SPIRIT2025, locator: "assignment of interventions items"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+  - id: PRO-07
+    dimension: PRO
+    title: Primary analysis method
+    check: The primary analysis method, effect measure, and key covariates agree with the Protocol's statistical section.
+    basis: [{id: B-ICHE9, locator: "section 5.1"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-08
+    dimension: PRO
+    title: Multiplicity and alpha
+    check: The significance level, sidedness, and multiplicity procedure agree with the Protocol.
+    basis: [{id: B-ICHE9, locator: "section 5.6"}]
+    applies_to: [rct]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-09
+    dimension: PRO
+    title: Interim analyses and monitoring
+    check: Interim analyses, DMC roles, and stopping rules agree with the Protocol (and with the DMC charter if one is supplied).
+    basis: [{id: B-SPIRIT2025, locator: "interim analyses and data monitoring items"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Critical
+  - id: PRO-10
+    dimension: PRO
+    title: Schedule of assessments
+    check: Every analysis visit or timepoint used in the SAP exists in the Protocol schedule of activities.
+    basis: [{id: B-SPIRIT2025, locator: "schedule of enrolment, interventions and assessments"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+  - id: PRO-11
+    dimension: PRO
+    title: Safety definitions
+    check: The AE collection period, AESI list, DLT definition, and grading system agree with the Protocol.
+    basis: [{id: B-PRACTICE, locator: "safety reconciliation"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+  - id: PRO-12
+    dimension: PRO
+    title: Differences are declared
+    check: Every substantive SAP-versus-Protocol difference found under PRO-02 to PRO-11 is declared and justified in the changes-from-Protocol section, and every declared change is real.
+    basis: [{id: B-ICHE9, locator: "section 5.1"}, {id: B-GAMBLE2017, locator: "item 4b"}]
+    applies_to: [all]
+    requires: [sap, protocol]
+    severity_hint: Major
+    notes: A declared and justified difference is not an inconsistency. Record it as pass for the dimension item and check only the justification.
+
+  # ---------------- PRG: programmability ----------------
+  - id: PRG-01
+    dimension: PRG
+    title: Baseline definition is operational
+    check: Baseline is defined at variable level (for example, the last non-missing value before first dose), with rules for same-day assessments, repeats, and missing baseline.
+    basis: [{id: B-ADAM, locator: "analysis-ready principle"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-02
+    dimension: PRG
+    title: Reference dates and study day
+    check: The reference date for study day, and whether a Day 0 exists, are defined.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: PRG-03
+    dimension: PRG
+    title: Analysis visit windows
+    check: Windows are defined without gaps or overlaps, and the SAP states how multiple values in one window are selected and how unscheduled and early-termination visits are mapped.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-04
+    dimension: PRG
+    title: Endpoint derivation algorithms
+    check: Each derived endpoint has an unambiguous algorithm (formula, units, scoring, handling of partially missing items), so that two programmers would get the same value.
+    basis: [{id: B-ADAM, locator: "traceability principle"}, {id: B-GAMBLE2017, locator: "item 26c"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-05
+    dimension: PRG
+    title: Time-to-event rules
+    check: Event definition, origin date, date of event, censoring rules for each scenario, and the source data for each date are specified.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [tte]
+    requires: [sap]
+    severity_hint: Critical
+  - id: PRG-06
+    dimension: PRG
+    title: Population flags derivable
+    check: Each population can be flagged from collected data, for example deviation categories that exclude participants from the per-protocol set, dosing records, or assessability criteria.
+    basis: [{id: B-ADAM, locator: "traceability principle"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-07
+    dimension: PRG
+    title: Treatment-for-analysis rules
+    check: Planned and actual treatment assignment rules are given, including mis-randomization and wrong-treatment cases.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-08
+    dimension: PRG
+    title: Partial and missing date imputation
+    check: Imputation rules for partial or missing dates (AE onset, concomitant medication, death, progression) are given, together with how imputed dates are flagged.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-09
+    dimension: PRG
+    title: Treatment-emergent and on-treatment periods
+    check: The start and end of the treatment-emergent and on-treatment periods are defined, including the window after last dose.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-10
+    dimension: PRG
+    title: Model specification complete enough to program
+    check: Models list covariates with coding and reference levels, the covariance structure, the degrees-of-freedom method, and the fallback if the model does not converge.
+    basis: [{id: B-PRACTICE, locator: "reproducibility"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Major
+  - id: PRG-11
+    dimension: PRG
+    title: Imputation reproducibility
+    check: Multiple imputation or other stochastic methods state the imputation model variables, number of imputations, random seed policy, and combining rules.
+    basis: [{id: B-PRACTICE, locator: "reproducibility"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: PRG-12
+    dimension: PRG
+    title: Dictionaries and grading versions
+    check: Coding dictionaries (MedDRA, WHODrug), grading systems (CTCAE or equivalent), and how laboratory units and normal ranges are handled are specified, or a controlling document is referenced.
+    basis: [{id: B-PRACTICE, locator: "data standards"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor
+  - id: PRG-13
+    dimension: PRG
+    title: Presentation conventions
+    check: Decimal places, rounding, percentage denominators, the standard summary statistics, and how missing categories are shown are specified.
+    basis: [{id: B-PRACTICE, locator: "TFL conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Editorial
+  - id: PRG-14
+    dimension: PRG
+    title: Data are collected for each planned analysis
+    check: Variables needed for the planned analyses, subgroups, and covariates are collected according to the CRF or the Protocol schedule.
+    basis: [{id: B-FDA-TCG, locator: "traceability"}]
+    applies_to: [all]
+    requires: [sap, crf]
+    alternate_requires: [sap, protocol]
+    severity_hint: Major
+    notes: Without a CRF, the Protocol schedule of activities can be used instead. Record that substitution in the coverage note.
+  - id: PRG-15
+    dimension: PRG
+    title: Alignment with TFL shells
+    check: Planned outputs in the SAP and the TFL shells or output list correspond (populations, statistics, subgroups).
+    basis: [{id: B-PRACTICE, locator: "TFL conventions"}]
+    applies_to: [all]
+    requires: [sap, tfl_shells]
+    severity_hint: Minor
+  - id: PRG-16
+    dimension: PRG
+    title: Special data values
+    check: The SAP states how retests, duplicate records, values below or above quantification limits, and character results are handled.
+    basis: [{id: B-PRACTICE, locator: "derivation conventions"}]
+    applies_to: [all]
+    requires: [sap]
+    severity_hint: Minor

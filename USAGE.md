@@ -46,3 +46,13 @@ $generate-sap 根据提供的 Protocol、统计决定和 Sponsor 约定生成一
 ```
 
 该 skill 当前为 draft。即使输入不完整，也会保留完整 SAP 结构，并在对应章节插入稳定的 TBD、Author Query 或 Conflict。宿主允许网络搜索时，它会查找同类公开 SAP，明确记录直接引用、相似点和差异；检索不可用时会显式降级。输出必须由合格的临床试验统计师审核，不负责 TFL/ADaM 生成或统计编程。
+
+## Review SAP 初版
+
+安装后显式调用：
+
+```text
+$review-sap 对照附件 Protocol 审阅这份 SAP，输出 Excel 问题清单。
+```
+
+该 skill 当前为 draft，面向外部 SAP。v1 审阅维度为结构完整性、内部一致性、与 Protocol 一致性和可编程性（ADaM/TFL 就绪度），方法学恰当性不在范围内。依赖 Python 3.9+、`openpyxl`、`pyyaml`；生成 docx 批注另需 `python-docx` 1.2+，且仅在用户确认后执行。输出必须由合格统计师复核，不构成批准或合规结论。

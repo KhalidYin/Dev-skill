@@ -1,0 +1,87 @@
+{
+  "skill_name": "review-sap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use $review-sap to review the attached SAP against the attached Protocol excerpt. Return the Excel issue log. Do not do web research.",
+      "expected_output": "An Excel issue log built with build_issue_log.py, plus a chat summary of counts and Critical/Major findings, and a one-line offer of a commented docx.",
+      "files": ["files/sap-seeded.md", "files/protocol-excerpt.md"],
+      "expectations": [
+        "At least 8 of the 10 defects in files/seeded-answer-key.yaml are detected, with the expected checklist items",
+        "D1 (sample size 400 vs 420), D2 (Week 26 vs Week 24), and D8 (efficacy interims vs futility-only) are all Critical",
+        "The declared tipping-point analysis (decoy X1) is not reported as an undeclared Protocol difference",
+        "Every finding has a SAP locator and excerpt; every PRO, error, and inconsistency finding has comparator source, locator, and excerpt",
+        "Every applicable checklist item for design tags rct and tte has exactly one coverage record; build_issue_log.py check passes",
+        "PRG-15 is not-assessable because no TFL shells were supplied; PRG-14 is not-assessable, or it explicitly uses the Protocol schedule of activities as the CRF substitute",
+        "No docx is produced in this turn; the summary offers it in one line",
+        "The output requires statistician confirmation and does not claim approval or compliance"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use $review-sap on the attached SAP. I only have the SAP for now.",
+      "expected_output": "A review covering STR, INT, and PRG, with every PRO item marked not-assessable for lack of a Protocol.",
+      "files": ["files/sap-seeded.md"],
+      "expectations": [
+        "Every PRO item has coverage not-assessable, and the note names the missing Protocol",
+        "Internal defects D1 (synopsis 420 vs 8.1 400), D2 (Week 26 vs Week 24 inside the SAP), D5, D6, D7, D9, D10 are still found",
+        "No finding claims what the Protocol says",
+        "The review proceeds without stopping to ask for the Protocol, and the gap is recorded in review.limitations"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use $review-sap to review the attached SAP against the Protocol excerpt.",
+      "expected_output": "A control review of a clean SAP: no Critical findings, and Major findings only when they can be defended from the text.",
+      "files": ["files/sap-clean.md", "files/protocol-excerpt.md"],
+      "expectations": [
+        "No Critical findings",
+        "None of the seeded defects D1-D10 is reported",
+        "The tipping-point analysis is recognized as a declared change",
+        "Each pass coverage note names where the item was confirmed",
+        "Any suggestion is labelled suggestion and ranked Minor or Editorial"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Please write the missing censoring rules section for this SAP and update the interim analysis section.",
+      "expected_output": "The skill does not draft SAP text; the request belongs to generate-sap or the author.",
+      "files": ["files/sap-seeded.md"],
+      "expectations": [
+        "review-sap does not produce replacement SAP sections",
+        "The response routes drafting to generate-sap or the SAP author, and may offer to review the result afterwards"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use $review-sap on the attached SAP and Protocol, and put the comments straight into the Word file.",
+      "expected_output": "The Excel log, then confirmation of comment options; the docx is produced only with annotate_docx.py --confirmed, as a new file.",
+      "files": ["files/sap-seeded.md", "files/protocol-excerpt.md"],
+      "expectations": [
+        "The user's explicit request counts as confirmation, but the minimum severity and author label are settled (defaults stated)",
+        "The skill notes that comments need a .docx SAP. With a Markdown or PDF SAP it explains this, and the Excel log remains the deliverable",
+        "With a .docx SAP, annotate_docx.py writes a new file and reports anchored and unanchored finding IDs; the original file is unchanged"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use $review-sap and also tell me whether MMRM is the right model and whether jump-to-reference is too conservative for this indication.",
+      "expected_output": "A v1 review that keeps methodology out of ranked findings and records method concerns as out-of-scope observations.",
+      "files": ["files/sap-clean.md", "files/protocol-excerpt.md"],
+      "expectations": [
+        "Method appropriateness opinions appear only as out-of-scope-observation records with severity n/a and dimension MTH, or in a clearly separated chat note",
+        "The response says methodology review is planned as a separate module and is not part of v1"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Can you search the web for other SAPs from XR-301's sponsor and compare them with this one?",
+      "expected_output": "No study identifiers or sponsor names in search queries; confidentiality is explained.",
+      "files": ["files/sap-seeded.md"],
+      "expectations": [
+        "No web query contains the study code, compound name, or verbatim SAP text",
+        "The response explains the confidentiality rule and offers checklist-basis lookups with generic terms only"
+      ]
+    }
+  ]
+}
