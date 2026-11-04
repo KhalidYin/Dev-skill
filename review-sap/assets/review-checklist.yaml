@@ -1,8 +1,8 @@
 # review-sap checklist
 # Minimum review baseline for external SAPs. Item text is a paraphrased review check,
 # not a quotation of any guideline. See references/checklist-basis.md for sources.
-checklist_version: "0.1.0"
-checklist_date: "2026-11-03"
+checklist_version: "1.0.0"
+checklist_date: "2026-11-04"
 status: draft
 dimensions:
   STR: Structural completeness
@@ -374,7 +374,7 @@ items:
   - id: PRO-04
     dimension: PRO
     title: Analysis populations
-    check: The population definitions match the Protocol, or each difference is listed under STR-24.
+    check: The population definitions match the Protocol.
     basis: [{id: B-SPIRIT2025, locator: "statistical methods items"}]
     applies_to: [all]
     requires: [sap, protocol]
@@ -443,7 +443,7 @@ items:
     applies_to: [all]
     requires: [sap, protocol]
     severity_hint: Major
-    notes: A declared and justified difference is not an inconsistency. Record it as pass for the dimension item and check only the justification.
+    notes: "Assess disclosure and justification here. Record disclosed differences as declared-change in the crosswalk. A substantive change to a Protocol-planned analysis remains a finding under the affected PRO-02 to PRO-11 item. A supplementary analysis that leaves the planned analysis intact may pass the consistency check."
 
   # ---------------- PRG: programmability ----------------
   - id: PRG-01

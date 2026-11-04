@@ -49,7 +49,7 @@ SCHEMAS = {
         "sap_document_id": (r"id:^DOC-\d{2}$", True),
         "review_date": ("date", True),
         "reviewer": ("str", True),
-        "design_tags": ("list", True),
+        "design_tags": ("list", False),
         "dimensions_in_scope": ("list", True),
         "checklist_version": ("str", True),
         "language": ("str", True),
@@ -222,7 +222,8 @@ def _validate_semantics(record_type: str, rec: dict, checklist: dict) -> None:
             raise RecordError("A suggestion can only be Minor or Editorial.")
         if rec["confidence"] == "low" and sev == "Critical":
             raise RecordError("A low-confidence finding cannot be Critical.")
-        needs_comparator = ftype in ("error", "inconsistency") or rec["dimension"] == "PRO"
+        needs_comparator = (sev == "Critical" or ftype in ("error", "inconsistency")
+                            or rec["dimension"] == "PRO")
         if needs_comparator:
             missing = [f for f in ("comparator_source", "comparator_locator", "comparator_excerpt")
                        if not rec[f]]
@@ -272,6 +273,11 @@ def check_records(records: list[dict], checklist: dict) -> tuple[list[str], dict
     grouped: dict[str, list[dict]] = {t: [] for t in SCHEMAS}
     for r in records:
         grouped[r["_type"]].append(r)
+        if r["_type"] in ("review", "finding"):
+            try:
+                _validate_semantics(r["_type"], r, checklist)
+            except RecordError as exc:
+                errors.append(str(exc))
 
     if len(grouped["review"]) != 1:
         errors.append(f"Exactly one review record is required (found {len(grouped['review'])}).")
@@ -308,6 +314,8 @@ def check_records(records: list[dict], checklist: dict) -> tuple[list[str], dict
         for fid in c["finding_ids"]:
             if fid not in findings:
                 errors.append(f"coverage {item_id} references undefined finding {fid}.")
+            elif item_id not in findings[fid]["checklist_items"]:
+                errors.append(f"coverage {item_id} lists {fid} but that finding does not list {item_id}.")
 
     referenced = set()
     for c in coverage.values():
@@ -346,6 +354,12 @@ def build_workbook(grouped: dict, checklist: dict, out_path: Path) -> None:
 
     wb = Workbook()
 
+    def append_text_row(ws, values):
+        ws.append(values)
+        for cell in ws[ws.max_row]:
+            if isinstance(cell.value, str):
+                cell.data_type = "s"
+
     def table(ws, headers, rows, widths):
         ws.append([h for h, _ in headers])
         for col, _ in enumerate(headers, 1):
@@ -353,7 +367,7 @@ def build_workbook(grouped: dict, checklist: dict, out_path: Path) -> None:
             cell.fill, cell.font = header_fill, header_font
             cell.alignment = Alignment(wrap_text=True, vertical="center")
         for row in rows:
-            ws.append(row)
+            append_text_row(ws, row)
         for col, width in enumerate(widths, 1):
             ws.column_dimensions[get_column_letter(col)].width = width
         for row in ws.iter_rows(min_row=2):
@@ -397,7 +411,7 @@ def build_workbook(grouped: dict, checklist: dict, out_path: Path) -> None:
         ("Limitations / 局限", True),
     ] + [(f"- {x}", False) for x in (review["limitations"] or ["None recorded."])]
     for text, bold in lines:
-        ws.append([text])
+        append_text_row(ws, [text])
         ws.cell(row=ws.max_row, column=1).font = Font(bold=bold, size=12 if bold else 11)
         ws.cell(row=ws.max_row, column=1).alignment = Alignment(wrap_text=True, vertical="top")
     ws.column_dimensions["A"].width = 120

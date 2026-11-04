@@ -27,7 +27,7 @@ Extract each parameter that exists in either document. Record it once per parame
 - `sap_value` and `protocol_value` are short normalized statements (for example, "N=420 (210/arm), 1:1"), not long quotations.
 - Each value carries a locator: section number, table, or page.
 - Within one document, record every place the value appears when it is stated more than once (synopsis, body, appendix). A difference inside one document is evidence for INT-03 or INT-04.
-- `match` is one of `match`, `mismatch`, `sap-only`, `protocol-only`, `declared-change`, or `unclear`. Use `declared-change` when the SAP's changes-from-Protocol section covers the difference.
+- `match` is one of `match`, `mismatch`, `sap-only`, `protocol-only`, `declared-change`, or `unclear`. Use `declared-change` when the SAP discloses the difference in its changes-from-Protocol section. Include the disclosure locator in `note` and link any finding about a substantive change through `finding_ids`.
 - A `mismatch` or `unclear` row should normally be linked to a finding through `finding_ids`. If you decide it is not a defect, say why in `note`.
 
 ## Reading tips

@@ -89,7 +89,7 @@ TEAEs (onset on or after the first dose and up to 28 days after the last dose) a
 
 ## 10 Changes from the Protocol
 
-Sensitivity analysis 2 (tipping point) is added; it is not described in the Protocol. It is added to assess the robustness of the primary result to departures from the missing-at-random assumption. There are no other changes.
+Sensitivity analysis 2 (tipping point) is added; it is not described in the Protocol. It is added to assess the robustness of the primary result to departures from the missing-at-random assumption. The primary endpoint timepoint is changed from Week 24 to Week 26 to allow two extra weeks for clinical response. There are no other changes.
 
 ## 11 Software
 

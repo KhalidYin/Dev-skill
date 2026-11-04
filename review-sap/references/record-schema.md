@@ -13,13 +13,13 @@ Stage one JSON object per `add` call. The builder validates each record when it 
   "reviewer": "AI-assisted draft (requires statistician review)",
   "design_tags": ["rct", "tte"],
   "dimensions_in_scope": ["STR", "INT", "PRO", "PRG"],
-  "checklist_version": "0.1.0",
+  "checklist_version": "1.0.0",
   "language": "zh",
   "limitations": ["No CRF supplied; PRG-14 assessed against Protocol SoA"]
 }
 ```
 
-`design_tags` must be drawn from the checklist's design tags; `all` is implied and should not be listed. `checklist_version` must equal the packaged checklist's version.
+`design_tags` lists the matching design tags. Use `[]` when only the implied `all` applies. `checklist_version` must equal the packaged checklist's version. For a run staged under an earlier checklist version, reassess coverage under the current checklist and stage the records in a new run directory.
 
 ## `document`
 
@@ -64,7 +64,7 @@ Stage one JSON object per `add` call. The builder validates each record when it 
 - `severity`: `Critical`, `Major`, `Minor`, `Editorial`, `n/a`. Use `n/a` only for `out-of-scope-observation`. A `suggestion` is `Minor` or `Editorial`.
 - `confidence`: `high`, `medium`, `low`. A `low` finding cannot be `Critical`.
 - `verification`: `self`, `independent-confirmed`, `independent-disputed`.
-- `comparator_*` fields are required for `error` and `inconsistency` and for every `PRO` finding. `comparator_source` is a defined `document_id` or `SAP`. Otherwise leave them empty.
+- `comparator_*` fields are required for every Critical finding, every `error` or `inconsistency`, and every `PRO` finding. `comparator_source` is a defined `document_id` or `SAP`.
 - `checklist_items` must be non-empty and defined in the checklist, except for `out-of-scope-observation`, which uses `[]`.
 - ID pattern `F-NNN`.
 
@@ -81,6 +81,6 @@ Stage one JSON object per `add` call. The builder validates each record when it 
 1. Exactly one `review`. Its `sap_document_id` is a defined `sap` document.
 2. Every applicable checklist item has exactly one coverage record. An item is applicable when its dimension is in scope and its `applies_to` includes `all` or one of the review's design tags. Coverage for a non-applicable item, if one is added, must be `not-applicable`.
 3. If an item's required documents are missing, its status must be `not-assessable` or `not-applicable`. The one exception is an item whose `alternate_requires` are all present.
-4. For each finding, every listed checklist item has coverage status `finding` that includes this finding ID. Every finding ID listed in coverage or the crosswalk is defined.
+4. For each finding, every listed checklist item has coverage status `finding` that includes this finding ID. Each finding linked from coverage lists the same checklist item. Every finding ID listed in coverage or the crosswalk is defined.
 5. Every non-`MTH` finding is referenced by at least one coverage record.
 6. Every ID is unique within its type.

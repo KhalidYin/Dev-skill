@@ -10,7 +10,7 @@ Review an external Statistical Analysis Plan and return an evidence-linked issue
 ## Non-negotiable behavior
 
 1. Review only what is supplied. Every finding cites the SAP location and, when it claims a mismatch, the comparator location (Protocol, amendment, TFL shell, CRF, or checklist basis).
-2. Never fabricate a requirement. A finding rests on a checklist item, an explicit document statement, or an internal contradiction that can be shown. Reviewer preference is labelled `suggestion`.
+2. Ground each finding in a checklist item, an explicit document statement, or a demonstrable internal contradiction. Label reviewer preference `suggestion`. Assess disclosure of a Protocol change separately from its effect on the planned analysis.
 3. Give every in-scope checklist item exactly one coverage status: `pass`, `finding`, `not-applicable`, or `not-assessable`. Silence is not a pass.
 4. When a comparator document is missing, mark the dependent items `not-assessable` and name the missing input. Do not infer Protocol content from the SAP.
 5. Keep v1 scope: structure, internal consistency, Protocol consistency, and programmability. Methodological appropriateness is out of scope. A serious method concern noticed in passing is recorded as `out-of-scope-observation` and is not severity-ranked.

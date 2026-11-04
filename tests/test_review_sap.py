@@ -57,17 +57,17 @@ class ReviewSapBuilderTests(unittest.TestCase):
         return BUILDER.append_record(self.run_dir, record_type,
                                      json.dumps(value, ensure_ascii=False), CHECKLIST)
 
-    def stage_valid_set(self, with_protocol=True, finding=True):
-        self.add("review", REVIEW)
+    def stage_valid_set(self, with_protocol=True, finding=True, review=REVIEW, finding_record=FINDING):
+        self.add("review", review)
         self.add("document", SAP_DOC)
         roles = {"sap"}
         if with_protocol:
             self.add("document", PROTOCOL_DOC)
             roles.add("protocol")
         if finding:
-            self.add("finding", FINDING)
-        for item in BUILDER.applicable_items(CHECKLIST, REVIEW):
-            linked = finding and item["id"] in FINDING["checklist_items"]
+            self.add("finding", finding_record)
+        for item in BUILDER.applicable_items(CHECKLIST, review):
+            linked = finding and item["id"] in finding_record["checklist_items"]
             if linked:
                 rec = {"item_id": item["id"], "status": "finding",
                        "finding_ids": ["F-001"], "note": "See F-001"}
@@ -107,6 +107,23 @@ class ReviewSapBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(BUILDER.RecordError, "low-confidence"):
             self.add("finding", {**FINDING, "confidence": "low"})
 
+    def test_critical_omission_requires_comparator_at_add_and_check(self):
+        omission = {**FINDING, "dimension": "PRG", "type": "omission",
+                    "checklist_items": ["PRG-05"], "sap_locator": "Sec 7.1",
+                    "sap_excerpt": "Section 7.1 gives no censoring rule.",
+                    "comparator_source": "SAP", "comparator_locator": "Sec 3.1",
+                    "comparator_excerpt": "Time to death is the primary endpoint."}
+        bad = {**omission, "comparator_excerpt": ""}
+        with self.assertRaisesRegex(BUILDER.RecordError, "comparator evidence"):
+            self.add("finding", bad)
+
+        self.stage_valid_set(finding_record=omission, review={**REVIEW, "design_tags": ["tte"]})
+        self.assertEqual([], self.check())
+        records = BUILDER.read_staged(self.run_dir)
+        next(r for r in records if r["_type"] == "finding").update(bad)
+        errors, _ = BUILDER.check_records(records, CHECKLIST)
+        self.assertTrue(any("comparator evidence" in e for e in errors))
+
     def test_suggestion_cannot_be_major(self):
         bad = {**FINDING, "dimension": "STR", "type": "suggestion", "severity": "Major",
                "checklist_items": ["STR-20"]}
@@ -143,6 +160,22 @@ class ReviewSapBuilderTests(unittest.TestCase):
         self.stage_valid_set()
         self.assertEqual([], self.check())
 
+    def test_review_with_only_implied_all_builds(self):
+        self.stage_valid_set(finding=False, review={**REVIEW, "design_tags": []})
+        self.assertEqual([], self.check())
+        self.assertIn("STR-01", self.staged_text())
+        self.assertNotIn("STR-EP-01", self.staged_text())
+        out = Path(self.tmp.name) / "log.xlsx"
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(0, BUILDER.main(["build", "--run-dir", str(self.run_dir), "--out", str(out)]))
+
+    def test_staged_review_must_use_current_checklist(self):
+        self.stage_valid_set()
+        records = BUILDER.read_staged(self.run_dir)
+        next(r for r in records if r["_type"] == "review")["checklist_version"] = "0.1.0"
+        errors, _ = BUILDER.check_records(records, CHECKLIST)
+        self.assertTrue(any("review.checklist_version 0.1.0" in e for e in errors))
+
     def test_missing_coverage_is_reported(self):
         self.add("review", REVIEW)
         self.add("document", SAP_DOC)
@@ -175,6 +208,14 @@ class ReviewSapBuilderTests(unittest.TestCase):
         self.assertTrue(any("F-001 lists PRO-05" in e for e in errors))
         self.assertTrue(any("F-001 is not referenced" in e for e in errors))
 
+    def test_coverage_cannot_link_finding_for_different_item(self):
+        self.stage_valid_set()
+        records = BUILDER.read_staged(self.run_dir)
+        coverage = next(r for r in records if r.get("item_id") == "PRO-02")
+        coverage.update(status="finding", finding_ids=["F-001"])
+        errors, _ = BUILDER.check_records(records, CHECKLIST)
+        self.assertTrue(any("coverage PRO-02 lists F-001" in e for e in errors))
+
     # --- workbook -------------------------------------------------------------
 
     def test_build_writes_expected_workbook_and_refuses_overwrite(self):
@@ -203,6 +244,19 @@ class ReviewSapBuilderTests(unittest.TestCase):
             rc = BUILDER.main(["build", "--run-dir", str(self.run_dir), "--out", str(out)])
         self.assertEqual(1, rc)
         self.assertFalse(out.exists())
+
+    def test_workbook_preserves_formula_like_inputs_as_text(self):
+        import openpyxl
+
+        self.stage_valid_set(review={**REVIEW, "title": "=1+1"},
+                             finding_record={**FINDING, "sap_excerpt": "=2+2"})
+        out = Path(self.tmp.name) / "log.xlsx"
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(0, BUILDER.main(["build", "--run-dir", str(self.run_dir), "--out", str(out)]))
+        wb = openpyxl.load_workbook(out)
+        self.assertEqual(("=1+1", "s"), (wb["Read Me"]["A2"].value, wb["Read Me"]["A2"].data_type))
+        self.assertEqual(("=2+2", "s"), (wb["Findings"]["G2"].value, wb["Findings"]["G2"].data_type))
+        self.assertEqual("f", wb["Summary"]["B3"].data_type)
 
     # --- docx comments ----------------------------------------------------------
 
@@ -239,6 +293,35 @@ class ReviewSapBuilderTests(unittest.TestCase):
             rc = ANNOTATE.main(["--run-dir", str(self.run_dir), "--sap", str(sap),
                                 "--out", str(sap), "--confirmed"])
         self.assertEqual(1, rc)
+
+    def test_anchor_fallback_requires_exact_section_number(self):
+        import docx
+
+        doc = docx.Document()
+        doc.add_heading("8.1.2 Other population", level=2)
+        finding = {**FINDING, "sap_excerpt": "No PP definition"}
+        self.assertEqual((None, "no-match"), ANNOTATE.find_anchor(doc.paragraphs, finding))
+        doc.add_heading("8.1 Analysis populations", level=1)
+        paragraph, method = ANNOTATE.find_anchor(doc.paragraphs, finding)
+        self.assertEqual(("8.1 Analysis populations", "section-heading"), (paragraph.text, method))
+
+    def test_anchor_disambiguates_repeated_excerpt_in_section_table(self):
+        import docx
+
+        doc = docx.Document()
+        doc.add_heading("8.0 Synopsis", level=1)
+        doc.add_paragraph("Repeated evidence")
+        doc.add_heading("8.1 Analysis populations", level=1)
+        cell = doc.add_table(rows=1, cols=1).cell(0, 0)
+        cell.text = "Repeated evidence"
+        doc.add_heading("8.2 Safety", level=1)
+        finding = {**FINDING, "sap_excerpt": cell.text}
+        paragraph, method = ANNOTATE.find_anchor(ANNOTATE.iter_paragraphs(doc), finding)
+        self.assertEqual("excerpt", method)
+        self.assertIs(cell.paragraphs[0]._p, paragraph._p)
+        cell.add_paragraph(cell.text)
+        self.assertEqual((None, "ambiguous-excerpt"),
+                         ANNOTATE.find_anchor(ANNOTATE.iter_paragraphs(doc), finding))
 
 
 class ReviewSapChecklistTests(unittest.TestCase):

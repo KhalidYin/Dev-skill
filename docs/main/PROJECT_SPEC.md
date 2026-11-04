@@ -54,7 +54,8 @@
 - 同类研究 Reference 必须记录真实文档类型、版本/日期/状态、直接 URL、章节或页码、检索日期、相似点和重要差异。
 - 所有输出必须要求合格统计师审核，不得声称已批准或已完成法规合规判断。
 - `review-sap` 每个适用检查项必须有且仅有一个覆盖结论（`pass`、`finding`、`not-applicable`、`not-assessable`）；缺少对照文件时相关项只能为 `not-assessable`。
-- `review-sap` 问题记录逐条以 JSON 暂存并由 `build_issue_log.py` 校验后生成 Excel；PRO 维度及 `error`/`inconsistency` 问题必须同时给出 SAP 与对照文件的位置和原文；低置信度问题不得为 Critical；方法学意见仅可记为 `out-of-scope-observation`。
+- `review-sap` 问题记录逐条以 JSON 暂存并由 `build_issue_log.py` 校验后生成 Excel。Critical、PRO 维度及 `error`/`inconsistency` 问题必须同时给出 SAP 与对照证据的位置和内容。低置信度问题不得为 Critical。方法学意见仅可记为 `out-of-scope-observation`。
+- `review-sap` 将变更披露与 Protocol 一致性分别判定。已披露且有理由的实质变更仍须记录在受影响的 PRO 检查项下。
 - `review-sap` 不改写 SAP 正文，不得把研究标识或原文写入网络检索。
 
 ## 非功能需求

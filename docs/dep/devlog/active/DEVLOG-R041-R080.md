@@ -140,3 +140,20 @@
 - `generate-sap/references/`, `generate-sap/scripts/validate_output_contract.py`, `generate-sap/evals/`（modified/added）— `(uncommitted)`
 - `tests/test_generate_sap_output_contract.py`（modified）— `(uncommitted)`
 - `.skill-registry.json`, `docs/main/`, `docs/dep/`（modified）— `(uncommitted)`
+
+---
+
+## 2026-11-04
+
+### R046 [09:50] Review SAP 审查问题修复
+
+#### Done
+
+- 分别判定 Protocol 变更披露和一致性，更新检查表至 v1.0.0，并在合成案例加入已披露的主要终点差异。
+- 支持空设计标签，校验 Critical 对照证据和覆盖双向关联，修正 Word 批注定位及 Excel 原文序列化。
+- 新增 7 项脚本回归，全仓测试 39 通过、1 跳过，四个 Skill 通过仓库校验。已更新注册表和索引，并验证 Codex 与 Claude 的安装链接。
+- 独立前向审阅合成 SAP 的 PRO 维度，生成含 12 条覆盖记录的 Excel。已披露的主要终点变更在 PRO-02 记为 Critical，PRO-12 仅关联其余未披露差异。保留主分析的 tipping-point 补充分析只记录在 crosswalk。
+
+#### Next
+
+- 按计划运行全套 7 个行为评测并评分。

@@ -22,6 +22,11 @@ from build_issue_log import (  # noqa: E402
     SEVERITIES, RecordError, check_records, load_checklist, read_staged)
 
 RANK = {"Critical": 0, "Major": 1, "Minor": 2, "Editorial": 3, "n/a": 4}
+SECTION_LOCATOR = re.compile(
+    r"^\s*(?:sec(?:tion)?\.?\s*|§\s*|第\s*)?(\d+(?:\.\d+)*)(?=$|[\s,:，：节]|\.(?!\d))",
+    re.IGNORECASE,
+)
+NUMBERED_HEADING = re.compile(r"^\s*(\d+(?:\.\d+)*)(?:[.、])?(?:\s+\S|$)")
 
 
 def _norm(text: str) -> str:
@@ -29,36 +34,54 @@ def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
-def iter_paragraphs(doc):
+def iter_paragraphs(container):
     """Yield body paragraphs and table-cell paragraphs in document order."""
-    for p in doc.paragraphs:
-        yield p
-    for table in doc.tables:
-        for row in table.rows:
+    from docx.text.paragraph import Paragraph
+
+    for block in container.iter_inner_content():
+        if isinstance(block, Paragraph):
+            yield block
+            continue
+        seen_cells = set()
+        for row in block.rows:
             for cell in row.cells:
-                for p in cell.paragraphs:
-                    yield p
+                if cell._tc not in seen_cells:
+                    seen_cells.add(cell._tc)
+                    yield from iter_paragraphs(cell)
 
 
 def find_anchor(paragraphs, finding):
     """Return (paragraph, method) for a finding, or (None, reason)."""
     excerpt = _norm(finding["sap_excerpt"])
     candidates = [p for p in paragraphs if p.runs and p.text.strip()]
+    heading = None
+    locator = SECTION_LOCATOR.match(finding["sap_locator"])
+    if locator:
+        number = locator.group(1)
+        headings = []
+        for index, paragraph in enumerate(candidates):
+            match = NUMBERED_HEADING.match(paragraph.text)
+            if match and len(paragraph.text) < 200:
+                headings.append((index, match.group(1)))
+        starts = [index for index, section in headings if section == number]
+        if len(starts) > 1:
+            return None, "ambiguous-section"
+        if starts:
+            start = starts[0]
+            end = next((index for index, section in headings
+                        if index > start and not section.startswith(number + ".")),
+                       len(candidates))
+            heading = candidates[start]
+            candidates = candidates[start:end]
+
     if excerpt:
-        probes = [excerpt]
-        if len(excerpt) > 60:
-            probes += [excerpt[:60], excerpt[-60:]]
-        for probe in probes:
-            for p in candidates:
-                if probe in _norm(p.text):
-                    return p, "excerpt"
-    m = re.search(r"(\d+(?:\.\d+)*)", finding["sap_locator"])
-    if m:
-        num = m.group(1)
-        pattern = re.compile(rf"^\s*{re.escape(num)}(?:\.|\s)")
-        for p in candidates:
-            if pattern.match(p.text) and len(p.text) < 200:
-                return p, "section-heading"
+        matches = [p for p in candidates if excerpt in _norm(p.text)]
+        if len(matches) == 1:
+            return matches[0], "excerpt"
+        if matches:
+            return None, "ambiguous-excerpt"
+    if heading is not None:
+        return heading, "section-heading"
     return None, "no-match"
 
 

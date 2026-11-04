@@ -14,8 +14,8 @@ defects:
     expected_type: [inconsistency, error]
     expected_severity: [Critical]
   - id: D2
-    location: "SAP 3 vs SAP 7.1 and Protocol 3"
-    description: Primary endpoint timepoint is Week 26 in Section 3, but Week 24 in 7.1 and in the Protocol.
+    location: "SAP 3 vs SAP 7.1 and Protocol 3, disclosed in SAP 10"
+    description: Primary endpoint timepoint is Week 26 in Section 3, but Week 24 in 7.1 and in the Protocol. Section 10 discloses and justifies the change, so the difference is still a PRO-02 finding but does not by itself fail PRO-12.
     expected_items: [PRO-02, INT-01, INT-07]
     expected_type: [inconsistency, error]
     expected_severity: [Critical]

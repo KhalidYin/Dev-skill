@@ -4,8 +4,8 @@
 
 | Type | Meaning |
 |------|---------|
-| `error` | A statement is wrong: a value is impossible, or it contradicts an authoritative source with no declared change |
-| `inconsistency` | Two statements disagree (within the SAP, or SAP versus a comparator) and the correct one cannot be determined from the documents |
+| `error` | Evidence shows that a statement is wrong or a value is impossible |
+| `inconsistency` | Two source statements conflict, or the SAP substantively changes a Protocol-planned analysis |
 | `omission` | Content required by a checklist item is absent |
 | `ambiguity` | The content exists but allows more than one reasonable implementation |
 | `suggestion` | An improvement that no checklist item or source requires. Never ranked above Minor |
@@ -29,7 +29,7 @@ The checklist's `severity_hint` is a starting point. Move it up or down only for
 Each finding must carry:
 
 - `sap_locator` (section, table, or page) and a short `sap_excerpt` (at most about 40 words, verbatim) or a precise statement of the absence ("Section 9 defines FAS and SS only; no PP definition").
-- For `error` and `inconsistency` findings, plus any PRO-dimension finding: `comparator_source` (a document ID, or `SAP` for internal comparisons), `comparator_locator`, and `comparator_excerpt`.
+- For every Critical finding, every `error` or `inconsistency`, and every PRO-dimension finding, supply `comparator_source` (a document ID, or `SAP` for internal comparisons), `comparator_locator`, and `comparator_excerpt`. For a Critical omission, cite the source statement that makes the missing rule necessary, such as the definition of the primary time-to-event endpoint.
 - `checklist_items`: one or more checklist IDs. An `out-of-scope-observation` uses `[]`.
 
 ## Confidence and verification
@@ -58,5 +58,5 @@ Each finding must carry:
 3. Are there duplicates (one defect raised under several items)? Merge them and list all affected items.
 4. Does every Critical have both locators and `high` or `medium` confidence?
 5. Did I mark items `pass` without looking? Every pass needs a location in its note.
-6. Are any declared changes being reported as inconsistencies? They should not be.
+6. Did I separate disclosure from consistency? A justified, disclosed change can satisfy PRO-12 and still warrant a finding under the affected PRO item. A supplementary analysis that preserves the planned analysis can satisfy both checks.
 7. Did any methodology judgment slip into a ranked finding? Move it to `out-of-scope-observation`.

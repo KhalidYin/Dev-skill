@@ -37,14 +37,14 @@ python scripts/generate_index.py
 - `generate-sap` 的 12 个单元测试：8 个输出合同测试和 4 个 Ledger builder 测试；覆盖确定性组装、UTF-8、重复 ID/单例拒绝、错误 JSON 不污染暂存、必需单例、禁止覆盖最终文件、`sourced` 模式夹带 assumptions/alternatives 的拒绝，以及既有盲测产物的新规则回放。
 - Ledger 序列化非临床 smoke：本地大记录集通过；真实 CLI 生成 60 条目标记录，最终 YAML 可解析且暂存已清除。真实 CLI 曾把 `question_id` 写成 `query_id` 合同以外字段，构建器安全拒绝后以相同语义重试，因此结果记为 `pass_with_recovery`，不是零错误通过。
 
-- `review-sap` 的 21 个单元测试：单条记录校验（未知字段、对照证据、低置信度 Critical、suggestion 分级、范围外观察、检查表版本、重复 ID）、跨记录检查（覆盖完整性、缺少 Protocol 时的 not-assessable、问题与覆盖双向关联）、Excel 结构与拒绝覆盖、docx 批注须 `--confirmed` 且不修改原件，以及检查表完整性和评测答案键一致性。
+- `review-sap` 的单元测试覆盖空设计标签、Critical 对照证据、检查表版本、缺少 Protocol 时的覆盖、问题与覆盖双向关联、Excel 原文保留和拒绝覆盖、Word 批注定位及确认、检查表与评测答案键完整性。
 - `review-sap` 的 7 个行为评测和合成 fixture：含 10 个植入缺陷与 1 个已声明变更诱饵的 SAP、对照用干净 SAP、Protocol 摘录和答案键 `seeded-answer-key.yaml`。
 
 ### 未覆盖
 
 - 自动化语义触发评测执行器：当前仅保存 eval 用例，需由 agent 前向测试或后续工具执行。
 - 安装到不同 agent 环境后的端到端发现行为：需在目标环境验证。
-- `review-sap` 行为评测尚未由真实 agent 前向执行；检出率、误报率需按答案键评分并由合格统计师复核。
+- `review-sap` 全套行为评测待执行。检出率和误报率需按答案键评分并由合格统计师复核。
 
 ## 测试约定
 
@@ -60,7 +60,7 @@ python scripts/generate_index.py
 - 真实 CLI 序列化 smoke 必须保留被拒绝记录和重试审计，分别报告 `pass`、`pass_with_recovery` 或 `fail`，不得把恢复后的结果表述为从未失败。
 - 路由评测应分别记录 `should_trigger`、`expected_route` 和 `expected_status`，不能把意图匹配与能力覆盖混为一谈。
 
-- SAP 审阅 skill 必须用植入缺陷 fixture 验证检出率，并用干净 SAP 验证不虚构 Critical/Major；已声明的 Protocol 变更不得被报告为不一致。
+- SAP 审阅 skill 用植入缺陷验证检出率，用干净 SAP 检查 Critical/Major 误报。已披露的主要终点变更仍应进入对应 PRO 检查项，保留原计划分析的补充分析则单独检查披露。
 
 ## 测试数据
 

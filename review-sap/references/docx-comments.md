@@ -23,7 +23,7 @@ python scripts/annotate_docx.py --run-dir RUN --sap SAP.docx \
 
 The script:
 
-- anchors each comment to the paragraph that contains the finding's `sap_excerpt`; it falls back to the heading that matches the section number in `sap_locator`;
+- anchors each comment to a unique paragraph containing `sap_excerpt`, using the numbered section in `sap_locator` to narrow the search when available. It can fall back to a uniquely matched section heading when the excerpt is absent. Ambiguous matches are reported as unanchored;
 - includes ranked findings at or above `--min-severity`. Out-of-scope observations (`n/a`) are excluded unless `--min-severity n/a` is passed;
 - collects findings it cannot anchor into one comment on the first paragraph, and reports them;
 - writes a new file and never modifies the original.

@@ -6,7 +6,7 @@
 
 ## 待开始
 
-- `review-sap` v0.1 前向评测：按 `review-sap/evals/evals.json` 运行 7 个用例，用 `seeded-answer-key.yaml` 评分；完成 Homer 2022 条目编号映射与 NMPA 2016 官方链接核验后再考虑升级状态。
+- `review-sap` 前向评测（检查表 v1.0.0）：按 `review-sap/evals/evals.json` 运行 7 个用例，用 `seeded-answer-key.yaml` 评分；完成 Homer 2022 条目编号映射与 NMPA 2016 官方链接核验后再考虑升级状态。
 
 ## 最近完成
 

@@ -9,6 +9,7 @@
       "expectations": [
         "At least 8 of the 10 defects in files/seeded-answer-key.yaml are detected, with the expected checklist items",
         "D1 (sample size 400 vs 420), D2 (Week 26 vs Week 24), and D8 (efficacy interims vs futility-only) are all Critical",
+        "D2 has a declared-change crosswalk row linked to a PRO-02 finding. SAP Section 10 discloses and justifies this difference, so D2 alone does not fail PRO-12",
         "The declared tipping-point analysis (decoy X1) is not reported as an undeclared Protocol difference",
         "Every finding has a SAP locator and excerpt; every PRO, error, and inconsistency finding has comparator source, locator, and excerpt",
         "Every applicable checklist item for design tags rct and tte has exactly one coverage record; build_issue_log.py check passes",
