@@ -53,6 +53,21 @@
         "excel"
       ]
     },
+    "review-protocol": {
+      "status": "draft",
+      "category": "clinical-statistics",
+      "last_modified": "2026-11-05",
+      "has_evals": true,
+      "tags": [
+        "clinical-trials",
+        "protocol",
+        "biostatistics",
+        "review",
+        "traceability",
+        "analysis-matrix",
+        "excel"
+      ]
+    },
     "tfls-shell": {
       "status": "draft",
       "category": "clinical-statistics",

@@ -1,0 +1,41 @@
+{
+  "skill_name": "review-protocol",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this clinical trial protocol from a statistician's perspective and deliver an Excel issue log. Treat outside lookup as unavailable for this evaluation.",
+      "files": [
+        "evals/files/randomized.md"
+      ],
+      "expected_output": "A four-tab review. Identify the post-discontinuation assessment mismatch using §3 and §7. Link one actionable comment with rationale and both locators to the relevant coverage and primary-analysis matrix rows. Mark SAP-dependent comparisons not assessable and omit inactive single-arm checks from the compact workbook."
+    },
+    {
+      "id": 2,
+      "prompt": "请审核这份单臂肿瘤方案并出 Excel。没有附件，本次不进行联网检索。",
+      "files": [
+        "evals/files/single-arm.md"
+      ],
+      "expected_output": "Route single-arm, benchmark and multistage checks. Find the Stage 1 threshold conflict (§1 vs §10), with one author comment and two evidence anchors. Record analysis-level stage boundaries and distinguish the absent benchmark citation from a statistician's judgment of benchmark appropriateness."
+    },
+    {
+      "id": 3,
+      "prompt": "Review the attached I/II oncology protocol. Keep dose escalation and expansion evidence separate. Public research is unavailable for this evaluation.",
+      "files": [
+        "evals/files/escalation-expansion.md"
+      ],
+      "expected_output": "One shared unit, separate escalation and expansion units. Credit dose-decision content found outside the statistics chapter. Identify the Day 28 vs Day 21 DLT conflict in Part A and treat the missing referenced calibration report as an evidence gap. Keep escalation matrix slots scoped to Part A and avoid formal benchmark testing in Part B."
+    },
+    {
+      "id": 4,
+      "prompt": "Please audit the protocol's statistics. I have not uploaded or pasted the protocol yet.",
+      "files": [],
+      "expected_output": "Ask for the protocol or a readable excerpt. Do not issue findings or an empty review workbook."
+    },
+    {
+      "id": 5,
+      "prompt": "Review the SAP against its protocol and check that the ADaM and TFL rules are programmable.",
+      "files": [],
+      "expected_output": "Route to review-sap because the SAP is the primary review target."
+    }
+  ]
+}

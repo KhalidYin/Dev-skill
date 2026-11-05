@@ -10,6 +10,8 @@
 
 ## 最近完成
 
+- [P4-review-protocol-depth.md](plans/complete/P4-review-protocol-depth.md) — 新增统计章节检查和分析矩阵，Excel 默认四页，结构回归已通过。
+- [P3-review-protocol.md](plans/complete/P3-review-protocol.md) — 初版已安装，三类合成方案通过路由和工作簿测试，待独立行为评测和临床统计师验证。
 - [P0-generate-sap-output-contract.md](plans/complete/P0-generate-sap-output-contract.md) — R16 L1 六槽 6/6 locked，4+1 匿名包完成并恢复 P2 盲评入口。
 - [P1-generate-sap-skill.md](plans/complete/P1-generate-sap-skill.md) — `generate-sap` 初版完成：完整 SAP 骨架、逐项生成约束、证据账本、先例检索规则和行为验证（5/5 Phase 完成）。
 

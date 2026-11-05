@@ -14,6 +14,7 @@
 - `sub-brainstorm`：需求探索和设计规划。
 - `generate-sap`（draft）：从 Protocol、Sponsor 约定、已确认决定和经核验的公开先例生成结构完整、内容状态明确、依据可追溯的 SAP review draft。
 - `review-sap`（draft）：审阅外部 SAP，按版本化检查表覆盖结构完整性、内部一致性、与 Protocol 一致性和可编程性四个维度，输出证据关联的 Excel 问题清单；docx 批注须用户确认后生成。
+- `review-protocol`（draft）从统计师视角审核现有临床试验方案。按研究目的、比较结构、实施结构和统计推断判型，选择通用、条件和专项检查，输出证据关联的 Excel 问题清单。
 - `tfls-shell`（draft）：从 Protocol、SAP 或统计需求推荐受控 TFL shell，并调用上游 Product 生成 DOCX、XLSX 和 SOP；整合正式入口，历史名称不重复安装。
 
 ### 规划中
@@ -62,6 +63,10 @@
 - `review-sap` 问题记录逐条以 JSON 暂存并由 `build_issue_log.py` 校验后生成 Excel。Critical、PRO 维度及 `error`/`inconsistency` 问题必须同时给出 SAP 与对照证据的位置和内容。低置信度问题不得为 Critical。方法学意见仅可记为 `out-of-scope-observation`。
 - `review-sap` 将变更披露与 Protocol 一致性分别判定。已披露且有理由的实质变更仍须记录在受影响的 PRO 检查项下。
 - `review-sap` 不改写 SAP 正文，不得把研究标识或原文写入网络检索。
+- `review-protocol` 按研究部分记录检查项的唯一覆盖结论。缺失附件或判型未定只影响依赖项，当前研究原文、适用指南或法规、公开先例分别记录。
+- `review-protocol` 用 `plan`、`check` 和 `build` 从 UTF-8 JSON 生成 Excel，校验问题与覆盖的双向关联。高影响问题需要可复查的证据，方法选择和特殊设计判断单列给统计师复核。
+- `review-protocol` v0.2 先查统计章节完整性，再按研究部分、终点与分析角色核查语句、预设和方法匹配。默认工作簿四页，批注、理由和来源同条记录，专项证据可加一页。
+- `review-protocol` 审阅以适用监管依据及方案明确的 estimand 或决策目标为主线，逐段判断设计、采集、估计方法、敏感性与决策是否支持该目标。
 
 ## 非功能需求
 

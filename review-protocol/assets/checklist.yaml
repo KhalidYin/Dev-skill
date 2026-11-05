@@ -1,0 +1,349 @@
+checklist_version: "0.2.1"
+checklist_date: "2026-11-05"
+design_tags:
+  - randomized
+  - blinded
+  - single-arm
+  - benchmark
+  - nonrandomized-comparison
+  - external-control
+  - dose-escalation
+  - dose-expansion
+  - multistage
+  - multi-cohort
+  - interim
+  - adaptive
+  - bayesian
+  - tte
+  - event-driven
+  - non-inferiority
+  - multiplicity
+  - estimand
+  - specialist
+basis_register:
+  - id: ICH-E8
+    title: "ICH E8(R1), General Considerations for Clinical Studies"
+    region: "international"
+    status: final
+    url: "https://www.ema.europa.eu/en/scientific-guidelines/ich-e8-general-considerations-clinical-studies"
+    locator: "§3 and §5"
+    checked_date: "2026-11-04"
+  - id: ICH-E9
+    title: "ICH E9, Statistical Principles for Clinical Trials"
+    region: "international"
+    status: final
+    url: "https://www.ema.europa.eu/en/scientific-guidelines/ich-e9-statistical-principles-clinical-trials"
+    locator: "Design, conduct and analysis"
+    checked_date: "2026-11-04"
+  - id: ICH-E9R1
+    title: "ICH E9(R1), Estimands and Sensitivity Analysis"
+    region: "international"
+    status: final
+    url: "https://www.ema.europa.eu/en/scientific-guidelines/ich-e9-statistical-principles-clinical-trials"
+    locator: "Estimands, estimation and sensitivity"
+    checked_date: "2026-11-04"
+  - id: ICH-M11
+    title: "ICH M11 CeSHarP final template"
+    region: "international"
+    status: final
+    url: "https://www.fda.gov/media/192647/download?attachment="
+    locator: "§1, §3–9 and §10"
+    checked_date: "2026-11-04"
+  - id: SPIRIT-2025
+    title: "SPIRIT 2025 randomized trial protocol reporting checklist"
+    region: "international"
+    status: reporting-reference
+    url: "https://www.bmj.com/content/389/bmj-2024-081477"
+    locator: "Table 1"
+    checked_date: "2026-11-04"
+  - id: FDA-NI
+    title: "FDA Non-Inferiority Clinical Trials"
+    region: "US"
+    status: final
+    url: "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/non-inferiority-clinical-trials"
+    locator: "Margin and non-inferiority testing"
+    checked_date: "2026-11-04"
+  - id: FDA-MULT
+    title: "FDA Multiple Endpoints in Clinical Trials"
+    region: "US"
+    status: final
+    url: "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/multiple-endpoints-clinical-trials"
+    locator: "Control of Type I error"
+    checked_date: "2026-11-04"
+  - id: CDE-DOSE
+    title: "CDE model-informed dose exploration and optimization for innovative drugs (2024 No. 53)"
+    region: "CN"
+    status: final
+    url: "https://www.cde.org.cn/main/news/viewInfoCommon/3a55263f274e0525c1172a37f5b04a8e"
+    locator: "Scope and dose exploration"
+    checked_date: "2026-11-04"
+  - id: PRACTICE
+    title: "Internal consistency and reviewer reconciliation"
+    region: ""
+    status: review-practice
+    url: ""
+    locator: "Current protocol locators establish the evidence"
+    checked_date: "2026-11-04"
+analysis_slots:
+  objective-endpoint: [primary, key-secondary, secondary, exploratory, safety, decision, sensitivity, supplementary]
+  population: [primary, key-secondary, secondary, exploratory, safety, decision, sensitivity, supplementary]
+  estimand-ice: [primary, key-secondary, decision, sensitivity, supplementary]
+  method: [primary, key-secondary, secondary, exploratory, safety, decision, sensitivity, supplementary]
+  assumptions: [primary, key-secondary, decision, sensitivity]
+  missing-data: [primary, key-secondary, secondary, decision]
+  sensitivity: [primary, key-secondary, decision]
+  decision-rule: [primary, key-secondary, decision]
+  method-fit: [primary, key-secondary, decision]
+design_analysis_slots:
+  time-origin-censoring:
+    roles: [primary, key-secondary]
+    any_tags: [tte]
+    note: "Apply only to time-to-event analyses. A unit may also have non-time-to-event endpoints."
+  stage-boundaries:
+    roles: [primary, decision]
+    any_tags: [multistage]
+    note: "Check stage-specific denominators, cutoffs, inequalities and the resulting action."
+  dose-decision-input:
+    roles: [decision]
+    any_tags: [dose-escalation]
+    note: "Check DLT evaluability, window and data used to drive the dose decision."
+items:
+  - id: CH-01
+    layer: chapter
+    scope: study
+    basis: [ICH-M11]
+    check: "General statistical conventions and references; note separately if a required supplied sponsor template's structure is missing."
+  - id: CH-02
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Analysis populations and grouping conventions for this part."
+  - id: CH-03
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Demographics and baseline summary, including baseline time where material."
+  - id: CH-04
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Analysis content for the primary objective or primary trial decision."
+  - id: CH-05
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Analysis content for each stated secondary objective, including which claims are confirmatory where applicable."
+  - id: CH-11
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Analysis content for each stated exploratory objective."
+  - id: CH-06
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Safety analysis or rationale if the trial has no applicable safety objective or assessment."
+  - id: CH-07
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Other analyses if planned, such as subgroup, PK, or biomarker analyses."
+  - id: CH-08
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Interim analysis and stopping or adaptation content for planned looks."
+    any_tags: [interim, adaptive, multistage]
+  - id: CH-09
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Multiplicity control or rationale aligned with planned claims and decisions."
+    any_tags: [multiplicity]
+  - id: CH-10
+    layer: chapter
+    scope: unit
+    basis: [ICH-M11]
+    check: "Sample size or cohort sizing rationale and its location."
+  - id: OBJ-01
+    scope: unit
+    basis: [ICH-E8, ICH-M11]
+    check: "Align objectives, endpoint hierarchy and intended conclusions across synopsis, objectives, design and statistics."
+  - id: OBJ-02
+    scope: unit
+    basis: [ICH-M11, ICH-E9]
+    check: "For material endpoints, verify measurement variable, origin or baseline, assessment time, outcome metric and summary or contrast."
+  - id: DES-01
+    scope: unit
+    basis: [ICH-E8, ICH-M11]
+    check: "Verify eligibility, allocation or cohort entry, analysis population and comparison structure support the stated objective; identify divergences that affect interpretation."
+  - id: DAT-01
+    layer: cross-check
+    scope: unit
+    basis: [ICH-E8, ICH-M11]
+    check: "Reconcile endpoint timing and required assessments with the visit schedule, assessment procedures and applicable windows."
+  - id: DAT-02
+    layer: cross-check
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Trace treatment discontinuation, rescue, progression or switching to follow-up and data availability when relevant. Distinguish treatment stop, follow-up stop and withdrawal of consent."
+  - id: N-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Check the rationale for sample or cohort size against its purpose: estimation precision, hypothesis testing, event yield, toxicity evaluation, simulation, or explicitly justified feasibility."
+  - id: N-02
+    layer: cross-check
+    scope: unit
+    basis: [PRACTICE, ICH-M11]
+    check: "Reconcile total, enrolled, treated, evaluable and analyzed counts, cohort or arm totals, replacements and event targets wherever specified; check arithmetic if inputs are available."
+  - id: ANA-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Define the analysis population and denominator for each key endpoint, with handling of exclusions, assignments and protocol deviations where material."
+  - id: ANA-02
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Verify the principal estimator or summary, relevant uncertainty measure and planned inference match the endpoint, population and study objective."
+  - id: ANA-03
+    scope: unit
+    basis: [ICH-E9, ICH-E9R1]
+    check: "Explain missing or unevaluable observations, relevant assumptions and sensitivity checks when needed; distinguish missing data from events that change interpretation."
+  - id: SAF-01
+    scope: unit
+    basis: [ICH-M11, ICH-E9]
+    check: "Verify safety population, reporting period and key safety endpoints or summaries match the design, dosing and visit schedule."
+  - id: DEC-01
+    scope: unit
+    basis: [ICH-E8, ICH-M11]
+    check: "Trace any claim, action or progression decision to its objective, eligible data, timing, criterion and decision owner as applicable. For descriptive work verify the interpretation boundary."
+  - id: VER-01
+    scope: study
+    basis: [ICH-M11, PRACTICE]
+    check: "Identify the effective protocol version and map stated material statistical changes, including rationale and timing relative to relevant data review if stated."
+  - id: VER-02
+    layer: cross-check
+    scope: study
+    basis: [PRACTICE]
+    check: "If comparing a supplied amendment, distinguish disclosed change from unresolved conflict between the amendment and the effective protocol."
+    requires: [protocol-amendment]
+  - id: VER-03
+    layer: cross-check
+    scope: unit
+    basis: [ICH-E9, PRACTICE]
+    check: "Compare protocol and supplied SAP for material statistical commitments; record disclosure separately from substantive agreement."
+    requires: [sap]
+  - id: RND-01
+    scope: unit
+    basis: [SPIRIT-2025, ICH-E9]
+    check: "Reconcile randomization unit, ratio, sequence and concealment with the design and implementation; assess cluster or other randomization units when applicable."
+    any_tags: [randomized]
+  - id: RND-02
+    scope: unit
+    basis: [ICH-E9, SPIRIT-2025]
+    check: "Reconcile allocation factors, randomization strata and unit of allocation with the planned analysis or documented rationale for differences."
+    any_tags: [randomized]
+  - id: BLD-01
+    scope: unit
+    basis: [SPIRIT-2025, ICH-M11]
+    check: "Verify who is blinded, who may unblind, emergency access and safeguards for bias or information flow."
+    any_tags: [blinded]
+  - id: SGL-01
+    scope: unit
+    basis: [ICH-E8, ICH-M11]
+    check: "Check the single-arm objective, population and observed estimate; distinguish descriptive results, a fixed-benchmark comparison and a comparative claim. For response outcomes verify denominator and handling of unevaluable participants."
+    any_tags: [single-arm]
+  - id: BMK-01
+    scope: unit
+    basis: [ICH-E8, ICH-E9]
+    check: "Check the fixed benchmark source, clinical rationale and relevance of population, treatment line, assessment and follow-up; align benchmark, target, sizing and inference."
+    any_tags: [benchmark]
+  - id: CMP-01
+    scope: unit
+    basis: [ICH-E8, ICH-E9]
+    check: "Identify the comparator data and eligibility, index date, endpoint ascertainment and follow-up; check whether confounding, selection and missingness are addressed for the planned inference."
+    any_tags: [nonrandomized-comparison, external-control]
+  - id: EXT-01
+    scope: unit
+    basis: [ICH-E8, PRACTICE]
+    check: "Verify external data provenance, timing, access, harmonization and whether external data are used for estimation, borrowing or a sensitivity analysis."
+    any_tags: [external-control]
+  - id: ESC-01
+    scope: unit
+    basis: [ICH-M11, CDE-DOSE]
+    check: "Reconcile DLT definition, assessment window, evaluability, replacements, and timing of decisions with the cohort design and schedule."
+    any_tags: [dose-escalation]
+  - id: ESC-02
+    scope: unit
+    basis: [ICH-M11, CDE-DOSE]
+    check: "Check initial dose, cohort size, allowed escalation, de-escalation or expansion, stopping rules and decision authority against the specified algorithm or model."
+    any_tags: [dose-escalation]
+  - id: EXP-01
+    scope: unit
+    basis: [ICH-M11, CDE-DOSE]
+    check: "Verify expansion entry, dose selection, cohort-specific objectives, evaluability, sizing and continuation or stopping decisions."
+    any_tags: [dose-expansion]
+  - id: SEQ-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Match each stage's evaluable count, timing, boundary and action to the design and distinguish exploration from formal testing, including implications for estimation or error rates."
+    any_tags: [multistage]
+  - id: COH-01
+    scope: unit
+    basis: [ICH-M11, PRACTICE]
+    check: "Reconcile cohort opening, allocation, closure, pooling and total size with cohort-level and study-wide objectives; check inference boundaries across cohorts."
+    any_tags: [multi-cohort]
+  - id: INT-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Verify planned looks, triggering information, timing, boundaries and permissible actions. Address control of error when the looks support confirmatory claims."
+    any_tags: [interim]
+  - id: INT-02
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Trace data access, decision maker and protection of trial integrity to the protocol and supplied oversight documents where relevant."
+    any_tags: [interim]
+  - id: ADP-01
+    scope: unit
+    basis: [ICH-E8, ICH-E9, ICH-M11]
+    check: "Identify allowable adaptations, data used, timing, constraints and decision thresholds; trace planned operating characteristics to the reported design assumptions."
+    any_tags: [adaptive]
+  - id: BAY-01
+    scope: unit
+    basis: [ICH-M11, PRACTICE]
+    check: "Identify model, prior, any borrowing, data inputs, thresholds and action rules; trace calibration or sensitivity of material design decisions."
+    any_tags: [bayesian]
+  - id: TTE-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Check time origin, event definition, censoring, follow-up, data cutoff and alignment with the endpoint's objective and planned analysis."
+    any_tags: [tte]
+  - id: EVT-01
+    scope: unit
+    basis: [ICH-E9, ICH-M11]
+    check: "Reconcile event target or information fraction, expected accrual, follow-up, and triggers across design, sizing and decision sections."
+    any_tags: [event-driven]
+  - id: NI-01
+    scope: unit
+    basis: [ICH-E9, FDA-NI]
+    check: "Trace the margin's rationale, scale, direction, hypotheses, confidence bound or decision rule, and sample size assumptions."
+    any_tags: [non-inferiority]
+  - id: NI-02
+    scope: unit
+    basis: [ICH-E9, FDA-NI]
+    check: "Reconcile planned analysis sets, exclusions and sensitivity to deviations or missingness with interpretation of the non-inferiority result."
+    any_tags: [non-inferiority]
+  - id: MUL-01
+    scope: unit
+    basis: [ICH-E9, FDA-MULT, ICH-M11]
+    check: "Match planned claims, endpoints, populations and comparisons to the multiplicity strategy, including the test order, thresholds and conditions for moving between tests."
+    any_tags: [multiplicity]
+  - id: EST-01
+    scope: unit
+    basis: [ICH-E9R1, ICH-M11]
+    check: "Trace estimand attributes and intercurrent-event strategies to endpoint measurement, post-event data collection, analysis and sensitivity to assumptions."
+    any_tags: [estimand]
+  - id: SPC-01
+    scope: unit
+    basis: [ICH-E8, PRACTICE]
+    check: "Document the uncovered design feature, its affected decision, the applicable source or evidence gap, and the exact specialist question."
+    any_tags: [specialist]
