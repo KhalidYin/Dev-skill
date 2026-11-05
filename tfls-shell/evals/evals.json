@@ -1,0 +1,82 @@
+{
+  "skill_name": "tfls-shell",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "为 Phase II 非肿瘤研究推荐 TFL shell，主要终点为首次急性加重时间，另需安全性汇总。本次只推荐。",
+      "should_trigger": true,
+      "expected_output": "解释语境，按包内受控 catalog 推荐基础包、可选扩展和排除项，不生成文件。",
+      "files": [],
+      "expectations": [
+        "识别 Phase II 和 Non-Oncology",
+        "推荐包含疗效与安全性范围，并说明 listings 的适用性",
+        "基于包内 catalog，注明研究特定假设",
+        "只做推荐，不调用生成脚本"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请修复一个与临床研究无关的 Python 登录接口超时错误。",
+      "should_trigger": false,
+      "expected_output": "交由普通开发流程处理，不加载 TFL 资产。",
+      "files": [],
+      "expectations": ["不触发 tfls-shell", "不推荐或生成临床 TFL"]
+    },
+    {
+      "id": 3,
+      "prompt": "帮我生成一套 TFL shell，目前没有 Protocol、SAP 或研究说明。",
+      "should_trigger": true,
+      "expected_output": "说明缺少研究语境，询问影响选择的分期、领域、终点和分析集；通用候选必须明确假设。",
+      "files": [],
+      "expectations": [
+        "明确输入缺口，不捏造终点、分析集或结果",
+        "对受影响的推荐保留歧义和假设",
+        "生成依赖缺失时报告缺口，不宣称文件已生成"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "为 Phase II oncology 研究生成关注 PFS 和安全性审阅的 DOCX、XLSX 和 SOP shell，所有数值都用占位符。",
+      "should_trigger": true,
+      "expected_output": "核对依赖和资料，先询问缺失的治疗组、分析集、时间点及未决交付偏好；确认后推荐并生成三件套，以本次交付契约验证。",
+      "files": [],
+      "expectations": [
+        "明确 Oncology、PFS 和安全性语境",
+        "在同一 Python 环境检查 tflshell 依赖",
+        "缺少关键研究信息时先补齐，不直接生成研究特定交付",
+        "核对 PFS 已纳入 14.2 疗效范围",
+        "确认后输出三件套及对应验证摘要",
+        "不将模拟图或占位数值称为真实结果",
+        "不把参考资产齐备当作生成验证通过"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "材料中已明确两个治疗组、ITT 和安全性集、Baseline 与 Week 12。使用英文、A4 纵向、Arial，交付版本 1.2，Protocol ABC-01，不要重复询问这些设置。生成 shell，避免重复标题。",
+      "should_trigger": true,
+      "files": [],
+      "expected_output": "从材料复用既有决定，将实际选择和展示要求写入配置。每个 shell 一个目录标题，版本和页眉一致。",
+      "expectations": [
+        "不重复询问已确认偏好，其他关键缺口仍明确报告",
+        "实际采用 A4 纵向、Arial 和独立版本 1.2",
+        "编号和名称只显示在一个 Heading 4，保留目录和页码字段",
+        "治疗组列与分析列顺序正确，Protocol 页眉为 ABC-01",
+        "按本次契约验证，已有文件拒绝覆盖"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "用现有研究材料生成中文 shell，采用宋体，不要保留未翻译的英文标题和表头。",
+      "should_trigger": true,
+      "files": [],
+      "expected_output": "补齐研究缺口和未决偏好；由 agent 完成中文映射并复核，翻译完整后发布。",
+      "expectations": [
+        "语言和字体传入生成配置",
+        "needs_localization 时由 agent 补齐文本，不把翻译清单交给用户完成",
+        "保留 ID 和统计占位符，复核译文统计含义",
+        "非英文图内文字缺口明确报告或使用图形占位框",
+        "不发布未完成本地化的交付"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "request_id": "example-non-oncology-phase-ii",
+  "task_mode": "recommend_then_generate",
+  "input_bundle": {
+    "sources": [
+      {
+        "source_type": "user_prompt",
+        "content_text": "Phase II non-oncology study with time-to-first exacerbation endpoint and safety population."
+      }
+    ]
+  },
+  "execution_preferences": {
+    "desired_outputs": ["xlsx", "docx", "sop"],
+    "include_figures": false,
+    "include_listings": true,
+    "presentation_profile": "csr_standard"
+  },
+  "user_overrides": {
+    "therapeutic_area_hint": "non-oncology",
+    "study_phase_hint": "phase-ii"
+  }
+}

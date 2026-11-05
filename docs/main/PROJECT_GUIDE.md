@@ -38,6 +38,15 @@ Dev-skill 是一个 Codex Skill 工厂，用于创建、维护、校验、安装
 - **当前切片**：完整通用 SAP 结构；深度覆盖研究设计、Endpoints、Estimands/ICE、Analysis Populations、Primary Efficacy、Missing Data/Sensitivity；对 adaptive/Bayesian 方法要求完整转录当前研究的 prior、阈值和决策规则；安全性仍是基础 authoring 约束，但未确认计数约定必须显式 proposed。
 - **边界**：仅属于 Skill Layer；不实现 Workflow、知识图谱、向量库、独立 Validation Engine、GUI、TFL/ADaM 或统计编程。
 
+### TFLs-Shell
+
+- **入口**：`tfls-shell/SKILL.md`，来源为 `KhalidYin/TFL-shell` 的 `Skill/tfls-shell/`，固定提交记录在注册表。
+- **资源**：保留上游 `docs/`、`package_assets/`、`examples/`、`runtime/` 和 `scripts/` 相对路径；`references/integration.md` 说明迁移、依赖和调用方式。
+- **依赖**：Product `tflshell` 在 Skill 外独立安装。脚本兼容源码仓库和已安装 Product，不将生成器代码复制进 Skill。
+- **范围**：CSR 14.1、14.2、14.3、14.4 和 16.2。材料归一后推荐 shell，生成 DOCX/XLSX/SOP 并返回契约检查；输出是模板与占位结构。
+- **安装**：使用本项目安装脚本；上游历史入口 `tfl-governed-shell-workflow` 不重复注册。
+- **交付 v2**：两类入口统一调用 `scripts/delivery.py`，由 agent 将材料和偏好整理为配置。依次执行资料关卡、Product 生成、标题去重与交付适配、配置驱动检查、排他发布；独立检查器通过交付契约复核子集与定制格式。
+
 ## 数据流
 
 `scripts/new_skill.py` 创建 skill 并登记注册表，开发者补充指令和资源后运行校验与安装，`scripts/generate_index.py` 根据注册表和 frontmatter 更新索引。

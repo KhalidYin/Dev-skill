@@ -48,3 +48,5 @@
 | R044 | 2026-09-01 | 10:21 | P2-generate-sap-blind-validation | P4 | 完成两案例版本对齐、五份事实预审和匿名包验证，转入单统计师盲评 | `.validation-work/.../comparison/`, `.validation-work/.../l2-review/`, `docs/dep/` | active/DEVLOG-R041-R080.md |
 | R045 | 2026-09-02 | 13:15 | generate-sap-post-review-remediation | - | 收紧 evidence mode、早期肿瘤 adaptive/Bayesian 完整性和 Protocol 内部一致性约束 | `generate-sap/`, `tests/`, `docs/dep/`, `docs/main/` | active/DEVLOG-R041-R080.md |
 | R046 | 2026-11-04 | 09:50 | review-sap | - | 修复五项审查问题并更新检查表版本 | `review-sap/`, `tests/test_review_sap.py`, `docs/`, `.skill-registry.json` | active/DEVLOG-R041-R080.md |
+| R050 | 2026-11-05 | 14:17 | tfls-shell | - | 导入正式技能、登记来源，兼容已安装 Product 并通过迁移回归和安装核验 | `tfls-shell/`, `tests/test_tfls_shell.py`, `.skill-registry.json`, `SKILL_INDEX.md`, `docs/main/` | active/DEVLOG-R041-R080.md |
+| R051 | 2026-11-05 | 15:27 | tfls-shell | - | 实施资料关卡、偏好配置、独立交付版本、标题去重及配置驱动验证 | `tfls-shell/`, `tests/test_tfls_shell.py`, `.skill-registry.json`, `SKILL_INDEX.md`, `docs/main/` | active/DEVLOG-R041-R080.md |
