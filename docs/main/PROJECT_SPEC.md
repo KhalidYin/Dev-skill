@@ -14,6 +14,7 @@
 - `sub-brainstorm`：需求探索和设计规划。
 - `generate-sap`（draft）：从 Protocol、Sponsor 约定、已确认决定和经核验的公开先例生成结构完整、内容状态明确、依据可追溯的 SAP review draft。
 - `review-sap`（draft）：审阅外部 SAP，按版本化检查表覆盖结构完整性、内部一致性、与 Protocol 一致性和可编程性四个维度，输出证据关联的 Excel 问题清单；docx 批注须用户确认后生成。
+- `tfls-shell`（draft）：从 Protocol、SAP 或统计需求推荐受控 TFL shell，并调用上游 Product 生成 DOCX、XLSX 和 SOP；整合正式入口，历史名称不重复安装。
 
 ### 规划中
 
@@ -42,6 +43,10 @@
 
 - 每个 skill 的入口为 `<skill-name>/SKILL.md`。
 - `.skill-registry.json` 记录 `status`、`category`、`last_modified`、`has_evals` 和 `tags`。
+- 外部导入的 `tfls-shell` 另以 `source` 记录来源仓库、目录、固定提交、Product 版本、整合日期和历史名称。
+- `tfls-shell` 的参考资产随包携带，Product 独立 editable 安装，保留普通 wheel 遗漏的领域 JSON。交付 v2 在 Skill 层实现资料缺口关卡、偏好配置、单个目录标题和独立交付版本；先暂存，按配置验证后排他发布。定制输出携带交付契约，独立检查器带 `--contract` 验证本次子集。原始 Product 固定基线另行保留。
+- `tfls-shell` 研究特定生成需要分期、领域、终点、分析集、治疗组和时间点。只推荐不写文件，通用模板须显式选择；问询复用材料与已有答案，只集中确认影响交付的未决项。
+- 交付支持纸张/方向/字体、组别列和标签配置；中文与双语缺少精确翻译映射时返回 `needs_localization`，不发布半成品。任意 Sponsor 模板自动导入和非英文图内文字仍需适配，必须明确报告。
 - `scripts/validate_all.py` 对所有注册 skill 执行 frontmatter 校验。
 - `generate-sap` 输出三个逻辑产物：完整 `SAP Review Draft`、`Generation Evidence Ledger`、`Open Questions and References`。
 - generic 模板的 18 个二级章节标题和顺序是固定合同；仅在提供 Sponsor 模板时允许改变。

@@ -157,3 +157,57 @@
 #### Next
 
 - 按计划运行全套 7 个行为评测并评分。
+
+## 2026-11-05
+
+### R050 [14:17] 整合 TFLs-Shell 技能
+
+#### Done
+
+- 使用项目脚手架，将 `KhalidYin/TFL-shell` 提交 `8d85a4174a40b0b0847875e6411bdf1c278383fa` 的正式 `Skill/tfls-shell/` 导入顶层。保留完整参考资产、契约、示例、脚本和薄封装，不重复导入已标为历史名称的 `tfl-governed-shell-workflow`。
+- 修复迁移后脚本强制查找原仓库、wrapper 假设固定目录深度的问题，兼容已安装 Product；保持 catalog、生成逻辑和输出契约不变。当前用户 Python 环境安装 Product 2.1.0，源码在 `~/.codex/dependencies/tflshell-8d85a417`，使用 editable 安装保留普通 wheel 遗漏的领域 JSON 资源。
+- 注册为 `draft / clinical-statistics`，记录来源提交与版本，更新技能索引、项目指南、规格和测试说明。补充四个待执行行为用例。
+- 四项迁移回归通过：缺失依赖报错、异地推荐与三件套生成、完整 catalog 验证及篡改 ID 拒绝、catalog 导出一致性。全仓运行 51 项测试，50 通过、1 个既有本地盲测回归跳过。6 个技能全量校验、官方 quick validator、上游包结构和基线校验通过。
+- 通过本项目安装脚本建立 Codex 与 Claude 的 Junction，均指向本项目。Agents 和 Workbuddy 目标根不存在，安装脚本按约定跳过；Codex 已识别新技能。
+
+#### Issues
+
+- 本次验证覆盖结构与迁移运行；四个行为评测、临床适用性复核和带模拟图的视觉检查尚未执行，技能保持 draft。
+- 既有 SAP 盲评与旧技能残留清理检查点保持原样，本次未处理这些任务。
+
+#### Next
+
+- Done — 本次整合、登记、安装和校验已完成。
+
+#### Files Changed / Commits
+
+- `tfls-shell/`、`tests/test_tfls_shell.py`（added）— `(uncommitted)`
+- `.skill-registry.json`、`SKILL_INDEX.md`、`docs/main/PROJECT_GUIDE.md`、`docs/main/PROJECT_SPEC.md`、`docs/main/TEST_GUIDE.md`、`docs/dep/devlog/INDEX.md`、`docs/dep/devlog/active/DEVLOG-R041-R080.md`（modified）— `(uncommitted)`
+
+---
+
+### R051 [15:27] TFLs-Shell 交付 v2 与标题去重
+
+#### Done
+
+- 按用户接受的审查方案，统一两类生成入口到交付适配层。研究特定模式缺少分期、领域、终点、分析集、治疗组、时间点或有不可读资料/冲突时返回缺口；只推荐不写文件，通用模板显式选择。补充 PFS/OS 等缩写和常见中文信号，最终 shell 选择及逐项说明由 agent 解释后配置。
+- Skill 明确复用材料和已有答案，只集中问询影响交付的未决项；交付配置支持语言、字体、页面、组别列及顺序、标签、研究信息和独立交付版本。单臂/多臂调整保留独立分析列，表头组数与研究组数冲突会阻断。
+- 定位重复标题来自 Product 的 Heading 4 与信息块重复编号/名称。交付层移除信息块冗余对，保留单一 Heading 4、书签、目录和页码字段；同步 Protocol 页眉与研究名称。生成器 2.1.0、交付契约 v2、用户交付版本分别记录。
+- 中文/双语使用 agent 复核的完整映射，缺少译文仅返回待本地化字符串，不发布半成品；占位值和 ID 保留。Word 字段周围逐 run 适配，避免移动动态页码/目录节点。
+- 先临时生成和按本次配置检查，再排他发布业务文件及交付契约，拒绝覆盖既有文件。独立检查器通过交付契约复查研究子集、定制标题/表头、分析集、版本、纸张/方向/字体和 Protocol；篡改 ID 可检出。
+- 全仓测试 56 项，55 通过、1 个既有盲测跳过；补充字段和方向检查后九项相关回归再次全部通过。六个技能及官方 quick validator 通过，索引和注册更新到 delivery-v2，Codex/Claude 安装链接重新建立。
+
+#### Issues
+
+- 任意 Sponsor 模板仍需 agent 检查并形成支持字段的映射，脚本明确返回未适配缺口；非英文图内文字须单独适配或关闭图形生成。
+- 测试的译文为合成映射，仅证明机械应用；自然译文质量、实际 Office 视觉排版和统计师临床复核未由本次机械回归证明。原始 catalog/Product 基线未修改。
+- 其他任务检查点保持原样。
+
+#### Next
+
+- Done — 本次审查方案更新与重复标题修复完成。
+
+#### Files Changed / Commits
+
+- `tfls-shell/SKILL.md`、`tfls-shell/scripts/delivery.py`、两类生成入口、`validate_outputs.py`、`tfls-shell/references/`、`PACKAGE_GUIDE.md`、`evals/evals.json`、`tests/test_tfls_shell.py` — `(uncommitted)`
+- `.skill-registry.json`、`SKILL_INDEX.md`、`docs/main/PROJECT_GUIDE.md`、`PROJECT_SPEC.md`、`TEST_GUIDE.md`、`docs/dep/devlog/INDEX.md`、本日志 — `(uncommitted)`

@@ -1,0 +1,87 @@
+{
+  "package_name": "tfls-shell",
+  "registry_version": "1.1.0",
+  "contracts": {
+    "xlsx_master_sheet": {
+      "helper_module": "scripts/alignment_contracts.py",
+      "detail_keys": [
+        "TFL ID",
+        "Display Label",
+        "Type",
+        "Section",
+        "Shell Family",
+        "Study Phase Scope",
+        "Coverage Summary",
+        "Population",
+        "Applicability",
+        "Row Count"
+      ],
+      "notes": [
+        "用于声明 workbook 主表的稳定治理字段 contract。",
+        "字段命名与 TOC_Master 表头保持对齐。"
+      ]
+    },
+    "xlsx_workbook": {
+      "helper_module": "scripts/alignment_contracts.py",
+      "detail_keys": [
+        "Workbook Sheets",
+        "Catalog Sheet Columns",
+        "Section Sheet Row Counts",
+        "Field Definitions",
+        "Usage Guide",
+        "Change Log"
+      ],
+      "notes": [
+        "用于声明完整 XLSX workbook 的可观察结构 contract。",
+        "覆盖 sheet 名、字段、解释页、使用说明和变更记录。"
+      ]
+    },
+    "docx_shell_template": {
+      "helper_module": "scripts/alignment_contracts.py",
+      "detail_keys": [
+        "Heading 4",
+        "Section Heading",
+        "Display Label",
+        "Title",
+        "Analysis Set",
+        "Protocol",
+        "Sponsor"
+      ],
+      "notes": [
+        "用于声明 shell 模板 heading 与 header block 的稳定 contract。",
+        "当前顺序与项目内 DOCX 生成逻辑保持一致。"
+      ]
+    },
+    "docx_layout": {
+      "helper_module": "scripts/alignment_contracts.py",
+      "detail_keys": [
+        "Landscape Letter Page Setup",
+        "Margins",
+        "Introduction Headings",
+        "Usage Notes",
+        "Body Table Count",
+        "Group Headers"
+      ],
+      "notes": [
+        "用于声明 DOCX 主模板页面、说明文本和表格 layout contract。",
+        "覆盖 Product 已实现的三线表和受控组别展示语义。"
+      ]
+    },
+    "sop_governance_doc": {
+      "helper_module": "scripts/alignment_contracts.py",
+      "detail_keys": [
+        "Title",
+        "Scope",
+        "Cross-Output Alignment",
+        "Quality Gates",
+        "Classification",
+        "Appendix A",
+        "Appendix B"
+      ],
+      "notes": [
+        "用于声明 SOP 治理文档的稳定结构与关键文案 contract。",
+        "当前聚焦头表、scope、quality gate 和 appendix 层。"
+      ]
+    }
+  }
+}
