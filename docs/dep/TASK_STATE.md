@@ -213,3 +213,19 @@ status: done
 ### Resume From
 
 使用未见案例或新增合成案例做一次独立前向生成，验证三类约束确实改变生成行为；不要用历史评分倒推或改写既有 REV 产物。
+
+## Task 5: Review Protocol 初版
+
+status: done
+
+- **Sub-plan**: `plans/complete/P3-review-protocol.md`，P1 已完成。
+- **Validation**: 44 个测试通过、1 个既有本地盲测回归跳过。三种设计跑通已验证的路由与 Excel 构建。仓库和系统 Skill 校验通过，安装使用 Junction。
+- **Resume from**: 如后续进行质量验证，运行五个行为用例并由临床统计师复核检出与误报。
+
+## Task 6: Review Protocol v0.2
+
+status: done
+
+- **Sub-plan**: `plans/complete/P4-review-protocol-depth.md`。
+- **Validation**: 46 个测试通过、1 个既有用例跳过；安装链接、四页主模板和可选明细已核验。
+- **Resume from**: 对 v0.2 运行独立行为评测，验证章节空缺、可交 SAP 细化和已明确但方法错配的区分。

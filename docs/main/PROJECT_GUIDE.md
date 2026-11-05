@@ -38,6 +38,12 @@ Dev-skill 是一个 Codex Skill 工厂，用于创建、维护、校验、安装
 - **当前切片**：完整通用 SAP 结构；深度覆盖研究设计、Endpoints、Estimands/ICE、Analysis Populations、Primary Efficacy、Missing Data/Sensitivity；对 adaptive/Bayesian 方法要求完整转录当前研究的 prior、阈值和决策规则；安全性仍是基础 authoring 约束，但未确认计数约定必须显式 proposed。
 - **边界**：仅属于 Skill Layer；不实现 Workflow、知识图谱、向量库、独立 Validation Engine、GUI、TFL/ADaM 或统计编程。
 
+### Review Protocol
+
+- **职责**为统计师审核现有方案，覆盖研究设计、终点、数据采集、样本量、分析与决策。
+- **数据流**从现行方案识别独立统计部分，再以 `assets/checklist.yaml` 路由。判型后查同类方案与适用指南，依次审核章节覆盖、逐项预设和跨章节一致性。独立构建器校验 JSON，输出总览、作者批注、覆盖和分析矩阵四页，可加证据对照页。
+- **部署**随项目脚手架安装，运行需要 Python 3.9+、PyYAML 和 openpyxl。
+
 ### TFLs-Shell
 
 - **入口**：`tfls-shell/SKILL.md`，来源为 `KhalidYin/TFL-shell` 的 `Skill/tfls-shell/`，固定提交记录在注册表。
