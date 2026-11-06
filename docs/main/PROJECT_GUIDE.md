@@ -55,6 +55,8 @@ Dev-skill 是一个 Codex Skill 工厂，用于创建、维护、校验、安装
 
 ## 数据流
 
+`review-tfl-shell` 审核已有样表（可来自 `tfls-shell` 或外部）。读取 SAP、Shell 和补充材料后，形成分析与输出清单、逐项判断和证据；`scripts/build_issue_log.py plan/check/build` 路由检查、校验审查记录并生成默认三页 Excel。输入 JSON 保留完整证据，`extra_checks` 扩展研究专项，`--details` 输出逐项明细。已填数结果的独立重算使用结果验证流程。
+
 `scripts/new_skill.py` 创建 skill 并登记注册表，开发者补充指令和资源后运行校验与安装，`scripts/generate_index.py` 根据注册表和 frontmatter 更新索引。
 
 `generate-sap` 由用户或上层 Workflow 显式触发，`agents/openai.yaml` 禁止隐式调用。Skill 先规范化输入并实例化完整 SAP 结构，再按章节读取生成规则；每个内容项记录来源、规则、假设、生成模式和问题。若宿主允许网络访问，Skill 在实质统计章节生成前搜索同类公开 SAP 并形成 Precedent Summary；不可访问时显式降级。

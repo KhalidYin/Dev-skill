@@ -237,3 +237,32 @@
 
 - `tfls-shell/SKILL.md`、`tfls-shell/scripts/delivery.py`、两类生成入口、`validate_outputs.py`、`tfls-shell/references/`、`PACKAGE_GUIDE.md`、`evals/evals.json`、`tests/test_tfls_shell.py` — `(uncommitted)`
 - `.skill-registry.json`、`SKILL_INDEX.md`、`docs/main/PROJECT_GUIDE.md`、`PROJECT_SPEC.md`、`TEST_GUIDE.md`、`docs/dep/devlog/INDEX.md`、本日志 — `(uncommitted)`
+
+---
+
+## 2026-11-06
+
+### R052 [10:38] [P5-review-tfl-shell] P1: TFL Mock Shell 审核初版
+
+#### Done
+
+- 按用户批准计划创建 `review-tfl-shell`，从研究类型、estimand／决策目标及 SAP 分析承诺映射到输出，七组 21 项检查覆盖 T/F/L、脚注及全局约定、数据支持和跨输出一致性。
+- 固化具体批注、统计理由和定位来源；实质歧义给出不同读法，高影响或冲突意见有对照证据。CRF 与外部资料按来源核查，派生字段由输入及规则支持；没有资料的依赖检查不记为通过。
+- `plan/check/build` 形成三页 Excel、九列 Comments，支持共享问题、多对多分析映射、研究专项 `X-` 扩展和可选明细。排他写入保留既有文件，源文本按字符串保存。
+- 新增十项机械测试，覆盖三类设计 T/F/L 构建、证据及覆盖拒绝、歧义读法、共享问题、全局约定和派生支持、扩展项、原文及防覆盖。全仓 66 项：65 通过，1 项既有本地盲测缺材料跳过。
+- 编写六份 clean/seeded 合成材料、十个行为评测及独立答案键。七个 Skill 全量校验和官方 quick validator 通过；索引、注册表及主文档同步。
+- 安装脚本在 Codex、Claude 建立指向本仓库的 Junction，目标此前不存在。Agents 和 Workbuddy 根不存在，按脚本跳过。
+
+#### Issues
+
+- 行为用例尚未运行，机械测试不能证明临床检出或误报水平。真实文件和 Office 渲染验证待后续；本版状态保持 draft。
+- 未修改原始 `tfls-shell`、SAP/Protocol 审阅技能或其他既有任务检查点。
+
+#### Next
+
+- Done — 初版实现、安装及代码验证完成。后续评测入口为 `review-tfl-shell/evals/evals.json`。
+
+#### Files Changed / Commits
+
+- `review-tfl-shell/`、`tests/test_review_tfl_shell.py`、`docs/dep/plans/complete/P5-review-tfl-shell.md`（added）— `(uncommitted)`
+- `.skill-registry.json`、`SKILL_INDEX.md`、`docs/main/`、`docs/dep/PLAN.md`、`TASK_STATE.md`、devlog（modified）— `(uncommitted)`

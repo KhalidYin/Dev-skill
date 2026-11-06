@@ -91,6 +91,13 @@
         "historical_name": "tfl-governed-shell-workflow"
       },
       "local_revision": "delivery-v2"
+    },
+    "review-tfl-shell": {
+      "status": "draft",
+      "category": "clinical-statistics",
+      "last_modified": "2026-11-06",
+      "has_evals": true,
+      "tags": ["clinical-trials", "tfl", "mock-shell", "review", "footnotes", "traceability", "excel"]
     }
   }
 }
