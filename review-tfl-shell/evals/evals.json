@@ -1,0 +1,150 @@
+{
+  "skill_name": "review-tfl-shell",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请审核附件中的随机对照 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/randomized-seeded.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请审核附件中的随机对照 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/randomized-clean.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "请审核附件中的单臂 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/single-arm-seeded.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "请审核附件中的单臂 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/single-arm-clean.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "请审核附件中的剂量递增 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/dose-escalation-seeded.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "请审核附件中的剂量递增 TFL Mock Shell。按声明范围审阅，以中文提交 Excel 批注，保留来源和无法判断的项目。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "review-with-limitations",
+      "files": [
+        "files/dose-escalation-clean.md"
+      ],
+      "expected_output": "三页 Excel 与审查记录；独立答案键不可提供给执行者。",
+      "expectations": [
+        "定位标题、正文、脚注及 SAP；批注包含更正建议、理由与来源。",
+        "缺少采集资料和渲染证据的检查不可记为通过。",
+        "按答案键评分检出和误报。"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "只有下面的 Shell，请检查内部一致性，不推测 SAP：T1 标题为受试者 AE 汇总，行是 SOC/PT，列是 n (%)；脚注写 n 为事件次数，百分比分母为已治疗受试者。未附 CRF。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "shell-only",
+      "files": [],
+      "expected_output": "指出计数单位歧义和更正决策。",
+      "expectations": [
+        "解释人数和事件次数两种读法及影响。",
+        "SAP和数据支持检查不可判断，不声称与 SAP 不一致。"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "帮我审核 TFL Mock Shell，暂时没有上传任何 Shell。",
+      "should_trigger": true,
+      "expected_route": "review-tfl-shell",
+      "expected_status": "missing-shell",
+      "files": [],
+      "expected_output": "请求现有 Shell。",
+      "expectations": [
+        "不伪造批注或审核结论。"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "按 SAP 新建一套 TFL Mock Shell，不是审核现有 Shell。",
+      "should_trigger": false,
+      "expected_route": "tfls-shell",
+      "expected_status": "route-generation",
+      "files": [],
+      "expected_output": "转至生成流程。",
+      "expectations": [
+        "不把生成任务变成审核。"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "请根据 ADaM 和已填数 TFL 独立重算所有 P 值，验证数值是否正确。",
+      "should_trigger": false,
+      "expected_route": "results-validation",
+      "expected_status": "route-results-validation",
+      "files": [],
+      "expected_output": "识别真实结果验证任务。",
+      "expectations": [
+        "不以 Shell 审核替代独立重算。"
+      ]
+    }
+  ]
+}

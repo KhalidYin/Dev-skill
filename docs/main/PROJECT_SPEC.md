@@ -16,6 +16,7 @@
 - `review-sap`（draft）：审阅外部 SAP，按版本化检查表覆盖结构完整性、内部一致性、与 Protocol 一致性和可编程性四个维度，输出证据关联的 Excel 问题清单；docx 批注须用户确认后生成。
 - `review-protocol`（draft）从统计师视角审核现有临床试验方案。按研究目的、比较结构、实施结构和统计推断判型，选择通用、条件和专项检查，输出证据关联的 Excel 问题清单。
 - `tfls-shell`（draft）：从 Protocol、SAP 或统计需求推荐受控 TFL shell，并调用上游 Product 生成 DOCX、XLSX 和 SOP；整合正式入口，历史名称不重复安装。
+- `review-tfl-shell`（draft）：审核已有 T/F/L 的分析覆盖、统计定义、脚注和数据支持，输出含批注、理由、来源的三页 Excel。
 
 ### 规划中
 
@@ -67,6 +68,10 @@
 - `review-protocol` 用 `plan`、`check` 和 `build` 从 UTF-8 JSON 生成 Excel，校验问题与覆盖的双向关联。高影响问题需要可复查的证据，方法选择和特殊设计判断单列给统计师复核。
 - `review-protocol` v0.2 先查统计章节完整性，再按研究部分、终点与分析角色核查语句、预设和方法匹配。默认工作簿四页，批注、理由和来源同条记录，专项证据可加一页。
 - `review-protocol` 审阅以适用监管依据及方案明确的 estimand 或决策目标为主线，逐段判断设计、采集、估计方法、敏感性与决策是否支持该目标。
+
+- `review-tfl-shell` v0.1 从研究类型及 estimand／决策目标出发，按 SAP—分析—输出双向映射审核 T/F/L，Protocol 用于追溯上游目标与冲突。七组 21 项固定检查可追加 `X-` 专项检查；脚注、图例、全局约定与程序说明均进入语义审核。
+- CRF、采集规范、外部数据规范和 ADaM 规范为补充输入。未提供采集规范不等于字段缺失；有输入和规则的派生变量可获得支持。缺少 SAP 仍可执行 Shell 内部审核，依赖检查不可记为通过。
+- `review-tfl-shell` 默认三页 Excel：Overview、Comments、SAP-TFL Crosswalk。Comments 固定九列，必须有批注、理由和来源；共享缺陷合并，问题与检查双向关联。可加 Check Details。程序校验字段与覆盖，不替代统计语义判断。
 
 ## 非功能需求
 

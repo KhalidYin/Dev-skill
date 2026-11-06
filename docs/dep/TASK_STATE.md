@@ -229,3 +229,11 @@ status: done
 - **Sub-plan**: `plans/complete/P4-review-protocol-depth.md`。
 - **Validation**: 46 个测试通过、1 个既有用例跳过；安装链接、四页主模板和可选明细已核验。
 - **Resume from**: 对 v0.2 运行独立行为评测，验证章节空缺、可交 SAP 细化和已明确但方法错配的区分。
+
+## Task 7: Review TFL Shell 初版
+
+status: done
+
+- **Sub-plan**: `plans/complete/P5-review-tfl-shell.md`。
+- **Validation**: 新增 10 项机械测试通过；全仓 66 项中 65 通过、1 项既有本地盲测跳过。七个 Skill 结构校验、官方 quick validator 和 Codex Junction 安装核验通过。
+- **Resume from**: 运行十个行为用例，按独立答案键统计检出与误报；真实文档及 Office 渲染另行验证。

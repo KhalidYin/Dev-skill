@@ -53,3 +53,4 @@
 | R049 | 2026-11-05 | 13:27 | review-protocol | - | 以 estimand 或决策目标串联审核并收紧批注表达 | `review-protocol/`, `docs/main/PROJECT_SPEC.md`, `.skill-registry.json` | active/DEVLOG-R041-R080.md |
 | R050 | 2026-11-05 | 14:17 | tfls-shell | - | 导入正式技能、登记来源，兼容已安装 Product 并通过迁移回归和安装核验 | `tfls-shell/`, `tests/test_tfls_shell.py`, `.skill-registry.json`, `SKILL_INDEX.md`, `docs/main/` | active/DEVLOG-R041-R080.md |
 | R051 | 2026-11-05 | 15:27 | tfls-shell | - | 实施资料关卡、偏好配置、独立交付版本、标题去重及配置驱动验证 | `tfls-shell/`, `tests/test_tfls_shell.py`, `.skill-registry.json`, `SKILL_INDEX.md`, `docs/main/` | active/DEVLOG-R041-R080.md |
+| R052 | 2026-11-06 | 10:38 | P5-review-tfl-shell | P1 | 完成 TFL 样表审核初版、脚注检查和三页 Excel；机械验证及安装通过 | `review-tfl-shell/`, `tests/test_review_tfl_shell.py`, `.skill-registry.json`, `SKILL_INDEX.md`, `docs/` | active/DEVLOG-R041-R080.md |

@@ -1,0 +1,108 @@
+checklist_version: "0.1.0"
+checklist_date: "2026-11-06"
+items:
+  - id: MAP-01
+    group: 覆盖完整性
+    target: analysis
+    sap_required: true
+    check: "Each SAP analysis has an output or documented reason; reconcile its purpose, population, endpoint and analysis role."
+  - id: MAP-02
+    group: 覆盖完整性
+    target: all
+    sap_required: true
+    check: "Identify this output's mapped SAP analyses or justified additional purpose; check apparent duplicates."
+  - id: ANA-01
+    group: 分析一致性
+    target: all
+    sap_required: true
+    check: "Match analysis population, treatment grouping, endpoint, visit or period and primary/sensitivity role to SAP."
+  - id: ANA-02
+    group: 分析一致性
+    target: all
+    sap_required: true
+    check: "Match displayed estimators, contrasts, direction, uncertainty, test, sidedness and adjustment to SAP."
+  - id: DEF-01
+    group: 行列与统计口径
+    target: all
+    sap_required: false
+    check: "Define N, n, percent denominator, subject/event counts, hierarchy, sorting and units wherever used."
+  - id: DEF-02
+    group: 行列与统计口径
+    target: all
+    sap_required: false
+    check: "Define applicable rounding, precision, blanks, zeros, missing, unevaluable and nonestimable displays."
+  - id: NOTE-01
+    group: 脚注及说明
+    target: all
+    sap_required: false
+    check: "Reconcile title, headers, body, local notes, legends and applicable global conventions."
+  - id: NOTE-02
+    group: 脚注及说明
+    target: all
+    sap_required: false
+    check: "Footnotes correctly explain population, denominator and counting scope including within-category deduplication where relevant."
+  - id: NOTE-03
+    group: 脚注及说明
+    target: all
+    sap_required: true
+    check: "Method notes accurately describe the statistics shown, with appropriate contrasts, intervals and adjustment."
+  - id: NOTE-04
+    group: 脚注及说明
+    target: all
+    sap_required: true
+    check: "Verify relevant baseline, treatment-emergent, missingness, censoring and endpoint definitions against governing specifications."
+  - id: NOTE-05
+    group: 脚注及说明
+    target: all
+    sap_required: false
+    check: "Match superscripts to notes in both directions; resolve abbreviations and validate output/method references."
+  - id: NOTE-06
+    group: 脚注及说明
+    target: all
+    sap_required: false
+    check: "Check copied notes for wrong endpoint, population, study part or method and explicit scope of global/local exceptions."
+  - id: NOTE-07
+    group: 脚注及说明
+    target: all
+    sap_required: false
+    check: "Place interpretation-critical definitions in the output or an accessible convention reference; reconcile programming notes with reader-facing text."
+  - id: DATA-01
+    group: 数据与执行支持
+    target: all
+    sap_required: false
+    check: "Trace required information to supplied collection or external specifications and derivation inputs, checking version, precision and classification."
+  - id: DATA-02
+    group: 数据与执行支持
+    target: all
+    sap_required: false
+    check: "Determine whether filters, windows, counting, sorting and display rules permit a consistent implementation using shell, SAP and conventions."
+  - id: TYPE-T1
+    group: 表图列表专项
+    target: T
+    sap_required: false
+    check: "Check row/column hierarchy, totals, category overlap, summary statistics, uncertainty and applicable zero/nonestimable cases."
+  - id: TYPE-F1
+    group: 表图列表专项
+    target: F
+    sap_required: false
+    check: "Check axes, scales, units, origin, grouping, legend, intervals and reference lines against the intended interpretation."
+  - id: TYPE-F2
+    group: 表图列表专项
+    target: F
+    sap_required: false
+    check: "Apply endpoint-specific needs such as risk counts, censor marks, effect direction or interaction labeling; explain applicability."
+  - id: TYPE-L1
+    group: 表图列表专项
+    target: L
+    sap_required: false
+    check: "Define row granularity, record linkage, identifiers, visits/events, relevant dates, filters and ordering."
+  - id: CONS-01
+    group: 跨输出及视觉
+    target: all
+    sap_required: false
+    check: "Reconcile shared populations, endpoint definitions, periods, units, precision and group order across related outputs; explain justified differences."
+  - id: CONS-02
+    group: 跨输出及视觉
+    target: all
+    sap_required: false
+    check: "Inspect rendered output for clipped content, spanning/repeated headers, note visibility, legend readability and page continuation."

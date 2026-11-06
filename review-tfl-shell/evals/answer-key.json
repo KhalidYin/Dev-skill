@@ -1,0 +1,77 @@
+{
+  "status": "not-executed",
+  "purpose": "Behavioral scoring only; do not give this file to the reviewing agent.",
+  "cases": {
+    "randomized": {
+      "seeded": [
+        {
+          "target": "A2",
+          "locations": [
+            "SAP §8.2",
+            "Shell directory"
+          ],
+          "finding": "Required delta sensitivity output absent",
+          "priority": "Major"
+        }
+      ],
+      "clean": "T2 covers A2; no missing-sensitivity finding.",
+      "avoid": [
+        "No collection assumptions for SAP-output mapping.",
+        "No visual pass on text-only input."
+      ]
+    },
+    "single-arm": {
+      "seeded": [
+        {
+          "target": "T1 footnote a",
+          "locations": [
+            "SAP §8.1",
+            "T1 footnote a"
+          ],
+          "finding": "Evaluable-only denominator conflicts with all-treated ORR; exclusion changes estimate",
+          "priority": "Major"
+        }
+      ],
+      "clean": "Denominator and missing rules corrected.",
+      "avoid": [
+        "Derived duration is supported by collected dates and SAP rule.",
+        "Imaging data supported by external specification.",
+        "Waterfall descriptive subset is explicitly justified.",
+        "Global numeric conventions need not repeat locally."
+      ]
+    },
+    "dose-escalation": {
+      "seeded": [
+        {
+          "target": "T1 footnote a",
+          "locations": [
+            "SAP §7.1",
+            "T1 footnote a",
+            "L1 caption"
+          ],
+          "finding": "Day 21 window/evaluability conflicts with Day 28",
+          "priority": "Major or Critical with supported decision consequence"
+        }
+      ],
+      "clean": "Day 28 restored; no window mismatch.",
+      "avoid": [
+        "Absent §7.2 algorithm and study-day appendix block dependent checks.",
+        "Multiple event rows per participant intentional.",
+        "Program TBD allowed.",
+        "No invented randomized comparison."
+      ]
+    }
+  },
+  "scoring": {
+    "required": "Locate all seeded defects with correction, consequence and source. Clean controls have no Critical/Major issues for corrected or intentional features.",
+    "additional": "Additional defects require independently verified evidence; no issue quota.",
+    "record": [
+      "actual comments",
+      "missed defects",
+      "unsupported findings",
+      "coverage limitations",
+      "workbook validation"
+    ],
+    "mechanical_note": "Builder tests enforce contracts, not these diagnoses."
+  }
+}
